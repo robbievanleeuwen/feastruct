@@ -21,6 +21,8 @@ class Frame2D(fea):
         TB2: 2 Noded Timoshenko Beam
         """
 
+        # TODO: check value types e.g. id and node_ids are ints
+
         if el_type == 'EB2':
             element = EulerBernoulliBeam2D(self, id, node_ids, E, A, ixx)
         elif el_type == 'TB2':
@@ -29,24 +31,45 @@ class Frame2D(fea):
         fea.add_element(self, element)
 
 
-class EulerBernoulliBeam2D(FiniteElement):
+class FrameElement(FiniteElement):
+    """asldkjaslkd
+    """
+
+    def __init__(self, analysis, id, node_ids, E, A):
+        """
+        """
+
+        super().__init__(analysis, id, node_ids)
+        self.EA = E * A
+
+    def plot_element(self, ax):
+        """
+        """
+
+        coords = self.get_coords()
+
+        ax.plot(coords[:, 0], coords[:, 1], 'k.-',
+                linewidth=2, markersize=8)
+
+
+class EulerBernoulliBeam2D(FrameElement):
     """
     """
+
+    # TODO: properly implement EB with shape functions etc.
 
     def __init__(self, analysis, id, node_ids, E, A, ixx):
         """
         """
 
-        FiniteElement.__init__(self, analysis, id, node_ids)
-
-        self.EA = E * A
+        super().__init__(analysis, id, node_ids, E, A)
         self.EI = E * ixx
 
     def get_stiff_matrix(self):
         """
         """
 
-        coords = np.array(self.get_coords())  # coordinates of nodes
+        coords = self.get_coords()  # coordinates of nodes
 
         if self.analysis.analysis_type == 'linear':
             # compute geometric parameters
@@ -85,7 +108,7 @@ class EulerBernoulliBeam2D(FiniteElement):
             return np.matmul(np.matmul(np.transpose(T), k_el), T)
 
 
-class TimoshenkoBeam2D(FiniteElement):
+class TimoshenkoBeam2D(FrameElement):
     """
     """
 
@@ -93,9 +116,7 @@ class TimoshenkoBeam2D(FiniteElement):
         """
         """
 
-        FiniteElement.__init__(self, analysis, id, node_ids)
-
-        self.EA = E * A
+        super().__init__(analysis, id, node_ids, E, A)
         self.EI = E * ixx
         self.GA_s = G * A_s
 
@@ -103,7 +124,7 @@ class TimoshenkoBeam2D(FiniteElement):
         """
         """
 
-        coords = np.array(self.get_coords())  # coordinates of nodes
+        coords = self.get_coords()  # coordinates of nodes
 
         if self.analysis.analysis_type == 'linear':
             # compute geometric parameters

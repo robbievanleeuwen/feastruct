@@ -28,6 +28,8 @@ class fea:
     def add_node(self, id, coord):
         """Adds a node to the fea class."""
 
+        # TODO: check value types
+
         # TODO: check that node id and location does not already exist
         self.nodes.append(Node(id, coord))
 
@@ -45,19 +47,41 @@ class fea:
         """
         """
 
-        # TODO: check that the support does not already exist
-        self.supports.append({"node": node_id, "val": val, "dir": dir})
+        # TODO: check value types e.g. node_id and dir are ints, check dir is
+        # within dofs limits
 
+        # find the node object corresponding to node_id
+        try:
+            node = self.find_node(node_id)
+        except IndexError as error:
+            print("Error in support. {}".format(error))
+            sys.exit(1)
+
+        # TODO: check that the support or load does not already exist
         # raise exception if duplicate added
+
+        # add a dictionary entry to the supports list
+        self.supports.append({"node": node, "val": val, "dir": dir})
 
     def add_nodal_load(self, node_id, val, dir):
         """
         """
 
-        # TODO: check that the support does not already exist
-        self.nodal_loads.append({"node": node_id, "val": val, "dir": dir})
+        # TODO: check value types e.g. node_id and dir are ints, check dir is
+        # within dofs limits
 
+        # find the node object corresponding to node_id
+        try:
+            node = self.find_node(node_id)
+        except IndexError as error:
+            print("Error in nodal load. {}".format(error))
+            sys.exit(1)
+
+        # TODO: check that the support or load does not already exist
         # raise exception if duplicate added
+
+        # add a dictionary entry to the nodal_loads list
+        self.nodal_loads.append({"node": node, "val": val, "dir": dir})
 
     def find_node(self, node_id):
         """Finds the reference to the node object given its node_id.
@@ -69,6 +93,27 @@ class fea:
                 return node
         else:
             raise IndexError("Cannot find node_id: {}".format(node_id))
+
+    def get_node_lims(self):
+        """asldkjasld
+        """
+
+        xmin = self.nodes[0].x
+        xmax = self.nodes[0].x
+        ymin = self.nodes[0].y
+        ymax = self.nodes[0].y
+
+        for node in self.nodes:
+            if node.x < xmin:
+                xmin = node.x
+            elif node.x > xmax:
+                xmax = node.x
+            if node.y < ymin:
+                ymin = node.y
+            elif node.y > ymax:
+                ymax = node.y
+
+        return (xmin, xmax, ymin, ymax)
 
 
 class FiniteElement:
@@ -117,7 +162,7 @@ class FiniteElement:
         for node in self.nodes:
             coord_list.append(node.coords)
 
-        return coord_list
+        return np.array(coord_list)
 
     def get_dofs(self):
         """

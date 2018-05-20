@@ -7,7 +7,7 @@ class Node:
 
         Args:
             id: an integer representing a unique node id.
-            coord: a list consisting of the x, y (and z) coordinates of
+            coord: a list consisting of the x, y coordinates of
             the node.
 
         Raises:
@@ -19,6 +19,7 @@ class Node:
         self.coord = coord
         self.dofs = []
         self.u = []
+        self.fixity = [0, 0, 0]  # for post processing only
 
     @property
     def x(self):
@@ -29,12 +30,5 @@ class Node:
         return self.coord[1]
 
     @property
-    def z(self):
-        return self.coord[2]
-
-    @property
     def coords(self):
-        if len(self.coord) == 2:
-            return [self.x, self.y]
-        elif len(self.coord) == 3:
-            return [self.x, self.y, self.z]
+        return [self.x, self.y]
