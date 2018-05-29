@@ -1,7 +1,8 @@
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
-import pdb
+from fea.exceptions import FEAInputError
 
 
 class PostProcessor:
@@ -13,20 +14,31 @@ class PostProcessor:
         """
 
         self.analysis = analysis
+        self.n_subdiv = 50
 
-    def plot_geom(self):
+    def plot_geom(self, case_id, undeformed=True, deformed=False, def_scale=1):
         """askldjasld
 
         N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
         plotGeom.m.
         """
 
+        # get analysis case
+        try:
+            analysis_case = self.analysis.find_analysis_case(case_id)
+        except FEAInputError as error:
+            print(error)
+            sys.exit(1)
+
         (fig, ax) = plt.subplots()
 
-        # TODO: plot deformation
-
         for el in self.analysis.elements:
-            el.plot_element(ax)
+            if deformed:
+                el.plot_deformed_element(ax, case_id, self.n_subdiv, def_scale)
+                if undeformed:
+                    el.plot_element(ax, linestyle='--', linewidth=1, marker='')
+            else:
+                el.plot_element(ax)
 
         # set initial plot limits
         (xmin, xmax, ymin, ymax) = self.analysis.get_node_lims()
@@ -34,63 +46,53 @@ class PostProcessor:
         ax.set_ylim(ymin-1e-12, ymax)
 
         # get 2% of the maxmimum dimension
-        self.get_small = 0.02*max(xmax-xmin, ymax-ymin)
+        small = 0.02*max(xmax-xmin, ymax-ymin)
 
         # generate lists of nodal supports and imposed displacements
         support_node_list = []
         imposed_disp_list = []
         max_disp = 0
 
-        for support in self.analysis.supports:
+        for support in analysis_case.freedom_case.items:
             # check that there is no imposed displacement
-            if support["val"] == 0:
-                support["node"].fixity[support["dir"]-1] = 1
+            if support.val == 0:
+                support.node.fixity[support.dir-1] = 1
 
-                if support["node"] not in support_node_list:
-                    support_node_list.append(support["node"])
+                if support.node not in support_node_list:
+                    support_node_list.append(support)
             # if there is an imposed displacement
             else:
                 imposed_disp_list.append(support)
-                if support["dir"] == 1 or support["dir"] == 2:
-                    max_disp = max(max_disp, abs(support["val"]))
+                if support.dir in (1, 2):
+                    max_disp = max(max_disp, abs(support.val))
 
         # plot supports
-        for node in support_node_list:
-            if node.fixity == [1, 0, 0]:
-                self.plot_yroller(ax, node)
-            if node.fixity == [0, 1, 0]:
-                self.plot_xroller(ax, node)
-            if node.fixity == [1, 1, 0]:
-                self.plot_hinge(ax, node)
-            if node.fixity == [1, 1, 1]:
-                self.plot_fixed(ax, node)
-            if node.fixity == [1, 0, 1]:
-                self.plot_yroller_block(ax, node)
-            if node.fixity == [0, 1, 1]:
-                self.plot_xroller_block(ax, node)
-            if node.fixity == [0, 0, 1]:
-                self.plot_zmoment(ax, node)
+        for support in support_node_list:
+            support.plot_support(ax, max_disp, small, self.get_support_angle,
+                                 case_id, deformed, def_scale)
 
         # plot imposed displacements
         for imposed_disp in imposed_disp_list:
-            if imposed_disp["dir"] == 1 or imposed_disp["dir"] == 2:
-                self.plot_imposed_disp(ax, imposed_disp, max_disp)
-            elif imposed_disp["dir"] == 3:
-                self.plot_imposed_rot(ax, imposed_disp)
+            if imposed_disp.dir in (1, 2):
+                imposed_disp.plot_imposed_disp(
+                    ax, max_disp, small, self.get_support_angle, case_id,
+                    deformed, def_scale)
+            elif imposed_disp.dir == 3:
+                imposed_disp.plot_imposed_rot(
+                    ax, small, self.get_support_angle, case_id, deformed,
+                    def_scale)
 
-        # find max nodal loads
+        # find max force
         max_force = 0
 
-        for nodal_load in self.analysis.nodal_loads:
-            if nodal_load["dir"] == 1 or nodal_load["dir"] == 2:
-                max_force = max(max_force, abs(nodal_load["val"]))
+        for load in analysis_case.load_case.items:
+            if load.dir == 1 or load.dir == 2:
+                max_force = max(max_force, abs(load.val))
 
-        # plot nodal loads
-        for nodal_load in self.analysis.nodal_loads:
-            if nodal_load["dir"] == 1 or nodal_load["dir"] == 2:
-                self.plot_nodal_force(ax, nodal_load, max_force)
-            elif nodal_load["dir"] == 3:
-                self.plot_nodal_moment(ax, nodal_load)
+        # plot loads
+        for load in analysis_case.load_case.items:
+            load.plot_load(ax, max_force, small, self.get_support_angle,
+                           case_id, deformed, def_scale)
 
         # plot layout
         plt.axis('tight')
@@ -110,376 +112,7 @@ class PostProcessor:
         plt.box(on=None)
         plt.show()
 
-    def plot_xroller(self, ax, node):
-        """asdksa
-
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
-        """
-
-        (angle, num_el) = self.get_support_angle(node)
-
-        # prefer support below
-        if np.mod(angle + 1, 180) < 2:
-            angle = 90
-        else:
-            angle = round((angle + 90) / 180) * 180 - 90
-
-        self.plot_xysupport(ax, node, angle, True, num_el == 1)
-
-    def plot_yroller(self, ax, node):
-        """asdksa
-
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
-        """
-
-        (angle, num_el) = self.get_support_angle(node)
-        angle = round(angle / 180) * 180
-        self.plot_xysupport(ax, node, angle, True, num_el == 1)
-
-    def plot_hinge(self, ax, node):
-        """asdksa
-
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
-        """
-
-        (angle, num_el) = self.get_support_angle(node, 2)
-        self.plot_xysupport(ax, node, angle, False, num_el == 1)
-
-    def plot_fixed(self, ax, node):
-        """slkdjaksldasd
-        """
-
-        dx = self.get_small
-        (angle, num_el) = self.get_support_angle(node)
-        s = np.sin(angle * np.pi / 180)
-        c = np.cos(angle * np.pi / 180)
-        rot_mat = np.array([[c, -s], [s, c]])
-        line = np.array([[0, 0], [-1, 1]]) * dx
-        rect = np.array([[-0.6, -0.6, 0, 0], [-1, 1, 1, -1]]) * dx
-        rot_line = np.matmul(rot_mat, line)
-        rot_rect = np.matmul(rot_mat, rect)
-        rot_rect[0, :] += node.x
-        rot_rect[1, :] += node.y
-
-        ax.plot(rot_line[0, :] + node.x, rot_line[1, :] + node.y, 'k-',
-                linewidth=1)
-        ax.add_patch(Polygon(np.transpose(rot_rect),
-                             facecolor=(0.7, 0.7, 0.7)))
-
-    def plot_xroller_block(self, ax, node):
-        """slkdjaksldasd
-        """
-
-        dx = self.get_small
-        (angle, num_el) = self.get_support_angle(node)
-        angle = round((angle + 90) / 180) * 180 - 90
-        s = np.sin(angle * np.pi / 180)
-        c = np.cos(angle * np.pi / 180)
-        rot_mat = np.array([[c, -s], [s, c]])
-        line = np.array([[-0.85, -0.85], [-1, 1]]) * dx
-        rect = np.array([[-0.6, -0.6, 0, 0], [-1, 1, 1, -1]]) * dx
-        rot_line = np.matmul(rot_mat, line)
-        rot_rect = np.matmul(rot_mat, rect)
-        rot_rect[0, :] += node.x
-        rot_rect[1, :] += node.y
-
-        ax.plot(rot_line[0, :] + node.x, rot_line[1, :] + node.y, 'k-',
-                linewidth=1)
-        ax.add_patch(Polygon(np.transpose(rot_rect),
-                             facecolor=(0.7, 0.7, 0.7), edgecolor='k'))
-
-    def plot_yroller_block(self, ax, node):
-        """slkdjaksldasd
-        """
-
-        dx = self.get_small
-        (angle, num_el) = self.get_support_angle(node)
-        angle = round(angle / 180) * 180
-        s = np.sin(angle * np.pi / 180)
-        c = np.cos(angle * np.pi / 180)
-        rot_mat = np.array([[c, -s], [s, c]])
-        line = np.array([[-0.85, -0.85], [-1, 1]]) * dx
-        rect = np.array([[-0.6, -0.6, 0, 0], [-1, 1, 1, -1]]) * dx
-        rot_line = np.matmul(rot_mat, line)
-        rot_rect = np.matmul(rot_mat, rect)
-        rot_rect[0, :] += node.x
-        rot_rect[1, :] += node.y
-
-        ax.plot(rot_line[0, :] + node.x, rot_line[1, :] + node.y, 'k-',
-                linewidth=1)
-        ax.add_patch(Polygon(np.transpose(rot_rect),
-                             facecolor=(0.7, 0.7, 0.7), edgecolor='k'))
-
-    def plot_zmoment(self, ax, node):
-        """slkdjaksldasd
-        """
-
-        ax.plot(node.x, node.y, 'kx', markersize=8)
-
-    def plot_xysupport(self, ax, node, angle, roller, hinge):
-        """aslkdjsak
-
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
-        """
-
-        # determine coordinates of triangle
-        dx = self.get_small
-        h = np.sqrt(3) / 2
-        triangle = np.array([[-h, -h, -h, 0, -h], [-1, 1, 0.5, 0, -0.5]]) * dx
-        s = np.sin(angle * np.pi / 180)
-        c = np.cos(angle * np.pi / 180)
-        rot_mat = np.array([[c, -s], [s, c]])
-        rot_triangle = np.matmul(rot_mat, triangle)
-
-        if roller:
-            line = np.array([[-1.1, -1.1], [-1, 1]]) * dx
-            rot_line = np.matmul(rot_mat, line)
-            ax.plot(rot_line[0, :] + node.x, rot_line[1, :] + node.y, 'k-',
-                    linewidth=1)
-        else:
-            rect = np.array([[-1.4, -1.4, -h, -h], [-1, 1, 1, -1]]) * dx
-            rot_rect = np.matmul(rot_mat, rect)
-            rot_rect[0, :] += node.x
-            rot_rect[1, :] += node.y
-            ax.add_patch(Polygon(np.transpose(rot_rect),
-                                 facecolor=(0.7, 0.7, 0.7)))
-
-        ax.plot(rot_triangle[0, :] + node.x, rot_triangle[1, :] + node.y, 'k-',
-                linewidth=1)
-
-        if hinge:
-            ax.plot(node.x, node.y, 'ko', markerfacecolor='w',
-                    linewidth=1, markersize=4)
-
-    def plot_nodal_force(self, ax, nodal_load, max_force):
-        """aslkdjsak
-
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
-        """
-
-        val = nodal_load["val"] / max_force
-        node = nodal_load["node"]
-        dir = nodal_load["dir"]
-
-        small = self.get_small
-        offset = 0.5 * small
-
-        lf = abs(val) * 1.5 * small  # arrow length
-        lh = 0.6 * small  # arrow head length
-        wh = 0.6 * small  # arrow head width
-        lf = max(lf, lh * 1.5)
-
-        (angle, num_el) = self.get_support_angle(node)
-        s = np.sin(angle * np.pi / 180)
-        c = np.cos(angle * np.pi / 180)
-        n = np.array([c, s])
-        inward = (n[dir-1] == 0 or np.sign(n[dir-1]) == np.sign(val))
-
-        to_rotate = (dir - 1) * 90 + (n[dir-1] > 0) * 180
-        sr = np.sin(to_rotate * np.pi / 180)
-        cr = np.cos(to_rotate * np.pi / 180)
-        rot_mat = np.array([[cr, -sr], [sr, cr]])
-
-        ll = np.array([[offset, offset + lf], [0, 0]])
-        p0 = offset + (not inward) * lf
-        p1 = p0 + (inward) * lh - (not inward) * lh
-        pp = np.array([[p1, p1, p0], [-wh / 2, wh / 2, 0]])
-
-        # correct end of arrow line
-        if inward:
-            ll[0, 0] += lh
-        else:
-            ll[0, 1] -= lh
-
-        rl = np.matmul(rot_mat, ll)
-        rp = np.matmul(rot_mat, pp)
-        rp[0, :] += node.x
-        rp[1, :] += node.y
-
-        ax.plot(rl[0, :] + node.x, rl[1, :] + node.y, 'k-', linewidth=2)
-        ax.add_patch(Polygon(np.transpose(rp), facecolor='k'))
-
-    def plot_nodal_moment(self, ax, nodal_load):
-        """aslkdjsak
-
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
-        """
-
-        node = nodal_load["node"]
-        val = nodal_load["val"]
-
-        small = self.get_small
-        lh = 0.4 * small  # arrow head length
-        wh = 0.4 * small  # arrow head width
-        rr = 1.5 * small
-        (angle, num_el) = self.get_support_angle(node)
-        ths = np.arange(100, 261)
-
-        s = np.sin(angle * np.pi / 180)
-        c = np.cos(angle * np.pi / 180)
-        rot_mat = np.array([[c, -s], [s, c]])
-
-        # make arrow tail around (0,0)
-        ll = np.array([rr * np.cos(ths * np.pi / 180),
-                       rr * np.sin(ths * np.pi / 180)])
-
-        # make arrow head at (0,0)
-        pp = np.array([[-lh, -lh, 0], [-wh / 2, wh / 2, 0]])
-
-        # rotate arrow head around (0,0)
-        if val > 0:
-            thTip = 90 - ths[11]
-            xTip = ll[:, -1]
-            s = 0
-            e = -2
-        else:
-            thTip = ths[11] - 90
-            xTip = ll[:, 0]
-            s = 1
-            e = -1
-
-        cTip = np.cos(thTip * np.pi / 180)
-        sTip = np.sin(thTip * np.pi / 180)
-        rTip = np.array([[cTip, -sTip], [sTip, cTip]])
-        pp = np.matmul(rTip, pp)
-
-        # shift arrow head to tip
-        pp[0, :] += xTip[0]
-        pp[1, :] += xTip[1]
-
-        # rotate arrow to align it with the node
-        rl = np.matmul(rot_mat, ll)
-        rp = np.matmul(rot_mat, pp)
-        rp[0, :] += node.x
-        rp[1, :] += node.y
-
-        # shift arrow to node and plot
-        ax.plot(node.x + rl[0, s:e], node.y + rl[1, s:e], 'k-')
-        ax.add_patch(Polygon(np.transpose(rp), facecolor='k'))
-
-    def plot_imposed_disp(self, ax, imposed_disp, max_disp):
-        """aslkdjsak
-
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
-        """
-
-        val = imposed_disp["val"] / max_disp
-        node = imposed_disp["node"]
-        dir = imposed_disp["dir"]
-
-        small = self.get_small
-        offset = 0.5 * small
-
-        lf = abs(val) * 1.5 * small  # arrow length
-        lh = 0.6 * small  # arrow head length
-        wh = 0.6 * small  # arrow head width
-        sp = 0.15 * small  # half spacing between double line
-        lf = max(lf, lh * 1.5)
-
-        (angle, num_el) = self.get_support_angle(node)
-        s = np.sin(angle * np.pi / 180)
-        c = np.cos(angle * np.pi / 180)
-        n = np.array([c, s])
-        inward = (n[dir-1] == 0 or np.sign(n[dir-1]) == np.sign(val))
-
-        to_rotate = (dir - 1) * 90 + (n[dir-1] >= 0) * 180
-        sr = np.sin(to_rotate * np.pi / 180)
-        cr = np.cos(to_rotate * np.pi / 180)
-        rot_mat = np.array([[cr, -sr], [sr, cr]])
-
-        x0 = offset + inward * lf
-        x2 = offset + (not inward) * lf
-        x1 = x2 + (inward) * lh - (not inward) * lh
-        pp = np.array([[x1, x1, x2], [-wh / 2, wh / 2, 0]])
-        ll = np.array([[x1, x0, x0, x1], [sp, sp, -sp, -sp]])
-
-        rl = np.matmul(rot_mat, ll)
-        rp = np.matmul(rot_mat, pp)
-        rp[0, :] += node.x
-        rp[1, :] += node.y
-
-        ax.plot(rl[0, :] + node.x, rl[1, :] + node.y, 'k-')
-        ax.add_patch(Polygon(np.transpose(rp),
-                             facecolor='none', linewidth=1, edgecolor='k'))
-
-    def plot_imposed_rot(self, ax, imposed_disp):
-        """aslkdjsak
-
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
-        """
-
-        node = imposed_disp["node"]
-        val = imposed_disp["val"]
-
-        small = self.get_small
-        lh = 0.4 * small  # arrow head length
-        wh = 0.4 * small  # arrow head width
-        r1 = 1.0 * small
-        r2 = 1.2 * small
-        (angle, num_el) = self.get_support_angle(node)
-        ths = np.arange(100, 261)
-
-        s = np.sin(angle * np.pi / 180)
-        c = np.cos(angle * np.pi / 180)
-        rot_mat = np.array([[c, -s], [s, c]])
-
-        # make arrow tail around (0,0)
-        rr = (r1 + r2) / 2
-        ll = np.array([rr * np.cos(ths * np.pi / 180),
-                       rr * np.sin(ths * np.pi / 180)])
-        l1 = np.array([r1 * np.cos(ths * np.pi / 180),
-                       r1 * np.sin(ths * np.pi / 180)])
-        l2 = np.array([r2 * np.cos(ths * np.pi / 180),
-                       r2 * np.sin(ths * np.pi / 180)])
-
-        # make arrow head at (0,0)
-        pp = np.array([[-lh, -lh, 0], [-wh / 2, wh / 2, 0]])
-
-        # rotate arrow head around (0,0)
-        if val > 0:
-            thTip = 90 - ths[11]
-            xTip = ll[:, -1]
-            l1 = l1[:, 1:-21]
-            l2 = l2[:, 1:-21]
-            ibase = 0
-        else:
-            thTip = ths[11] - 90
-            xTip = ll[:, 0]
-            l1 = l1[:, 21:]
-            l2 = l2[:, 21:]
-            ibase = np.shape(l1)[1] - 1
-
-        cTip = np.cos(thTip * np.pi / 180)
-        sTip = np.sin(thTip * np.pi / 180)
-        rTip = np.array([[cTip, -sTip], [sTip, cTip]])
-        pp = np.matmul(rTip, pp)
-
-        # shift arrow head to tip
-        pp[0, :] += xTip[0]
-        pp[1, :] += xTip[1]
-
-        # rotate arrow to align it with the node
-        rl1 = np.matmul(rot_mat, l1)
-        rl2 = np.matmul(rot_mat, l2)
-        rp = np.matmul(rot_mat, pp)
-        rp[0, :] += node.x
-        rp[1, :] += node.y
-
-        # shift arrow to node and plot
-        ax.plot(node.x + rl1[0, :], node.y + rl1[1, :], 'k-')
-        ax.plot(node.x + rl2[0, :], node.y + rl2[1, :], 'k-')
-        ax.plot(node.x + np.append(rl1[0, ibase], rl2[0, ibase]),
-                node.y + np.append(rl1[1, ibase], rl2[1, ibase]), 'k-')
-        ax.add_patch(Polygon(np.transpose(rp),
-                             facecolor='none', linewidth=1, edgecolor='k'))
+        return ax
 
     def get_support_angle(self, node, prefer_dir=None):
         """alskdjaklsd
