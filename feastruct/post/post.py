@@ -1,7 +1,6 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
 from fea.exceptions import FEAInputError
 
 
@@ -16,8 +15,8 @@ class PostProcessor:
         self.analysis = analysis
         self.n_subdiv = 50
 
-    def plot_geom(self, case_id, undeformed=True, deformed=False, def_scale=1,
-                  ax=None):
+    def plot_geom(self, case_id, supports=True, loads=True, undeformed=True,
+                  deformed=False, def_scale=1, ax=None, dashed=False):
         """askldjasld
 
         N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
@@ -40,7 +39,10 @@ class PostProcessor:
                 if undeformed:
                     el.plot_element(ax, linestyle='--', linewidth=1, marker='')
             else:
-                el.plot_element(ax)
+                if dashed:
+                    el.plot_element(ax, linestyle='--', linewidth=1, marker='')
+                else:
+                    el.plot_element(ax)
 
         # set initial plot limits
         (xmin, xmax, ymin, ymax) = self.analysis.get_node_lims()
@@ -48,53 +50,57 @@ class PostProcessor:
         ax.set_ylim(ymin-1e-12, ymax)
 
         # get 2% of the maxmimum dimension
-        small = 0.02*max(xmax-xmin, ymax-ymin)
+        small = 0.02 * max(xmax-xmin, ymax-ymin)
 
-        # generate lists of nodal supports and imposed displacements
-        support_node_list = []
-        imposed_disp_list = []
-        max_disp = 0
+        if supports:
+            # generate lists of nodal supports and imposed displacements
+            support_node_list = []
+            imposed_disp_list = []
+            max_disp = 0
 
-        for support in analysis_case.freedom_case.items:
-            # check that there is no imposed displacement
-            if support.val == 0:
-                support.node.fixity[support.dir-1] = 1
+            for support in analysis_case.freedom_case.items:
+                # check that there is no imposed displacement
+                if support.val == 0:
+                    support.node.fixity[support.dir-1] = 1
 
-                if support.node not in support_node_list:
-                    support_node_list.append(support)
-            # if there is an imposed displacement
-            else:
-                imposed_disp_list.append(support)
-                if support.dir in (1, 2):
-                    max_disp = max(max_disp, abs(support.val))
+                    if support.node not in support_node_list:
+                        support_node_list.append(support)
+                # if there is an imposed displacement
+                else:
+                    imposed_disp_list.append(support)
+                    if support.dir in (1, 2):
+                        max_disp = max(max_disp, abs(support.val))
 
-        # plot supports
-        for support in support_node_list:
-            support.plot_support(ax, max_disp, small, self.get_support_angle,
-                                 case_id, deformed, def_scale)
-
-        # plot imposed displacements
-        for imposed_disp in imposed_disp_list:
-            if imposed_disp.dir in (1, 2):
-                imposed_disp.plot_imposed_disp(
+        if supports:
+            # plot supports
+            for support in support_node_list:
+                support.plot_support(
                     ax, max_disp, small, self.get_support_angle, case_id,
                     deformed, def_scale)
-            elif imposed_disp.dir == 3:
-                imposed_disp.plot_imposed_rot(
-                    ax, small, self.get_support_angle, case_id, deformed,
-                    def_scale)
 
-        # find max force
-        max_force = 0
+            # plot imposed displacements
+            for imposed_disp in imposed_disp_list:
+                if imposed_disp.dir in (1, 2):
+                    imposed_disp.plot_imposed_disp(
+                        ax, max_disp, small, self.get_support_angle, case_id,
+                        deformed, def_scale)
+                elif imposed_disp.dir == 3:
+                    imposed_disp.plot_imposed_rot(
+                        ax, small, self.get_support_angle, case_id, deformed,
+                        def_scale)
 
-        for load in analysis_case.load_case.items:
-            if load.dir == 1 or load.dir == 2:
-                max_force = max(max_force, abs(load.val))
+        if loads:
+            # find max force
+            max_force = 0
 
-        # plot loads
-        for load in analysis_case.load_case.items:
-            load.plot_load(ax, max_force, small, self.get_support_angle,
-                           case_id, deformed, def_scale)
+            for load in analysis_case.load_case.items:
+                if load.dir == 1 or load.dir == 2:
+                    max_force = max(max_force, abs(load.val))
+
+            # plot loads
+            for load in analysis_case.load_case.items:
+                load.plot_load(ax, max_force, small, self.get_support_angle,
+                               case_id, deformed, def_scale)
 
         # plot layout
         plt.axis('tight')
@@ -114,13 +120,43 @@ class PostProcessor:
         plt.box(on=None)
         plt.show()
 
-    def plot_reactions(self, case_id):
+    def plot_reactions(self, case_id, scale=0.1):
         """
         """
 
-        # ax = self.plot_geom(case_id)
+        (fig, ax) = plt.subplots()
 
-        # TODO: plot reaction forces
+        # get analysis case
+        try:
+            analysis_case = self.analysis.find_analysis_case(case_id)
+        except FEAInputError as error:
+            print(error)
+            sys.exit(1)
+
+        # get size of structure
+        (xmin, xmax, ymin, ymax) = self.analysis.get_node_lims()
+
+        # determine maximum reaction force
+        max_reaction = 0
+
+        for support in analysis_case.freedom_case.items:
+            if support.dir in (1, 2):
+                try:
+                    reaction = support.get_reaction(case_id)
+                except FEAInputError as error:
+                    print(error)
+                    sys.exit(1)
+                max_reaction = max(max_reaction, abs(reaction))
+
+        small = 0.02 * max(xmax-xmin, ymax-ymin)
+
+        # plot reactions
+        for support in analysis_case.freedom_case.items:
+            support.plot_reaction(ax, case_id, small, max_reaction,
+                                  self.get_support_angle)
+
+        # plot the undeformed structure
+        self.plot_geom(case_id, ax=ax, supports=False)
 
     def plot_frame_forces(self, case_id, axial=False, shear=False,
                           moment=False, scale=0.1):
@@ -174,6 +210,39 @@ class PostProcessor:
 
         # plot the undeformed structure
         self.plot_geom(case_id, ax=ax)
+
+    def plot_eigenvector(self, case_id, buckling_mode=1):
+        """
+        """
+
+        # TODO: check that analysis object is Frame2D
+
+        (fig, ax) = plt.subplots()
+
+        # set initial plot limits
+        (xmin, xmax, ymin, ymax) = self.analysis.get_node_lims()
+
+        # determine max displacement
+        max_v = 0
+
+        for el in self.analysis.elements:
+            (v_el, w) = el.get_nodal_eigenvectors(case_id, buckling_mode)
+            max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]),
+                        abs(v_el[1, 0]), abs(v_el[1, 1]))
+
+        # determine plot scale
+        scale = 0.1 * max(xmax - xmin, ymax - ymin) / max_v
+
+        # plot eigenvectors
+        for el in self.analysis.elements:
+            (v_el, _) = el.get_nodal_eigenvectors(case_id, buckling_mode)
+            el.plot_deformed_element(ax, case_id, self.n_subdiv, scale, v_el)
+
+        # plot the load factor (eigenvalue)
+        ax.set_title("Load Factor: {:.4e}".format(w), size=10)
+
+        # plot the undeformed structure
+        self.plot_geom(case_id, ax=ax, dashed=True)
 
     def get_support_angle(self, node, prefer_dir=None):
         """alskdjaklsd

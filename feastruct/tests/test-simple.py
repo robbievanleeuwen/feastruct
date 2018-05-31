@@ -56,3 +56,4 @@ solver = LinearStatic(analysis, case_ids=[1, 2, 3]).solve()
 # post.plot_geom(case_id=3, deformed=True, def_scale=1)
 
 post.plot_frame_forces(case_id=1, axial=True, shear=True)
+post.plot_reactions(case_id=1)

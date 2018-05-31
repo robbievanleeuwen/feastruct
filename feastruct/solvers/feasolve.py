@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.sparse as sp
-from scipy.sparse.linalg import spsolve, cgs, LinearOperator, spilu
+import scipy.sparse.linalg as linalg
 from fea.exceptions import FEASolverError
 
 
@@ -31,7 +31,7 @@ class Solver:
             node.dofs = dofs + dof_count
             dof_count += self.analysis.dofs
 
-    def assemble_matrix(self):
+    def assemble_stiff_matrix(self, geometric=False, case_id=None):
         """Assembles the global stiffness using the sparse COO format.
         """
 
@@ -39,6 +39,9 @@ class Solver:
         row = []  # list containing row indices
         col = []  # list containing column indices
         data = []  # list containing stiffness matrix entries
+
+        if geometric:
+            data_g = []
 
         # loop through all the elements
         for el in self.analysis.elements:
@@ -65,7 +68,21 @@ class Solver:
             col = np.hstack((col, c))
             data = np.hstack((data, k))
 
-        return sp.coo_matrix((data, (row, col)), shape=(self.ndof, self.ndof))
+            # assemble geometric stiffness matrix
+            if geometric:
+                k_el_g = el.get_geometric_stiff_matrix(case_id)
+                k_g = k_el_g.flatten()
+                data_g = np.hstack((data_g, k_g))
+
+        K = sp.coo_matrix((data, (row, col)), shape=(self.ndof, self.ndof))
+
+        if geometric:
+            K_g = sp.coo_matrix((data_g, (row, col)),
+                                shape=(self.ndof, self.ndof))
+        else:
+            K_g = None
+
+        return (K, K_g)
 
     def assemble_fext(self, analysis_case):
         """asdsakd
@@ -102,6 +119,25 @@ class Solver:
 
         return (K_lil, f_ext)
 
+    def remove_constrained_dofs(self, K, analysis_case):
+        """
+        """
+
+        # convert K to lil matrix
+        K_lil = sp.lil_matrix(K)
+
+        # get dofs of constrained nodes
+        constrained_dofs = []
+
+        for support in analysis_case.freedom_case.items:
+            constrained_dofs.append(support.node.dofs[support.dir-1])
+
+        # create list of free dofs
+        free_dofs = [i for i in range(self.ndof) if i not in constrained_dofs]
+        idx = np.ix_(free_dofs, free_dofs)
+
+        return K_lil[idx]
+
     def direct_solver(self, K, f_ext):
         """asdkljaskdjsa
 
@@ -111,7 +147,7 @@ class Solver:
         # convert stiffness matrix to csc format
         K_csc = sp.csc_matrix(K)
 
-        return spsolve(K_csc, f_ext)
+        return linalg.spsolve(K_csc, f_ext)
 
     def cgs_solver(self, K, f_ext):
         """sadasdsa
@@ -124,17 +160,37 @@ class Solver:
 
         if self.settings["precond"]:
             # perform ILU decomposition stiffness matrix
-            pre_cond = LinearOperator(K.get_shape(), spilu(K_csc).solve)
+            pre_cond = linalg.LinearOperator(K.get_shape(),
+                                             linalg.spilu(K_csc).solve)
         else:
             pre_cond = None
 
-        (u, exit) = cgs(K_csc, f_ext, tol=self.settings["tol"],
-                        maxiter=self.settings["maxiter"], M=pre_cond)
+        (u, exit) = linalg.cgs(K_csc, f_ext, tol=self.settings["tol"],
+                               maxiter=self.settings["maxiter"], M=pre_cond)
 
         if (exit != 0):
             raise FEASolverError("CGS solver did not converge.")
 
         return u
+
+    def solve_eigenvalue(self, A, M):
+        """
+        """
+
+        A_csc = sp.csc_matrix(A)
+        M_csc = sp.csc_matrix(M)
+
+        try:
+            (w, v) = linalg.eigs(A=A_csc, k=self.settings["n"], M=M_csc,
+                                 sigma=self.settings["shift"],
+                                 maxiter=self.settings["maxiter"],
+                                 tol=self.settings["tol"])
+
+        except linalg.ArpackNoConvergence:
+            raise FEASolverError("""Convergence not obtained for the
+            eigenvalue solver""")
+
+        return (np.real(w), np.real(v))
 
     def save_results(self, u, analysis_case):
         """ aslkdjlksad
@@ -142,6 +198,19 @@ class Solver:
 
         for node in self.analysis.nodes:
             node.u.append({"case_id": analysis_case.id, "u": u[node.dofs]})
+
+    def save_eigenvectors(self, v, w, analysis_case):
+        """
+        """
+
+        # add constrained dofs to eigenvector
+        for support in analysis_case.freedom_case.items:
+            dof = support.node.dofs[support.dir-1]
+            v = np.insert(v, dof, 0, axis=0)
+
+        for node in self.analysis.nodes:
+            node.eigenvector.append({"case_id": analysis_case.id,
+                                     "v": v[node.dofs, :], "w": w})
 
     def calculate_reactions(self, K, u, analysis_case):
         """

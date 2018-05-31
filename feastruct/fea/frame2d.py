@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 from matplotlib.patches import Polygon
 from fea.fea import fea, FiniteElement
@@ -271,12 +272,49 @@ class EulerBernoulliFrame2D(FrameElement):
 
             return np.matmul(np.matmul(np.transpose(T), k_el), T)
 
-    def plot_deformed_element(self, ax, case_id, n, def_scale):
+    def get_geometric_stiff_matrix(self, case_id):
+        """
+        """
+
+        # compute geometric parameters
+        (_, _, l0, _, c, s) = self.get_geometric_properties()
+
+        # get axial force
+        try:
+            f_int = self.get_fint(case_id)
+        except FEAInputError as error:
+            print(error)
+            sys.exit(1)
+
+        # get axial force in element (take average of nodal values)
+        N = np.mean([-f_int["N1"], f_int["N2"]])
+
+        # form geometric stiffness matrix
+        k_el_g = np.array([[0, 0, 0, 0, 0, 0],
+                           [0, 1.2, l0/10, 0, -1.2, l0/10],
+                           [0, l0/10, 2*l0*l0/15, 0, -l0/10, -l0*l0/30],
+                           [0, 0, 0, 0, 0, 0],
+                           [0, -1.2, -l0/10, 0, 1.2, -l0/10],
+                           [0, l0/10, -l0*l0/30, 0, -l0/10, 2*l0*l0/15]])
+        k_el_g *= N / l0
+
+        # construct rotation matrix
+        T = np.array([[c, s, 0, 0, 0, 0],
+                      [-s, c, 0, 0, 0, 0],
+                      [0, 0, 1, 0, 0, 0],
+                      [0, 0, 0, c, s, 0],
+                      [0, 0, 0, -s, c, 0],
+                      [0, 0, 0, 0, 0, 1]])
+
+        return np.matmul(np.matmul(np.transpose(T), k_el_g), T)
+
+    def plot_deformed_element(self, ax, case_id, n, def_scale, u_el=None):
         """
         """
 
         # nodal displacements in xy
-        u_el = self.get_nodal_displacements(case_id)
+        if u_el is None:
+            u_el = self.get_nodal_displacements(case_id)
 
         # compute frame geometric parameters
         (node_coords, _, l0, _, c, s) = self.get_geometric_properties()

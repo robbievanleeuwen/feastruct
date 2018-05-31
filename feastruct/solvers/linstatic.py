@@ -16,7 +16,7 @@ class LinearStatic(Solver):
             self.assign_dofs()  # assign the global degree of freedom numbers
 
             # assemble the global stiffness matrix
-            K_g = self.assemble_matrix()
+            (K, _) = self.assemble_stiff_matrix()
 
             # loop through each analysis case
             for case in self.case_ids:
@@ -27,7 +27,7 @@ class LinearStatic(Solver):
                 f_ext = self.assemble_fext(analysis_case)
 
                 # apply the boundary conditions
-                (K_mod, f_ext) = self.apply_bcs(K_g, f_ext, analysis_case)
+                (K_mod, f_ext) = self.apply_bcs(K, f_ext, analysis_case)
 
                 # solve for the displacement vector
                 if self.solver == 'direct':
@@ -39,7 +39,7 @@ class LinearStatic(Solver):
                 self.save_results(u, analysis_case)
 
                 # calculate the reaction forces
-                self.calculate_reactions(K_g, u, analysis_case)
+                self.calculate_reactions(K, u, analysis_case)
 
                 # calculate the element stresses
                 self.calculate_stresses(analysis_case)
