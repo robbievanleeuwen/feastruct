@@ -13,22 +13,36 @@ class LinearStatic(Solver):
 
     def solve(self):
         try:
-            self.assign_dofs()
-            K = self.assemble_matrix()
+            self.assign_dofs()  # assign the global degree of freedom numbers
 
+            # assemble the global stiffness matrix
+            K_g = self.assemble_matrix()
+
+            # loop through each analysis case
             for case in self.case_ids:
                 # get analysis case
                 analysis_case = self.analysis.find_analysis_case(case)
 
+                # assemble the external force vector
                 f_ext = self.assemble_fext(analysis_case)
-                (K, f_ext) = self.apply_bcs(K, f_ext, analysis_case)
 
+                # apply the boundary conditions
+                (K_mod, f_ext) = self.apply_bcs(K_g, f_ext, analysis_case)
+
+                # solve for the displacement vector
                 if self.solver == 'direct':
-                    u = self.direct_solver(K, f_ext)
+                    u = self.direct_solver(K_mod, f_ext)
                 elif self.solver == 'cgs':
-                    u = self.cgs_solver(K, f_ext)
+                    u = self.cgs_solver(K_mod, f_ext)
 
+                # save the displacements to the Node objects
                 self.save_results(u, analysis_case)
+
+                # calculate the reaction forces
+                self.calculate_reactions(K_g, u, analysis_case)
+
+                # calculate the element stresses
+                self.calculate_stresses(analysis_case)
 
         except FEAInputError as error:
             print("Error in linear static solver. {}".format(error))

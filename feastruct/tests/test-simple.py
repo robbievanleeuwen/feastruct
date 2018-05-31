@@ -51,6 +51,8 @@ post = PostProcessor(analysis)
 
 solver = LinearStatic(analysis, case_ids=[1, 2, 3]).solve()
 
-post.plot_geom(case_id=1, deformed=True, def_scale=10)
-post.plot_geom(case_id=2, deformed=True, def_scale=10)
-post.plot_geom(case_id=3, deformed=True, def_scale=1)
+# post.plot_geom(case_id=1, deformed=True, def_scale=10)
+# post.plot_geom(case_id=2, deformed=True, def_scale=10)
+# post.plot_geom(case_id=3, deformed=True, def_scale=1)
+
+post.plot_frame_forces(case_id=1, axial=True, shear=True)

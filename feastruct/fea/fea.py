@@ -233,6 +233,7 @@ class FiniteElement:
         self.analysis = analysis
         self.id = id
         self.nodes = []
+        self.f_int = []
 
         # add references to the node objects
         self.get_nodes(node_ids)
@@ -287,6 +288,13 @@ class FiniteElement:
         """
 
         pass
+
+    def save_fint(self, f_int, case_id):
+        """
+        """
+
+        # save internal force vector in global coordinate system
+        self.f_int.append({"case_id": case_id, "f_int": f_int})
 
 
 class Node:
@@ -456,6 +464,8 @@ class NodalSupport(BoundaryCondition):
 
     def __init__(self, analysis, node_id, val, dir):
         super().__init__(analysis, node_id, val, dir)
+
+        self.reaction = []
 
     def apply_support(self, K, f_ext):
         """sadsad

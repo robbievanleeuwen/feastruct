@@ -1,5 +1,7 @@
 import numpy as np
+from matplotlib.patches import Polygon
 from fea.fea import fea, FiniteElement
+from fea.exceptions import FEAInputError
 
 
 class Frame2D(fea):
@@ -43,6 +45,46 @@ class FrameElement(FiniteElement):
         super().__init__(analysis, id, node_ids)
         self.EA = E * A
 
+    def get_geometric_properties(self):
+        """
+        """
+
+        node_coords = self.get_node_coords()
+        dx = node_coords[1] - node_coords[0]
+        l0 = np.linalg.norm(dx)
+        phi = np.arctan2(dx[1], dx[0])
+        c = np.cos(phi)
+        s = np.sin(phi)
+
+        return (node_coords, dx, l0, phi, c, s)
+
+    def save_fint(self, f_int, case_id):
+        """
+        """
+
+        (_, _, _, _, c, s) = self.get_geometric_properties()
+
+        self.f_int.append({"case_id": case_id,
+                           "N1": f_int[0] * c + f_int[1] * s,
+                           "V1": -f_int[0] * s + f_int[1] * c,
+                           "M1": f_int[2],
+                           "N2": f_int[3] * c + f_int[4] * s,
+                           "V2": -f_int[3] * s + f_int[4] * c,
+                           "M2": f_int[5]})
+
+    def get_fint(self, case_id):
+        """
+        """
+
+        # get dictionary f_int entry for given case_id
+        f_int = next(d for d in self.f_int if d["case_id"] == case_id)
+
+        if f_int is not None:
+            return f_int
+        else:
+            raise FEAInputError("""Cannot find an analysis result for
+            case_id: {} at element_id: {}""".format(case_id, self.id))
+
     def plot_element(self, ax, linestyle='-', linewidth=2, marker='.'):
         """
         """
@@ -56,7 +98,126 @@ class FrameElement(FiniteElement):
         """
         """
         pass
-        # IMPLEMENT DEFAULT LINEAR BEHAVIOUR
+        # TODO: IMPLEMENT DEFAULT LINEAR BEHAVIOUR
+
+    def plot_axial_force(self, ax, case_id, scalef):
+        """alskdjaklsd
+
+        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
+        plotNLine.m.
+        """
+
+        # get geometric properties
+        (node_coords, dx, l0, _, _, _) = self.get_geometric_properties()
+
+        # get internal force vector
+        f_int = self.get_fint(case_id)
+        n1 = -f_int["N1"]  # axial force at node 1 (tension positive)
+        n2 = f_int["N2"]  # axial force at node 2 (tension positive)
+
+        # location of node 1 and node 2
+        p1 = node_coords[0, :]
+        p2 = node_coords[1, :]
+
+        # location of the axial force diagram end points
+        v = np.matmul(np.array([[0, -1], [1, 0]]), dx) / l0  # direction vector
+        p3 = p2 + v * scalef * n2
+        p4 = p1 + v * scalef * n1
+
+        # plot axial force line and patch
+        ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0.7, 0, 0))
+        ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0.7, 0, 0))
+        ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0.7, 0, 0))
+        ax.add_patch(Polygon(np.array([p1, p2, p3, p4]),
+                             facecolor=(1, 0, 0), linestyle='None', alpha=0.3))
+
+        # plot text value of axial force
+        mid1 = (p1 + p4) / 2
+        mid2 = (p2 + p3) / 2
+        ax.text(mid1[0], mid1[1], "{:5.3g}".format(n1), size=8,
+                verticalalignment='bottom')
+        ax.text(mid2[0], mid2[1], "{:5.3g}".format(n2), size=8,
+                verticalalignment='bottom')
+
+    def plot_shear_force(self, ax, case_id, scalef):
+        """alskdjaklsd
+
+        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
+        plotVLine.m.
+        """
+
+        # get geometric properties
+        (node_coords, dx, l0, _, _, _) = self.get_geometric_properties()
+
+        # get internal force vector
+        f_int = self.get_fint(case_id)
+        v1 = f_int["V1"]  # shear force at node 1 (cw positive)
+        v2 = -f_int["V2"]  # shear force at node 2 (cw positive)
+
+        # location of node 1 and node 2
+        p1 = node_coords[0, :]
+        p2 = node_coords[1, :]
+
+        # location of the shear force diagram end points
+        v = np.matmul(np.array([[0, -1], [1, 0]]), dx) / l0  # direction vector
+        p3 = p2 + v * scalef * v2
+        p4 = p1 + v * scalef * v1
+
+        # plot shear force line and patch
+        ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0, 0.3, 0))
+        ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0, 0.3, 0))
+        ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0, 0.3, 0))
+        ax.add_patch(Polygon(np.array([p1, p2, p3, p4]),
+                             facecolor=(0, 0.5, 0), linestyle='None',
+                             alpha=0.3))
+
+        # plot text value of shear force
+        mid1 = (p1 + p4) / 2
+        mid2 = (p2 + p3) / 2
+        ax.text(mid1[0], mid1[1], "{:5.3g}".format(v1), size=8,
+                verticalalignment='bottom')
+        ax.text(mid2[0], mid2[1], "{:5.3g}".format(v2), size=8,
+                verticalalignment='bottom')
+
+    def plot_bending_moment(self, ax, case_id, scalef):
+        """alskdjaklsd
+
+        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
+        plotMLine.m.
+        """
+
+        # get geometric properties
+        (node_coords, dx, l0, _, _, _) = self.get_geometric_properties()
+
+        # get internal force vector
+        f_int = self.get_fint(case_id)
+        m1 = f_int["M1"]  # bending moment at node 1 (tension positive)
+        m2 = -f_int["M2"]  # bending moment at node 2 (tension positive)
+
+        # location of node 1 and node 2
+        p1 = node_coords[0, :]
+        p2 = node_coords[1, :]
+
+        # location of the bending moment diagram end points
+        v = np.matmul(np.array([[0, -1], [1, 0]]), dx) / l0  # direction vector
+        p3 = p2 + v * scalef * m2
+        p4 = p1 + v * scalef * m1
+
+        # plot bending moment line and patch
+        ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0, 0, 0.7))
+        ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0, 0, 0.7))
+        ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0, 0, 0.7))
+        ax.add_patch(Polygon(np.array([p1, p2, p3, p4]),
+                             facecolor=(0.2, 0.4, 0.8), linestyle='None',
+                             alpha=0.3))
+
+        # plot text value of bending moment
+        mid1 = (p1 + p4) / 2
+        mid2 = (p2 + p3) / 2
+        ax.text(mid1[0], mid1[1], "{:5.3g}".format(m1), size=8,
+                verticalalignment='bottom')
+        ax.text(mid2[0], mid2[1], "{:5.3g}".format(m2), size=8,
+                verticalalignment='bottom')
 
 
 class EulerBernoulliFrame2D(FrameElement):
@@ -76,15 +237,9 @@ class EulerBernoulliFrame2D(FrameElement):
         """
         """
 
-        node_coords = self.get_node_coords()  # coordinates of nodes
-
         if not self.analysis.non_linear:
             # compute geometric parameters
-            dx = node_coords[1]-node_coords[0]
-            l0 = np.linalg.norm(dx)
-            phi = np.arctan2(dx[1], dx[0])
-            c = np.cos(phi)
-            s = np.sin(phi)
+            (_, _, l0, _, c, s) = self.get_geometric_properties()
 
             # use analytical integration result:
             # compute bar stiffness
@@ -120,16 +275,11 @@ class EulerBernoulliFrame2D(FrameElement):
         """
         """
 
-        node_coords = self.get_node_coords()  # coordinates of nodes
         # nodal displacements in xy
         u_el = self.get_nodal_displacements(case_id)
 
         # compute frame geometric parameters
-        dx = node_coords[1]-node_coords[0]
-        l0 = np.linalg.norm(dx)
-        phi = np.arctan2(dx[1], dx[0])
-        c = np.cos(phi)
-        s = np.sin(phi)
+        (node_coords, _, l0, _, c, s) = self.get_geometric_properties()
 
         # rotate nodal displacements to local axis
         T = np.array([[c, s, 0], [-s, c, 0], [0, 0, 1]])
@@ -165,8 +315,8 @@ class EulerBernoulliFrame2D(FrameElement):
             v *= def_scale
 
             # compute cartesian displacements at point i
-            u_x[i] = u * np.cos(phi) - v * np.sin(phi)
-            u_y[i] = u * np.sin(phi) + v * np.cos(phi)
+            u_x[i] = u * c - v * s
+            u_y[i] = u * s + v * c
 
             # compute location of point i
             x[i] = u_x[i] + x0[i]
@@ -197,19 +347,15 @@ class TimoshenkoFrame2D(FrameElement):
         """
         """
 
-        coords = self.get_node_coords()  # coordinates of nodes
-
         if not self.analysis.non_linear:
             # compute geometric parameters
-            dx = coords[1]-coords[0]
-            l0 = np.linalg.norm(dx)
-            phi = np.arctan2(dx[1], dx[0])
+            (_, _, l0, _, c, s) = self.get_geometric_properties()
 
             # use one point integration
             N = np.array([0.5, 0.5])
 
-            c = np.cos(phi) / l0
-            s = np.sin(phi) / l0
+            c *= 1 / l0
+            s *= 1 / l0
             t = 1 / l0
 
             bmat = np.array([[-c, -s, 0,  c,  s, 0],

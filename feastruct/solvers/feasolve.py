@@ -142,3 +142,32 @@ class Solver:
 
         for node in self.analysis.nodes:
             node.u.append({"case_id": analysis_case.id, "u": u[node.dofs]})
+
+    def calculate_reactions(self, K, u, analysis_case):
+        """
+        """
+
+        # calculate global force vector
+        F = K.dot(u)
+
+        # loop through constrained nodes
+        for support in analysis_case.freedom_case.items:
+            f = F[(support.node.dofs[support.dir-1])]
+            support.reaction.append({"case_id": analysis_case.id, "f_ext": f})
+
+    def calculate_stresses(self, analysis_case):
+        """
+        """
+
+        # loop through each element
+        for el in self.analysis.elements:
+            # get element stiffness matrix
+            k_el = el.get_stiff_matrix()
+
+            # get nodal displacements
+            u_el = el.get_nodal_displacements(analysis_case.id).reshape(-1)
+
+            # calculate internal force vector
+            f_int = np.matmul(k_el, u_el)
+
+            el.save_fint(f_int, analysis_case.id)

@@ -16,7 +16,8 @@ class PostProcessor:
         self.analysis = analysis
         self.n_subdiv = 50
 
-    def plot_geom(self, case_id, undeformed=True, deformed=False, def_scale=1):
+    def plot_geom(self, case_id, undeformed=True, deformed=False, def_scale=1,
+                  ax=None):
         """askldjasld
 
         N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
@@ -30,7 +31,8 @@ class PostProcessor:
             print(error)
             sys.exit(1)
 
-        (fig, ax) = plt.subplots()
+        if ax is None:
+            (fig, ax) = plt.subplots()
 
         for el in self.analysis.elements:
             if deformed:
@@ -112,7 +114,66 @@ class PostProcessor:
         plt.box(on=None)
         plt.show()
 
-        return ax
+    def plot_reactions(self, case_id):
+        """
+        """
+
+        # ax = self.plot_geom(case_id)
+
+        # TODO: plot reaction forces
+
+    def plot_frame_forces(self, case_id, axial=False, shear=False,
+                          moment=False, scale=0.1):
+        """
+        """
+
+        # TODO: check that analysis object is Frame2D
+
+        (fig, ax) = plt.subplots()
+
+        # get size of structure
+        (xmin, xmax, ymin, ymax) = self.analysis.get_node_lims()
+
+        # determine maximum forces
+        max_axial = 0
+        max_shear = 0
+        max_moment = 0
+
+        # loop throuh each element to get max forces
+        for el in self.analysis.elements:
+            try:
+                f_int = el.get_fint(case_id)
+                if axial:
+                    max_axial = max(max_axial, abs(f_int["N1"]),
+                                    abs(f_int["N2"]))
+                if shear:
+                    max_shear = max(max_shear, abs(f_int["V1"]),
+                                    abs(f_int["V2"]))
+                if moment:
+                    max_moment = max(max_moment, abs(f_int["M1"]),
+                                     abs(f_int["M2"]))
+            except FEAInputError as error:
+                print(error)
+                sys.exit(1)
+
+        scale_axial = scale * max(xmax - xmin, ymax - ymin) / max(
+            max_axial, 1e-8)
+        scale_shear = scale * max(xmax - xmin, ymax - ymin) / max(
+            max_shear, 1e-8)
+        scale_moment = scale * max(xmax - xmin, ymax - ymin) / max(
+            max_moment, 1e-8)
+
+        # loop throgh each element to plot the forces
+        for el in self.analysis.elements:
+            if axial:
+                el.plot_axial_force(ax, case_id, scale_axial)
+            if shear:
+                el.plot_shear_force(ax, case_id, scale_shear)
+            if moment:
+                el.plot_bending_moment(ax, case_id, scale_moment)
+
+        # plot the undeformed structure
+        self.plot_geom(case_id, ax=ax)
 
     def get_support_angle(self, node, prefer_dir=None):
         """alskdjaklsd
