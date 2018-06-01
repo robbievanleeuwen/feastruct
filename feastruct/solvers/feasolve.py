@@ -84,6 +84,42 @@ class Solver:
 
         return (K, K_g)
 
+    def assemble_mass_matrix(self):
+        """
+        """
+
+        # initialise lists
+        row = []  # list containing row indices
+        col = []  # list containing column indices
+        data = []  # list containing mass matrix entries
+
+        # loop through all the elements
+        for el in self.analysis.elements:
+            # determine number of dofs in the current element
+            n = len(el.nodes) * self.analysis.dofs
+
+            # get element mass matrix
+            m_el = el.get_mass_matrix()
+
+            # get element degrees of freedom
+            el_dofs = el.get_dofs()
+
+            # create row index vector
+            r = np.repeat(el_dofs, n)
+
+            # create column index vector
+            c = np.tile(el_dofs, n)
+
+            # flatten element mass matrix
+            m = m_el.flatten()
+
+            # add to global arrays
+            row = np.hstack((row, r))
+            col = np.hstack((col, c))
+            data = np.hstack((data, m))
+
+        return sp.coo_matrix((data, (row, col)), shape=(self.ndof, self.ndof))
+
     def assemble_fext(self, analysis_case):
         """asdsakd
         """
@@ -199,9 +235,15 @@ class Solver:
         for node in self.analysis.nodes:
             node.u.append({"case_id": analysis_case.id, "u": u[node.dofs]})
 
-    def save_eigenvectors(self, v, w, analysis_case):
+    def save_eigenvectors(self, v, w, analysis_case, buckling=False,
+                          natural_frequency=False):
         """
         """
+
+        if buckling:
+            str = "buckling"
+        elif natural_frequency:
+            str = "natural_frequency"
 
         # add constrained dofs to eigenvector
         for support in analysis_case.freedom_case.items:
@@ -209,7 +251,7 @@ class Solver:
             v = np.insert(v, dof, 0, axis=0)
 
         for node in self.analysis.nodes:
-            node.eigenvector.append({"case_id": analysis_case.id,
+            node.eigenvector.append({"case_id": analysis_case.id, "type": str,
                                      "v": v[node.dofs, :], "w": w})
 
     def calculate_reactions(self, K, u, analysis_case):

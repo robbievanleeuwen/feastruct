@@ -51,15 +51,34 @@ class Node:
             raise FEAInputError("""Cannot find an analysis result for
             case_id: {} at node_id: {}""".format(case_id, self.id))
 
-    def get_eigenvector(self, case_id, buckling_mode):
+    def get_eigenvector(self, case_id, buckling_mode, frequency_mode):
         """
         """
 
-        # get dictionary eigenvector entry for given case_id
-        v = next(d for d in self.eigenvector if d["case_id"] == case_id)
+        if buckling_mode is not None:
+            # get dictionary buckling eigenvector entry for given case_id
+            analysis_type = "buckling"
+            v = next(d for d in self.eigenvector if d["case_id"]
+                     == case_id and d["type"] == analysis_type)
 
-        if v is not None:
-            return (v["v"][:, buckling_mode-1], v["w"][buckling_mode-1])
-        else:
-            raise FEAInputError("""Cannot find an eigenvector result for
-            case_id: {} at node_id: {}""".format(case_id, self.id))
+            if v is not None:
+                return (v["v"][:, buckling_mode-1], v["w"][buckling_mode-1])
+            else:
+                raise FEAInputError("""Cannot find a buckling eigenvector
+                result for case_id: {} at node_id: {}""".format(
+                    case_id, self.id))
+
+        elif frequency_mode is not None:
+            # get dictionary frequency eigenvector entry for given case_id
+            analysis_type = "natural_frequency"
+            v = next(d for d in self.eigenvector if d["case_id"]
+                     == case_id and d["type"] == analysis_type)
+
+            if v is not None:
+                return (v["v"][:, frequency_mode-1], v["w"][frequency_mode-1])
+            else:
+                raise FEAInputError("""Cannot find a natural frequency
+                eigenvector result for case_id: {} at node_id: {}""".format(
+                    case_id, self.id))
+
+# TODO: add clases for storing nodal results for a cleaner implementation

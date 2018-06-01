@@ -19,7 +19,7 @@ class Frame2D(fea):
                          analysis_cases, non_linear, dofs=3)
 
     def add_element(self, id, node_ids, el_type='EB2', E=1, A=1, ixx=1,
-                    G=0, A_s=0):
+                    G=0, A_s=0, rho=1):
         """
         EB2: 2 Noded Euler Bernoulli Beam
         TB2: 2 Noded Timoshenko Beam
@@ -28,9 +28,10 @@ class Frame2D(fea):
         # TODO: check value types e.g. id and node_ids are ints
 
         if el_type == 'EB2':
-            element = EulerBernoulliFrame2D(self, id, node_ids, E, A, ixx)
+            element = EulerBernoulliFrame2D(self, id, node_ids, E, A, ixx, rho)
         elif el_type == 'TB2':
-            element = TimoshenkoFrame2D(self, id, node_ids, E, A, ixx, G, A_s)
+            element = TimoshenkoFrame2D(self, id, node_ids, E, A, ixx, G, A_s,
+                                        rho)
 
         fea.add_element(self, element)
 
@@ -39,12 +40,13 @@ class FrameElement(FiniteElement):
     """asldkjaslkd
     """
 
-    def __init__(self, analysis, id, node_ids, E, A):
+    def __init__(self, analysis, id, node_ids, E, A, rho):
         """
         """
 
         super().__init__(analysis, id, node_ids)
         self.EA = E * A
+        self.rhoA = rho * A
 
     def get_geometric_properties(self):
         """
@@ -227,11 +229,11 @@ class EulerBernoulliFrame2D(FrameElement):
 
     # TODO: properly implement EB with shape functions etc.
 
-    def __init__(self, analysis, id, node_ids, E, A, ixx):
+    def __init__(self, analysis, id, node_ids, E, A, ixx, rho):
         """
         """
 
-        super().__init__(analysis, id, node_ids, E, A)
+        super().__init__(analysis, id, node_ids, E, A, rho)
         self.EI = E * ixx
 
     def get_stiff_matrix(self):
@@ -308,6 +310,32 @@ class EulerBernoulliFrame2D(FrameElement):
 
         return np.matmul(np.matmul(np.transpose(T), k_el_g), T)
 
+    def get_mass_matrix(self):
+        """
+        """
+
+        # compute geometric parameters
+        (_, _, l0, _, c, s) = self.get_geometric_properties()
+
+        # compute element mass matrix
+        m_el = np.array([[140, 0, 0, 70, 0, 0],
+                         [0, 156, 22*l0, 0, 54, -13*l0],
+                         [0, 22*l0, 4*l0*l0, 0, 13*l0, -3*l0*l0],
+                         [70, 0, 0, 140, 0, 0],
+                         [0, 54, 13*l0, 0, 156, -22*l0],
+                         [0, -13*l0, -3*l0*l0, 0, -22*l0, 4*l0*l0]])
+        m_el *= self.rhoA * l0 / 420
+
+        # construct rotation matrix
+        T = np.array([[c, s, 0, 0, 0, 0],
+                      [-s, c, 0, 0, 0, 0],
+                      [0, 0, 1, 0, 0, 0],
+                      [0, 0, 0, c, s, 0],
+                      [0, 0, 0, -s, c, 0],
+                      [0, 0, 0, 0, 0, 1]])
+
+        return np.matmul(np.matmul(np.transpose(T), m_el), T)
+
     def plot_deformed_element(self, ax, case_id, n, def_scale, u_el=None):
         """
         """
@@ -373,11 +401,11 @@ class TimoshenkoFrame2D(FrameElement):
     """ TODO: implement with proper shape functions
     """
 
-    def __init__(self, analysis, id, node_ids, E, A, ixx, G, A_s):
+    def __init__(self, analysis, id, node_ids, E, A, ixx, G, A_s, rho):
         """
         """
 
-        super().__init__(analysis, id, node_ids, E, A)
+        super().__init__(analysis, id, node_ids, E, A, rho)
         self.EI = E * ixx
         self.GA_s = G * A_s
 

@@ -1,9 +1,10 @@
 import sys
+import numpy as np
 from solvers.feasolve import Solver
 from fea.exceptions import FEAInputError, FEASolverError
 
 
-class LinearBuckling(Solver):
+class NaturalFrequency(Solver):
     """asdkjasd
     """
 
@@ -17,21 +18,28 @@ class LinearBuckling(Solver):
 
     def solve(self):
         try:
-            # assemble the global stiffness and geometric stiffnes matrices
-            (K, K_g) = self.assemble_stiff_matrix(geometric=True,
-                                                  case_id=self.case_ids)
+            self.assign_dofs()  # assign the global degree of freedom numbers
+
+            # assemble the global stiffness matrix
+            (K, _) = self.assemble_stiff_matrix()
+
+            # assemble the global mass matrix
+            M = self.assemble_mass_matrix()
 
             # get analysis case
             analysis_case = self.analysis.find_analysis_case(self.case_ids)
 
             # apply the boundary conditions
             K_mod = self.remove_constrained_dofs(K, analysis_case)
-            K_mod_g = self.remove_constrained_dofs(K_g, analysis_case)
+            M_mod = self.remove_constrained_dofs(M, analysis_case)
 
             # solve for the eigenvalues
-            (w, v) = self.solve_eigenvalue(K_mod, -K_mod_g)
+            (w, v) = self.solve_eigenvalue(K_mod, M_mod)
 
-            self.save_eigenvectors(v, w, analysis_case, buckling=True)
+            # compute natural frequencies in Hz
+            w = np.sqrt(w) / 2 / np.pi
+
+            self.save_eigenvectors(v, w, analysis_case, natural_frequency=True)
 
             return w
 

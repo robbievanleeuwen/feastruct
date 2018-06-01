@@ -273,14 +273,15 @@ class FiniteElement:
 
         return np.array(disp_list)
 
-    def get_nodal_eigenvectors(self, case_id, buckling_mode):
+    def get_nodal_eigenvectors(self, case_id, buckling_mode, frequency_mode):
         """
         """
 
         v_list = []  # allocate list of displacements
 
         for node in self.nodes:
-            (v, w) = node.get_eigenvector(case_id, buckling_mode)
+            (v, w) = node.get_eigenvector(case_id, buckling_mode,
+                                          frequency_mode)
             v_list.append(v)
 
         return (np.array(v_list), w)

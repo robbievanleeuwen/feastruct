@@ -8,12 +8,12 @@ class PostProcessor:
     """docstring for PostProcessor.
     """
 
-    def __init__(self, analysis):
+    def __init__(self, analysis, n_subdiv=50):
         """asldkjasld
         """
 
         self.analysis = analysis
-        self.n_subdiv = 50
+        self.n_subdiv = n_subdiv
 
     def plot_geom(self, case_id, supports=True, loads=True, undeformed=True,
                   deformed=False, def_scale=1, ax=None, dashed=False):
@@ -211,7 +211,8 @@ class PostProcessor:
         # plot the undeformed structure
         self.plot_geom(case_id, ax=ax)
 
-    def plot_eigenvector(self, case_id, buckling_mode=1):
+    def plot_eigenvector(self, case_id, buckling_mode=None,
+                         frequency_mode=None):
         """
         """
 
@@ -226,7 +227,8 @@ class PostProcessor:
         max_v = 0
 
         for el in self.analysis.elements:
-            (v_el, w) = el.get_nodal_eigenvectors(case_id, buckling_mode)
+            (v_el, w) = el.get_nodal_eigenvectors(case_id, buckling_mode,
+                                                  frequency_mode)
             max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]),
                         abs(v_el[1, 0]), abs(v_el[1, 1]))
 
@@ -235,11 +237,17 @@ class PostProcessor:
 
         # plot eigenvectors
         for el in self.analysis.elements:
-            (v_el, _) = el.get_nodal_eigenvectors(case_id, buckling_mode)
+            (v_el, _) = el.get_nodal_eigenvectors(case_id, buckling_mode,
+                                                  frequency_mode)
             el.plot_deformed_element(ax, case_id, self.n_subdiv, scale, v_el)
 
         # plot the load factor (eigenvalue)
-        ax.set_title("Load Factor: {:.4e}".format(w), size=10)
+        if buckling_mode is not None:
+            ax.set_title("Load Factor for Mode {:d}: {:.4e}".format(
+                buckling_mode, w), size=10)
+        elif frequency_mode is not None:
+            ax.set_title("Natural Frequency for Mode {:d}: {:.4e} Hz".format(
+                frequency_mode, w), size=10)
 
         # plot the undeformed structure
         self.plot_geom(case_id, ax=ax, dashed=True)
