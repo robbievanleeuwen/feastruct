@@ -19,9 +19,9 @@ class LinearStatic(Solver):
             (K, _) = self.assemble_stiff_matrix()
 
             # loop through each analysis case
-            for case in self.case_ids:
+            for case_id in self.case_ids:
                 # get analysis case
-                analysis_case = self.analysis.find_analysis_case(case)
+                analysis_case = self.analysis.find_analysis_case(case_id)
 
                 # assemble the external force vector
                 f_ext = self.assemble_fext(analysis_case)
@@ -36,7 +36,7 @@ class LinearStatic(Solver):
                     u = self.cgs_solver(K_mod, f_ext)
 
                 # save the displacements to the Node objects
-                self.save_results(u, analysis_case)
+                self.save_displacements(u, analysis_case)
 
                 # calculate the reaction forces
                 self.calculate_reactions(K, u, analysis_case)

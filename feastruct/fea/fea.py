@@ -1,7 +1,7 @@
-import sys
 import numpy as np
 from fea.node import Node
 import fea.cases as Cases
+from post.results import ResultList, FrameForceVector
 from fea.exceptions import FEAInputError
 
 
@@ -234,7 +234,7 @@ class FiniteElement:
         self.analysis = analysis
         self.id = id
         self.nodes = []
-        self.f_int = []
+        self.f_int = ResultList()
 
         # add references to the node objects
         self.get_nodes(node_ids)
@@ -247,9 +247,8 @@ class FiniteElement:
             try:
                 self.nodes.append(self.analysis.find_node(node_id))
             except FEAInputError as error:
-                print(
-                    "Error in FiniteElement id: {}. {}".format(self.id, error))
-                sys.exit(1)
+                print("Error in FiniteElement id: {}. {}".format(
+                    self.id, error))
 
     def get_node_coords(self):
         """
@@ -273,18 +272,29 @@ class FiniteElement:
 
         return np.array(disp_list)
 
-    def get_nodal_eigenvectors(self, case_id, buckling_mode, frequency_mode):
+    def get_buckling_results(self, case_id, buckling_mode):
         """
         """
 
-        v_list = []  # allocate list of displacements
+        v_list = []  # allocate list of eigenvectors
 
         for node in self.nodes:
-            (v, w) = node.get_eigenvector(case_id, buckling_mode,
-                                          frequency_mode)
+            (w, v) = node.get_buckling_results(case_id, buckling_mode)
             v_list.append(v)
 
-        return (np.array(v_list), w)
+        return (w, np.array(v_list))
+
+    def get_frequency_results(self, case_id, frequency_mode):
+        """
+        """
+
+        v_list = []  # allocate list of eigenvectors
+
+        for node in self.nodes:
+            (w, v) = node.get_frequency_results(case_id, frequency_mode)
+            v_list.append(v)
+
+        return (w, np.array(v_list))
 
     def get_dofs(self):
         """
@@ -303,9 +313,9 @@ class FiniteElement:
 
         pass
 
-    def save_fint(self, f_int, case_id):
+    def set_fint(self, case_id, f_int):
         """
         """
 
         # save internal force vector in global coordinate system
-        self.f_int.append({"case_id": case_id, "f_int": f_int})
+        self.f_int.set_result(FrameForceVector(case_id, f_int))

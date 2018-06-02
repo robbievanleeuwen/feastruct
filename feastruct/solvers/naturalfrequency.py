@@ -39,9 +39,7 @@ class NaturalFrequency(Solver):
             # compute natural frequencies in Hz
             w = np.sqrt(w) / 2 / np.pi
 
-            self.save_eigenvectors(v, w, analysis_case, natural_frequency=True)
-
-            return w
+            self.save_eigenvectors(w, v, analysis_case, frequency=True)
 
         except FEAInputError as error:
             print("Error in linear buckling solver. {}".format(error))

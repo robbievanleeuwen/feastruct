@@ -228,31 +228,36 @@ class Solver:
 
         return (np.real(w), np.real(v))
 
-    def save_results(self, u, analysis_case):
+    def save_displacements(self, u, analysis_case):
         """ aslkdjlksad
         """
 
         for node in self.analysis.nodes:
-            node.u.append({"case_id": analysis_case.id, "u": u[node.dofs]})
+            node.set_displacements(analysis_case.id, u[node.dofs])
 
-    def save_eigenvectors(self, v, w, analysis_case, buckling=False,
-                          natural_frequency=False):
+    def save_eigenvectors(self, w, v, analysis_case, buckling=False,
+                          frequency=False):
         """
         """
-
-        if buckling:
-            str = "buckling"
-        elif natural_frequency:
-            str = "natural_frequency"
 
         # add constrained dofs to eigenvector
+        constrained_dofs = []
+
         for support in analysis_case.freedom_case.items:
-            dof = support.node.dofs[support.dir-1]
+            constrained_dofs.append(support.node.dofs[support.dir-1])
+
+        for dof in sorted(constrained_dofs):
             v = np.insert(v, dof, 0, axis=0)
 
         for node in self.analysis.nodes:
-            node.eigenvector.append({"case_id": analysis_case.id, "type": str,
-                                     "v": v[node.dofs, :], "w": w})
+            for i in range(len(w)):
+                w_i = w[i]
+                v_i = v[node.dofs, i]
+
+                if buckling:
+                    node.set_buckling_results(analysis_case.id, i+1, w_i, v_i)
+                elif frequency:
+                    node.set_frequency_results(analysis_case.id, i+1, w_i, v_i)
 
     def calculate_reactions(self, K, u, analysis_case):
         """
@@ -261,10 +266,10 @@ class Solver:
         # calculate global force vector
         F = K.dot(u)
 
-        # loop through constrained nodes
+        # loop through constrained nodes and save reactions
         for support in analysis_case.freedom_case.items:
             f = F[(support.node.dofs[support.dir-1])]
-            support.reaction.append({"case_id": analysis_case.id, "f_ext": f})
+            support.set_reaction(analysis_case.id, f)
 
     def calculate_stresses(self, analysis_case):
         """
@@ -281,4 +286,4 @@ class Solver:
             # calculate internal force vector
             f_int = np.matmul(k_el, u_el)
 
-            el.save_fint(f_int, analysis_case.id)
+            el.set_fint(analysis_case.id, f_int)

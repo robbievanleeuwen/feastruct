@@ -1,4 +1,3 @@
-import sys
 import fea.bcs as BCs
 from fea.exceptions import FEAInputError
 
@@ -91,4 +90,3 @@ class AnalysisCase:
                     lc_id))
         except FEAInputError as error:
             print(error)
-            sys.exit(1)

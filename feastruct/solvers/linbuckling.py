@@ -31,9 +31,7 @@ class LinearBuckling(Solver):
             # solve for the eigenvalues
             (w, v) = self.solve_eigenvalue(K_mod, -K_mod_g)
 
-            self.save_eigenvectors(v, w, analysis_case, buckling=True)
-
-            return w
+            self.save_eigenvectors(w, v, analysis_case, buckling=True)
 
         except FEAInputError as error:
             print("Error in linear buckling solver. {}".format(error))

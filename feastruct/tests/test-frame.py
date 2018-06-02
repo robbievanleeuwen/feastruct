@@ -45,15 +45,15 @@ analysis.add_analysis_case(id=2, fc_id=2, lc_id=2)
 analysis.add_analysis_case(id=3, fc_id=3, lc_id=2)
 
 post = PostProcessor(analysis)
-# post.plot_geom(case_id=1)
-# post.plot_geom(case_id=2)
-# post.plot_geom(case_id=3)
+post.plot_geom(case_id=1)
+post.plot_geom(case_id=2)
+post.plot_geom(case_id=3)
 
-solver = LinearStatic(analysis, case_ids=[1, 2, 3]).solve()
+LinearStatic(analysis, case_ids=[1, 2, 3]).solve()
 
-# post.plot_geom(case_id=1, deformed=True, def_scale=10)
-# post.plot_geom(case_id=2, deformed=True, def_scale=10)
-# post.plot_geom(case_id=3, deformed=True, def_scale=1)
+post.plot_geom(case_id=1, deformed=True, def_scale=10)
+post.plot_geom(case_id=2, deformed=True, def_scale=10)
+post.plot_geom(case_id=3, deformed=True, def_scale=1)
 
 post.plot_frame_forces(case_id=1, axial=True, shear=True)
 post.plot_reactions(case_id=1)

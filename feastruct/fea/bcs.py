@@ -1,37 +1,55 @@
-import sys
 import numpy as np
 from matplotlib.patches import Polygon
+from post.results import ResultList, Force
 from fea.exceptions import FEAInputError
 
 
 class BoundaryCondition:
-    """asdlkjaskld
+    """Parent class for supports and loads.
+
+    Provides an init for the creation of boundary conditions at nodes.
+
+    Attributes:
+        node:       The node object at which the boundary condition acts.
+        val:        The value of the boundary condition.
+        dir:        The direction in which the boundary condition acts.
     """
 
     def __init__(self, analysis, node_id, val, dir):
-        # TODO: check value types e.g. node_id and dir are ints, check dir is
-        # within dofs limits
+        """inits the BoundaryCondition class with an analysis object, a node
+        id and the value and direction of the boundary condition."""
 
-        # find the node object corresponding to node_id
+        # TODO: check value types e.g. node_id and dir are ints, check dir is
+        # within dofs limits. Check there is no duplicate BC here.
+
+        # find the node object corresponding to node_id in the analysis object
         try:
             node = analysis.find_node(node_id)
         except FEAInputError as error:
             print(error)
-            sys.exit(1)
 
+        # assign the node object, value and direction of the boundary condition
         self.node = node
         self.val = val
         self.dir = dir
 
 
 class NodalSupport(BoundaryCondition):
-    """asldkjasdl
+    """Class for a dirichlet boundary condition acting at a node.
+
+    Provides methods for the FEA solver and post-processing.
+
+    Attributes:
+        node:       The node object at which the boundary condition acts.
+        val:        The value of the boundary condition.
+        dir:        The direction in which the boundary condition acts.
+        reaction:   A result object containing reaction force results.
     """
 
     def __init__(self, analysis, node_id, val, dir):
         super().__init__(analysis, node_id, val, dir)
 
-        self.reaction = []
+        self.reaction = ResultList()
 
     def apply_support(self, K, f_ext):
         """sadsad
@@ -46,14 +64,16 @@ class NodalSupport(BoundaryCondition):
         """
         """
 
-        # get dictionary reaction entry for given case_id
-        reaction = next(d for d in self.reaction if d["case_id"] == case_id)
+        try:
+            return self.reaction.get_result(case_id).f
+        except FEAInputError as error:
+            print(error)
 
-        if reaction is not None:
-            return reaction["f_ext"]
-        else:
-            raise FEAInputError("""Cannot find an analysis result for
-            case_id: {} at node_id: {}""".format(case_id, self.node_id))
+    def set_reaction(self, case_id, f):
+        """
+        """
+
+        self.reaction.set_result(Force(case_id, f))
 
     def plot_support(self, ax, max_disp, small, get_support_angle, case_id,
                      deformed, def_scale):
@@ -293,7 +313,6 @@ class NodalSupport(BoundaryCondition):
             reaction = self.get_reaction(case_id)
         except FEAInputError as error:
             print(error)
-            sys.exit(1)
 
         # dont plot small reaction
         if abs(reaction) < 1e-6:

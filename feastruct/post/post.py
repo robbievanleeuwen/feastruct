@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from fea.exceptions import FEAInputError
@@ -15,8 +14,8 @@ class PostProcessor:
         self.analysis = analysis
         self.n_subdiv = n_subdiv
 
-    def plot_geom(self, case_id, supports=True, loads=True, undeformed=True,
-                  deformed=False, def_scale=1, ax=None, dashed=False):
+    def plot_geom(self, case_id, ax=None, supports=True, loads=True,
+                  undeformed=True, deformed=False, def_scale=1, dashed=False):
         """askldjasld
 
         N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
@@ -28,7 +27,6 @@ class PostProcessor:
             analysis_case = self.analysis.find_analysis_case(case_id)
         except FEAInputError as error:
             print(error)
-            sys.exit(1)
 
         if ax is None:
             (fig, ax) = plt.subplots()
@@ -131,7 +129,6 @@ class PostProcessor:
             analysis_case = self.analysis.find_analysis_case(case_id)
         except FEAInputError as error:
             print(error)
-            sys.exit(1)
 
         # get size of structure
         (xmin, xmax, ymin, ymax) = self.analysis.get_node_lims()
@@ -145,7 +142,6 @@ class PostProcessor:
                     reaction = support.get_reaction(case_id)
                 except FEAInputError as error:
                     print(error)
-                    sys.exit(1)
                 max_reaction = max(max_reaction, abs(reaction))
 
         small = 0.02 * max(xmax-xmin, ymax-ymin)
@@ -180,17 +176,13 @@ class PostProcessor:
             try:
                 f_int = el.get_fint(case_id)
                 if axial:
-                    max_axial = max(max_axial, abs(f_int["N1"]),
-                                    abs(f_int["N2"]))
+                    max_axial = max(max_axial, abs(f_int.N1), abs(f_int.N2))
                 if shear:
-                    max_shear = max(max_shear, abs(f_int["V1"]),
-                                    abs(f_int["V2"]))
+                    max_shear = max(max_shear, abs(f_int.V1), abs(f_int.V2))
                 if moment:
-                    max_moment = max(max_moment, abs(f_int["M1"]),
-                                     abs(f_int["M2"]))
+                    max_moment = max(max_moment, abs(f_int.M1), abs(f_int.M2))
             except FEAInputError as error:
                 print(error)
-                sys.exit(1)
 
         scale_axial = scale * max(xmax - xmin, ymax - ymin) / max(
             max_axial, 1e-8)
@@ -211,24 +203,20 @@ class PostProcessor:
         # plot the undeformed structure
         self.plot_geom(case_id, ax=ax)
 
-    def plot_eigenvector(self, case_id, buckling_mode=None,
-                         frequency_mode=None):
+    def plot_buckling_eigenvector(self, case_id, buckling_mode=1):
         """
         """
-
-        # TODO: check that analysis object is Frame2D
 
         (fig, ax) = plt.subplots()
 
         # set initial plot limits
         (xmin, xmax, ymin, ymax) = self.analysis.get_node_lims()
 
-        # determine max displacement
+        # determine max eigenvector displacement value (ignore rotation)
         max_v = 0
 
         for el in self.analysis.elements:
-            (v_el, w) = el.get_nodal_eigenvectors(case_id, buckling_mode,
-                                                  frequency_mode)
+            (w, v_el) = el.get_buckling_results(case_id, buckling_mode)
             max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]),
                         abs(v_el[1, 0]), abs(v_el[1, 1]))
 
@@ -237,17 +225,44 @@ class PostProcessor:
 
         # plot eigenvectors
         for el in self.analysis.elements:
-            (v_el, _) = el.get_nodal_eigenvectors(case_id, buckling_mode,
-                                                  frequency_mode)
+            (_, v_el) = el.get_buckling_results(case_id, buckling_mode)
             el.plot_deformed_element(ax, case_id, self.n_subdiv, scale, v_el)
 
         # plot the load factor (eigenvalue)
-        if buckling_mode is not None:
-            ax.set_title("Load Factor for Mode {:d}: {:.4e}".format(
-                buckling_mode, w), size=10)
-        elif frequency_mode is not None:
-            ax.set_title("Natural Frequency for Mode {:d}: {:.4e} Hz".format(
-                frequency_mode, w), size=10)
+        ax.set_title("Load Factor for Mode {:d}: {:.4e}".format(
+            buckling_mode, w), size=10)
+
+        # plot the undeformed structure
+        self.plot_geom(case_id, ax=ax, dashed=True)
+
+    def plot_frequency_eigenvector(self, case_id, frequency_mode=1):
+        """
+        """
+
+        (fig, ax) = plt.subplots()
+
+        # set initial plot limits
+        (xmin, xmax, ymin, ymax) = self.analysis.get_node_lims()
+
+        # determine max eigenvector displacement value (ignore rotation)
+        max_v = 0
+
+        for el in self.analysis.elements:
+            (w, v_el) = el.get_frequency_results(case_id, frequency_mode)
+            max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]),
+                        abs(v_el[1, 0]), abs(v_el[1, 1]))
+
+        # determine plot scale
+        scale = 0.1 * max(xmax - xmin, ymax - ymin) / max_v
+
+        # plot eigenvectors
+        for el in self.analysis.elements:
+            (_, v_el) = el.get_frequency_results(case_id, frequency_mode)
+            el.plot_deformed_element(ax, case_id, self.n_subdiv, scale, v_el)
+
+        # plot the natural frequency
+        ax.set_title("Natural Frequency for Mode {:d}: {:.4e} Hz".format(
+            frequency_mode, w), size=10)
 
         # plot the undeformed structure
         self.plot_geom(case_id, ax=ax, dashed=True)

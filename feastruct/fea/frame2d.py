@@ -1,7 +1,7 @@
-import sys
 import numpy as np
 from matplotlib.patches import Polygon
 from fea.fea import fea, FiniteElement
+from post.results import FrameForceVector
 from fea.exceptions import FEAInputError
 
 
@@ -61,32 +61,23 @@ class FrameElement(FiniteElement):
 
         return (node_coords, dx, l0, phi, c, s)
 
-    def save_fint(self, f_int, case_id):
+    def get_fint(self, case_id):
+        """
+        """
+
+        return self.f_int.get_result(case_id)
+
+    def set_fint(self, case_id, f_int):
         """
         """
 
         (_, _, _, _, c, s) = self.get_geometric_properties()
 
-        self.f_int.append({"case_id": case_id,
-                           "N1": f_int[0] * c + f_int[1] * s,
-                           "V1": -f_int[0] * s + f_int[1] * c,
-                           "M1": f_int[2],
-                           "N2": f_int[3] * c + f_int[4] * s,
-                           "V2": -f_int[3] * s + f_int[4] * c,
-                           "M2": f_int[5]})
+        f = [f_int[0] * c + f_int[1] * s, -f_int[0] * s + f_int[1] * c,
+             f_int[2], f_int[3] * c + f_int[4] * s,
+             -f_int[3] * s + f_int[4] * c, f_int[5]]
 
-    def get_fint(self, case_id):
-        """
-        """
-
-        # get dictionary f_int entry for given case_id
-        f_int = next(d for d in self.f_int if d["case_id"] == case_id)
-
-        if f_int is not None:
-            return f_int
-        else:
-            raise FEAInputError("""Cannot find an analysis result for
-            case_id: {} at element_id: {}""".format(case_id, self.id))
+        self.f_int.set_result(FrameForceVector(case_id, f))
 
     def plot_element(self, ax, linestyle='-', linewidth=2, marker='.'):
         """
@@ -115,8 +106,8 @@ class FrameElement(FiniteElement):
 
         # get internal force vector
         f_int = self.get_fint(case_id)
-        n1 = -f_int["N1"]  # axial force at node 1 (tension positive)
-        n2 = f_int["N2"]  # axial force at node 2 (tension positive)
+        n1 = -f_int.N1  # axial force at node 1 (tension positive)
+        n2 = f_int.N2  # axial force at node 2 (tension positive)
 
         # location of node 1 and node 2
         p1 = node_coords[0, :]
@@ -154,8 +145,8 @@ class FrameElement(FiniteElement):
 
         # get internal force vector
         f_int = self.get_fint(case_id)
-        v1 = f_int["V1"]  # shear force at node 1 (cw positive)
-        v2 = -f_int["V2"]  # shear force at node 2 (cw positive)
+        v1 = f_int.V1  # shear force at node 1 (cw positive)
+        v2 = -f_int.V2  # shear force at node 2 (cw positive)
 
         # location of node 1 and node 2
         p1 = node_coords[0, :]
@@ -194,8 +185,8 @@ class FrameElement(FiniteElement):
 
         # get internal force vector
         f_int = self.get_fint(case_id)
-        m1 = f_int["M1"]  # bending moment at node 1 (tension positive)
-        m2 = -f_int["M2"]  # bending moment at node 2 (tension positive)
+        m1 = f_int.M1  # bending moment at node 1 (tension positive)
+        m2 = -f_int.M2  # bending moment at node 2 (tension positive)
 
         # location of node 1 and node 2
         p1 = node_coords[0, :]
@@ -286,10 +277,9 @@ class EulerBernoulliFrame2D(FrameElement):
             f_int = self.get_fint(case_id)
         except FEAInputError as error:
             print(error)
-            sys.exit(1)
 
         # get axial force in element (take average of nodal values)
-        N = np.mean([-f_int["N1"], f_int["N2"]])
+        N = np.mean([-f_int.N1, f_int.N2])
 
         # form geometric stiffness matrix
         k_el_g = np.array([[0, 0, 0, 0, 0, 0],
@@ -408,26 +398,3 @@ class TimoshenkoFrame2D(FrameElement):
         super().__init__(analysis, id, node_ids, E, A, rho)
         self.EI = E * ixx
         self.GA_s = G * A_s
-
-    def get_stiff_matrix(self):
-        """
-        """
-
-        if not self.analysis.non_linear:
-            # compute geometric parameters
-            (_, _, l0, _, c, s) = self.get_geometric_properties()
-
-            # use one point integration
-            N = np.array([0.5, 0.5])
-
-            c *= 1 / l0
-            s *= 1 / l0
-            t = 1 / l0
-
-            bmat = np.array([[-c, -s, 0,  c,  s, 0],
-                             [s, -c, -N[0], -s,  c, -N[1]],
-                             [0,  0, -t,  0,  0, t]])
-
-            dmat = np.diag([self.EA, self.GA_s, self.EI])
-
-            return l0 * np.matmul(np.matmul(np.transpose(bmat), dmat), bmat)

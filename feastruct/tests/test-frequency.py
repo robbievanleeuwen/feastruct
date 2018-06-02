@@ -29,7 +29,6 @@ for i in range(3 * n_el):
 fc1 = analysis.add_freedom_case(id=1)
 fc1.add_nodal_support(node_id=1, val=0, dir=1)
 fc1.add_nodal_support(node_id=1, val=0, dir=2)
-fc1.add_nodal_support(node_id=1, val=0, dir=3)
 fc1.add_nodal_support(node_id=3*n_el+1, val=0, dir=1)
 fc1.add_nodal_support(node_id=3*n_el+1, val=0, dir=2)
 
@@ -40,10 +39,9 @@ analysis.add_analysis_case(id=1, fc_id=1, lc_id=1)
 post = PostProcessor(analysis, n_subdiv=2)
 post.plot_geom(case_id=1)
 
-freqs = NaturalFrequency(analysis, case_id=1).solve()
-print(freqs)
+NaturalFrequency(analysis, case_id=1).solve()
 
-post.plot_eigenvector(case_id=1, frequency_mode=1)
-post.plot_eigenvector(case_id=1, frequency_mode=2)
-post.plot_eigenvector(case_id=1, frequency_mode=3)
-post.plot_eigenvector(case_id=1, frequency_mode=4)
+post.plot_frequency_eigenvector(case_id=1, frequency_mode=1)
+post.plot_frequency_eigenvector(case_id=1, frequency_mode=2)
+post.plot_frequency_eigenvector(case_id=1, frequency_mode=3)
+post.plot_frequency_eigenvector(case_id=1, frequency_mode=4)
