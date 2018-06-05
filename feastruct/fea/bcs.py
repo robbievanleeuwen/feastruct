@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib.patches import Polygon
-from post.results import ResultList, Force
-from fea.exceptions import FEAInputError
+from feastruct.post.results import ResultList, Force
+from feastruct.fea.exceptions import FEAInputError
 
 
 class BoundaryCondition:
@@ -9,24 +9,20 @@ class BoundaryCondition:
 
     Provides an init method for the creation of boundary conditions at nodes.
 
-    Attributes:
-        node:   The node object at which the boundary condition acts [Node].
-        val:    The value of the boundary condition [float].
-        dir:    The direction in which the boundary condition acts [int].
+    :cvar node: The node object at which the boundary condition acts
+    :vartype node: :class:`feastruct.fea.node.Node`
+    :cvar float val: The value of the boundary condition
+    :cvar int dir: The direction in which the boundary condition acts
     """
 
     def __init__(self, analysis, node_id, val, dir):
-        """inits the BoundaryCondition class.
+        """inits the :class:`feastruct.fea.bcs.BoundaryCondition` class.
 
-        Args:
-            analysis:   fea analysis object [fea].
-            node_id:    Unique id of the node at which the BC is applied [int].
-            val:        The value of the boundary condition [float].
-            dir:        The direction in which the boundary condition
-                        acts [int].
-
-        Returns:
-            void
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int node_id:  Unique id of the node at which the BC is applied
+        :param float val: The value of the boundary condition
+        :param int dir: The direction in which the boundary condition acts
         """
 
         # TODO: check value types e.g. node_id and dir are ints, check dir is
@@ -49,28 +45,23 @@ class NodalSupport(BoundaryCondition):
 
     Provides methods for the FEA solver and post-processing.
 
-    Attributes:
-        node:       The node object at which the boundary condition
-                    acts [Node].
-        val:        The value of the boundary condition [float].
-        dir:        The direction in which the boundary condition acts [int].
-        reaction:   A result object containing reaction force
-                    results [ResultList].
+    :cvar node: The node object at which the boundary condition acts
+    :vartype node: :class:`feastruct.fea.node.Node`
+    :cvar float val: The value of the boundary condition
+    :cvar int dir: The direction in which the boundary condition acts
+    :cvar reaction: A result object containing reaction force results
+    :vartype reaction: :class:`feastruct.post.results.ResultList`
     """
 
     def __init__(self, analysis, node_id, val, dir):
         """inits the NodalSupport class.
 
-        Args:
-            analysis:   fea analysis object [fea].
-            node_id:    Unique id of the node at which the boundary condition
-                        is applied [int].
-            val:        The value of the boundary condition [float].
-            dir:        The direction in which the boundary condition
-                        acts [int].
-
-        Returns:
-            void
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int node_id:  Unique id of the node at which the boundary
+            condition is applied
+        :param float val: The value of the boundary condition
+        :param int dir: The direction in which the boundary condition acts
         """
 
         # initialise the parent class
@@ -83,14 +74,13 @@ class NodalSupport(BoundaryCondition):
         """Applies the nodal support.
 
         The stiffness matrix and external force vector are modified to apply
-        the dirichlet boundary condition to enforce u_i = u_support.
+        the dirichlet boundary condition to enforce the displacement at the
+        chosen degree of freedom to be equal to the specified value.
 
-        Args:
-            K:      Global stiffness matrix [numpy.ndarray - (N x N)].
-            f_ext:  Global external force vector [numpy.ndarray - (N)].
-
-        Returns:
-            void
+        :param K: Global stiffness matrix (size = N x N)
+        :type K: :class:`numpy.ndarray`
+        :param f_ext: Global external force vector (size = N)
+        :type f_ext: :class:`numpy.ndarray`
         """
 
         # modify stiffness matrix and f_ext
@@ -99,14 +89,13 @@ class NodalSupport(BoundaryCondition):
         f_ext[self.node.dofs[self.dir-1]] = self.val
 
     def get_reaction(self, case_id):
-        """Gets the reaction force result corresponding to analysis case:
+        """Gets the reaction force result corresponding to analysis case
         case_id.
 
-        Args:
-            case_id:    Case id corresponding to an analysis case [int].
+        :param int case_id: Case id corresponding to an analysis case
 
-        Returns:
-            f:          Reaction force at the node [float].
+        :return: Reaction force at the node
+        :rtype: float
         """
 
         try:
@@ -115,14 +104,10 @@ class NodalSupport(BoundaryCondition):
             print(error)
 
     def set_reaction(self, case_id, f):
-        """Sets the reaction force 'f' corresponding to analysis case: case_id.
+        """Sets the reaction force corresponding to analysis case case_id.
 
-        Args:
-            case_id:    Case id corresponding to an analysis case [int].
-            f:          Reaction for at the node [float].
-
-        Returns:
-            void
+        :param int case_id: Case id corresponding to an analysis case
+        :param float f: Reaction for at the node
         """
 
         self.reaction.set_result(Force(case_id, f))
@@ -140,20 +125,17 @@ class NodalSupport(BoundaryCondition):
         some of the methods used to plot the supports are taken from Frans
         van der Meer's code plotGeom.m.
 
-        Args:
-            ax:                 Axes object on which to plot
-                                [matplotlib.axes.Axes].
-            small:              A dimension used to scale the support [float].
-            get_support_angle:  A function handle that returns the support
-                                angle and the number of connected elements
-                                [function].
-            case_id:            Analysis case id [int].
-            deformed:           Represents whether or not the node locations
-                                are deformed based on the case id [bool].
-            def_scale:          Value used to scale deformations [float].
-
-        Returns:
-            void
+        :param ax: Axes object on which to plot
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param float small: A dimension used to scale the support
+        :param get_support_angle: A function that returns the support angle
+            and the number of connected elements
+        :type get_support_angle:
+            :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param int case_id: Analysis case id
+        :param bool deformed: Represents whether or not the node locations are
+            deformed based on the results of case id
+        :param float def_scale: Value used to scale deformations
         """
 
         if self.node.fixity is not [1, 1, 0]:
@@ -241,21 +223,19 @@ class NodalSupport(BoundaryCondition):
                           case_id, deformed, def_scale):
         """Plots a graphical representation of an imposed translation.
 
-        Args:
-            ax:                 Axes object on which to plot
-                                [matplotlib.axes.Axes].
-            max_disp:           Maximum imposed displacement [float].
-            small:              A dimension used for scaling [float].
-            get_support_angle:  A function handle that returns the support
-                                angle and the number of connected elements
-                                [function].
-            case_id:            Analysis case id [int].
-            deformed:           Represents whether or not the node locations
-                                are deformed based on the case id [bool].
-            def_scale:          Value used to scale deformations [float].
-
-        Returns:
-            void
+        :param ax: Axes object on which to plot
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param float max_disp: Maximum imposed displacement in the analysis
+            case
+        :param float small: A dimension used to scale the support
+        :param get_support_angle: A function that returns the support angle
+            and the number of connected elements
+        :type get_support_angle:
+            :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param int case_id: Analysis case id
+        :param bool deformed: Represents whether or not the node locations are
+            deformed based on the results of case id
+        :param float def_scale: Value used to scale deformations
         """
 
         val = self.val / max_disp
@@ -310,20 +290,17 @@ class NodalSupport(BoundaryCondition):
                          def_scale):
         """Plots a graphical representation of an imposed rotation.
 
-        Args:
-            ax:                 Axes object on which to plot
-                                [matplotlib.axes.Axes].
-            small:              A dimension used for scaling [float].
-            get_support_angle:  A function handle that returns the support
-                                angle and the number of connected elements
-                                [function].
-            case_id:            Analysis case id [int].
-            deformed:           Represents whether or not the node locations
-                                are deformed based on the case id [bool].
-            def_scale:          Value used to scale deformations [float].
-
-        Returns:
-            void
+        :param ax: Axes object on which to plot
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param float small: A dimension used to scale the support
+        :param get_support_angle: A function that returns the support angle
+            and the number of connected elements
+        :type get_support_angle:
+            :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param int case_id: Analysis case id
+        :param bool deformed: Represents whether or not the node locations are
+            deformed based on the results of case id
+        :param float def_scale: Value used to scale deformations
         """
 
         lh = 0.4 * small  # arrow head length
@@ -404,25 +381,22 @@ class NodalSupport(BoundaryCondition):
         ax.add_patch(Polygon(np.transpose(rp),
                              facecolor='none', linewidth=1, edgecolor='k'))
 
-    def plot_reaction(self, ax, case_id, small, max_reaction,
-                      get_support_angle):
+    def plot_reaction(self, ax, max_reaction, small, get_support_angle,
+                      case_id):
         """Plots a graphical representation of a reaction force and displays
         the value of the reaction force. A straight arrow is plotted for a
         translational reaction and a curved arrow is plotted for a rotational
         reaction.
 
-        Args:
-            ax:                 Axes object on which to plot
-                                [matplotlib.axes.Axes].
-            case_id:            Analysis case id [int].
-            small:              A dimension used for scaling [float].
-            max_reaction:       Maximum reaction force [float].
-            get_support_angle:  A function handle that returns the support
-                                angle and the number of connected elements
-                                [function].
-
-        Returns:
-            void
+        :param ax: Axes object on which to plot
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param float max_reaction: Maximum reaction force in the analysis case
+        :param float small: A dimension used to scale the support
+        :param get_support_angle: A function that returns the support angle
+            and the number of connected elements
+        :type get_support_angle:
+            :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param int case_id: Analysis case id
         """
 
         # get reaction force
@@ -548,21 +522,16 @@ class NodalSupport(BoundaryCondition):
                        deformed, def_scale):
         """Plots a hinged or roller support.
 
-        Args:
-            ax:                 Axes object on which to plot
-                                [matplotlib.axes.Axes].
-            angle:              Angle to plot the support at [float].
-            roller:             Whether or not the support is a roller [bool].
-            hinge:              Whether or not there is a hinge at the
-                                support [bool].
-            small:              A dimension used for scaling [float].
-            case_id:            Analysis case id [int].
-            deformed:           Represents whether or not the node locations
-                                are deformed based on the case id [bool].
-            def_scale:          Value used to scale deformations [float].
-
-        Returns:
-            void
+        :param ax: Axes object on which to plot
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param float angle: Angle at which to plot the support
+        :param bool roller: Whether or not the support is a roller
+        :param bool hinge: Whether or not there is a hinge at the support
+        :param float small: A dimension used to scale the support
+        :param int case_id: Analysis case id
+        :param bool deformed: Represents whether or not the node locations are
+            deformed based on the results of case id
+        :param float def_scale: Value used to scale deformations
         """
 
         # determine coordinates of node
@@ -609,24 +578,21 @@ class NodalLoad(BoundaryCondition):
 
     Provides methods for the FEA solver and post-processing.
 
-    Attributes:
-        node:       The node object at which the nodal load acts [Node].
-        val:        The value of the nodal load [float].
-        dir:        The direction in which the nodal load acts [int].
+    :cvar node: The node object at which the nodal load acts
+    :vartype node: :class:`feastruct.fea.node.Node`
+    :cvar float val: The value of the nodal load
+    :cvar int dir: The direction in which the nodal load acts
     """
 
     def __init__(self, analysis, node_id, val, dir):
         """inits the NodalLoad class.
 
-        Args:
-            analysis:   fea analysis object [fea].
-            node_id:    Unique id of the node at which the nodal load is
-                        applied [int].
-            val:        The value of the nodal load [float].
-            dir:        The direction in which the nodal load acts [int].
-
-        Returns:
-            void
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int node_id:  Unique id of the node at which the nodal load is
+            applied
+        :param float val: The value of the nodal load
+        :param int dir: The direction in which the nodal load acts
         """
 
         super().__init__(analysis, node_id, val, dir)
@@ -635,13 +601,10 @@ class NodalLoad(BoundaryCondition):
         """Applies the nodal load.
 
         The external force vector is modified to apply the neumann boundary
-        condition to enforce f_ext = f_load.
+        condition.
 
-        Args:
-            f_ext:  Global external force vector [numpy.ndarray - (N)].
-
-        Returns:
-            void
+        :param f_ext: Global external force vector (size = N)
+        :type f_ext: :class:`numpy.ndarray`
         """
 
         # add load to f_ext, selecting the correct dof from dofs
@@ -653,21 +616,18 @@ class NodalLoad(BoundaryCondition):
         is plotted for a translational load and a curved arrow is plotted for a
         moment.
 
-        Args:
-            ax:                 Axes object on which to plot
-                                [matplotlib.axes.Axes].
-            max_reaction:       Maximum translational nodal load [float].
-            small:              A dimension used for scaling [float].
-            get_support_angle:  A function handle that returns the support
-                                angle and the number of connected elements
-                                [function].
-            case_id:            Analysis case id [int].
-            deformed:           Represents whether or not the node locations
-                                are deformed based on the case id [bool].
-            def_scale:          Value used to scale deformations [float].
-
-        Returns:
-            void
+        :param ax: Axes object on which to plot
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param float max_force: Maximum translational nodal load
+        :param float small: A dimension used to scale the support
+        :param get_support_angle: A function that returns the support angle
+            and the number of connected elements
+        :type get_support_angle:
+            :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param int case_id: Analysis case id
+        :param bool deformed: Represents whether or not the node locations are
+            deformed based on the results of case id
+        :param float def_scale: Value used to scale deformations
         """
 
         # determine coordinates of node

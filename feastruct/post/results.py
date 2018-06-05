@@ -1,4 +1,4 @@
-from fea.exceptions import FEAInputError
+from feastruct.fea.exceptions import FEAInputError
 
 
 class ResultList:

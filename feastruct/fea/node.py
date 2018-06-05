@@ -1,4 +1,4 @@
-import post.results as results
+import feastruct.post.results as results
 
 
 class Node:

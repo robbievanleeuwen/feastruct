@@ -1,6 +1,6 @@
 import sys
-from solvers.feasolve import Solver
-from fea.exceptions import FEAInputError, FEASolverError
+from feastruct.solvers.feasolve import Solver
+from feastruct.fea.exceptions import FEAInputError, FEASolverError
 
 
 class LinearStatic(Solver):

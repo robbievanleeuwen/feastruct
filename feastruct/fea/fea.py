@@ -1,8 +1,8 @@
 import numpy as np
-from fea.node import Node
-import fea.cases as Cases
-from post.results import ResultList, FrameForceVector
-from fea.exceptions import FEAInputError
+from feastruct.fea.node import Node
+import feastruct.fea.cases as Cases
+from feastruct.post.results import ResultList, FrameForceVector
+from feastruct.fea.exceptions import FEAInputError
 
 
 class fea:

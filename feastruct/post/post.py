@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from fea.exceptions import FEAInputError
+from feastruct.fea.exceptions import FEAInputError
 
 
 class PostProcessor:
@@ -147,8 +147,8 @@ class PostProcessor:
 
         # plot reactions
         for support in analysis_case.freedom_case.items:
-            support.plot_reaction(ax, case_id, small, max_reaction,
-                                  self.get_support_angle)
+            support.plot_reaction(ax, max_reaction, small,
+                                  self.get_support_angle, case_id)
 
         # plot the undeformed structure
         self.plot_geom(case_id, ax=ax, supports=False)

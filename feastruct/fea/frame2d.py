@@ -1,8 +1,8 @@
 import numpy as np
 from matplotlib.patches import Polygon
-from fea.fea import fea, FiniteElement
-from post.results import FrameForceVector
-from fea.exceptions import FEAInputError
+from feastruct.fea.fea import fea, FiniteElement
+from feastruct.post.results import FrameForceVector
+from feastruct.fea.exceptions import FEAInputError
 
 
 class Frame2D(fea):

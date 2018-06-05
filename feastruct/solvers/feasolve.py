@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as linalg
-from fea.exceptions import FEASolverError
+from feastruct.fea.exceptions import FEASolverError
 
 
 class Solver:

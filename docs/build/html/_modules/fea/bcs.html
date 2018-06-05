@@ -1,0 +1,976 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fea.bcs &mdash; feastruct 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rst/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rst/bcs.html">Boundary Conditions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fea.bcs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fea.bcs</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Polygon</span>
+<span class="kn">from</span> <span class="nn">post.results</span> <span class="k">import</span> <span class="n">ResultList</span><span class="p">,</span> <span class="n">Force</span>
+<span class="kn">from</span> <span class="nn">fea.exceptions</span> <span class="k">import</span> <span class="n">FEAInputError</span>
+
+
+<div class="viewcode-block" id="BoundaryCondition"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.BoundaryCondition">[docs]</a><span class="k">class</span> <span class="nc">BoundaryCondition</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for supports and loads.</span>
+
+<span class="sd">    Provides an init method for the creation of boundary conditions at nodes.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        node:   The node object at which the boundary condition acts [Node].</span>
+<span class="sd">        val:    The value of the boundary condition [float].</span>
+<span class="sd">        dir:    The direction in which the boundary condition acts [int].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;inits the BoundaryCondition class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            analysis:   fea analysis object [fea].</span>
+<span class="sd">            node_id:    Unique id of the node at which the BC is applied [int].</span>
+<span class="sd">            val:        The value of the boundary condition [float].</span>
+<span class="sd">            dir:        The direction in which the boundary condition</span>
+<span class="sd">                        acts [int].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: check value types e.g. node_id and dir are ints, check dir is</span>
+        <span class="c1"># within dofs limits.</span>
+
+        <span class="c1"># find the node object corresponding to node_id in the analysis object</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">find_node</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">FEAInputError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="c1"># assign the node object, value and direction of the boundary condition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="nb">dir</span></div>
+
+
+<div class="viewcode-block" id="NodalSupport"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport">[docs]</a><span class="k">class</span> <span class="nc">NodalSupport</span><span class="p">(</span><span class="n">BoundaryCondition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for a dirichlet boundary condition acting at a node.</span>
+
+<span class="sd">    Provides methods for the FEA solver and post-processing.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        node:       The node object at which the boundary condition</span>
+<span class="sd">                    acts [Node].</span>
+<span class="sd">        val:        The value of the boundary condition [float].</span>
+<span class="sd">        dir:        The direction in which the boundary condition acts [int].</span>
+<span class="sd">        reaction:   A result object containing reaction force</span>
+<span class="sd">                    results [ResultList].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;inits the NodalSupport class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            analysis:   fea analysis object [fea].</span>
+<span class="sd">            node_id:    Unique id of the node at which the boundary condition</span>
+<span class="sd">                        is applied [int].</span>
+<span class="sd">            val:        The value of the boundary condition [float].</span>
+<span class="sd">            dir:        The direction in which the boundary condition</span>
+<span class="sd">                        acts [int].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># initialise the parent class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">)</span>
+
+        <span class="c1"># initialise the nodal reaction results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span> <span class="o">=</span> <span class="n">ResultList</span><span class="p">()</span>
+
+<div class="viewcode-block" id="NodalSupport.apply_support"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport.apply_support">[docs]</a>    <span class="k">def</span> <span class="nf">apply_support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">f_ext</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies the nodal support.</span>
+
+<span class="sd">        The stiffness matrix and external force vector are modified to apply</span>
+<span class="sd">        the dirichlet boundary condition to enforce u_i = u_support.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            K:      Global stiffness matrix [numpy.ndarray - (N x N)].</span>
+<span class="sd">            f_ext:  Global external force vector [numpy.ndarray - (N)].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># modify stiffness matrix and f_ext</span>
+        <span class="n">K</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">K</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">f_ext</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span></div>
+
+<div class="viewcode-block" id="NodalSupport.get_reaction"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport.get_reaction">[docs]</a>    <span class="k">def</span> <span class="nf">get_reaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the reaction force result corresponding to analysis case:</span>
+<span class="sd">        case_id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            case_id:    Case id corresponding to an analysis case [int].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            f:          Reaction force at the node [float].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span><span class="o">.</span><span class="n">f</span>
+        <span class="k">except</span> <span class="n">FEAInputError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NodalSupport.set_reaction"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport.set_reaction">[docs]</a>    <span class="k">def</span> <span class="nf">set_reaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the reaction force &#39;f&#39; corresponding to analysis case: case_id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            case_id:    Case id corresponding to an analysis case [int].</span>
+<span class="sd">            f:          Reaction for at the node [float].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">Force</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NodalSupport.plot_support"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport.plot_support">[docs]</a>    <span class="k">def</span> <span class="nf">plot_support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">get_support_angle</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">deformed</span><span class="p">,</span>
+                     <span class="n">def_scale</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots a graphical representation of the nodal support.</span>
+
+<span class="sd">        Based on the type of support at the node, a graphical representation</span>
+<span class="sd">        of the support type is generated and plotted. Possible support types</span>
+<span class="sd">        include rollers, hinges, rotation restraints, fixed rollers and fully</span>
+<span class="sd">        fixed supports. The angle of the connecting elements is considered in</span>
+<span class="sd">        order to produce the most visually appealing representation. The</span>
+<span class="sd">        support location is displaced if a deformed plot is desired. Note that</span>
+<span class="sd">        some of the methods used to plot the supports are taken from Frans</span>
+<span class="sd">        van der Meer&#39;s code plotGeom.m.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax:                 Axes object on which to plot</span>
+<span class="sd">                                [matplotlib.axes.Axes].</span>
+<span class="sd">            small:              A dimension used to scale the support [float].</span>
+<span class="sd">            get_support_angle:  A function handle that returns the support</span>
+<span class="sd">                                angle and the number of connected elements</span>
+<span class="sd">                                [function].</span>
+<span class="sd">            case_id:            Analysis case id [int].</span>
+<span class="sd">            deformed:           Represents whether or not the node locations</span>
+<span class="sd">                                are deformed based on the case id [bool].</span>
+<span class="sd">            def_scale:          Value used to scale deformations [float].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">num_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="c1"># ploy a y-roller</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_xysupport</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">num_el</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span>
+                                <span class="n">deformed</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="c1"># plot an x-roller</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># prefer support below</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="mi">90</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">angle</span> <span class="o">+</span> <span class="mi">90</span><span class="p">)</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">-</span> <span class="mi">90</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_xysupport</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">num_el</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span>
+                                <span class="n">deformed</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="c1"># plot a hinge</span>
+            <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">num_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_xysupport</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">num_el</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span>
+                                <span class="n">deformed</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;kx&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># plot a support with moment fixity</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+                <span class="c1"># plot a fixed support</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+                <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">small</span>
+                <span class="n">rect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">small</span>
+                <span class="n">ec</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+                <span class="c1"># plot y-roller block</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+                <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.85</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.85</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">small</span>
+                <span class="n">rect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">small</span>
+                <span class="n">ec</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+                <span class="c1"># plot x-roller block</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">angle</span> <span class="o">+</span> <span class="mi">90</span><span class="p">)</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">-</span> <span class="mi">90</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+                <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.85</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.85</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">small</span>
+                <span class="n">rect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">small</span>
+                <span class="n">ec</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+
+            <span class="n">rot_line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="n">rot_rect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
+
+            <span class="c1"># add coordinates of node</span>
+            <span class="k">if</span> <span class="n">deformed</span><span class="p">:</span>
+                <span class="c1"># get displacement of node for current analysis case</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">get_displacement</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+
+                <span class="n">rot_line</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+                <span class="n">rot_line</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+                <span class="n">rot_rect</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+                <span class="n">rot_rect</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rot_line</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">rot_line</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+                <span class="n">rot_rect</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">rot_rect</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rot_line</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">rot_line</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">rot_rect</span><span class="p">),</span>
+                                 <span class="n">facecolor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">),</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">ec</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NodalSupport.plot_imposed_disp"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport.plot_imposed_disp">[docs]</a>    <span class="k">def</span> <span class="nf">plot_imposed_disp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">max_disp</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">get_support_angle</span><span class="p">,</span>
+                          <span class="n">case_id</span><span class="p">,</span> <span class="n">deformed</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots a graphical representation of an imposed translation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax:                 Axes object on which to plot</span>
+<span class="sd">                                [matplotlib.axes.Axes].</span>
+<span class="sd">            max_disp:           Maximum imposed displacement [float].</span>
+<span class="sd">            small:              A dimension used for scaling [float].</span>
+<span class="sd">            get_support_angle:  A function handle that returns the support</span>
+<span class="sd">                                angle and the number of connected elements</span>
+<span class="sd">                                [function].</span>
+<span class="sd">            case_id:            Analysis case id [int].</span>
+<span class="sd">            deformed:           Represents whether or not the node locations</span>
+<span class="sd">                                are deformed based on the case id [bool].</span>
+<span class="sd">            def_scale:          Value used to scale deformations [float].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">/</span> <span class="n">max_disp</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">small</span>
+
+        <span class="n">lf</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow length</span>
+        <span class="n">lh</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head length</span>
+        <span class="n">wh</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head width</span>
+        <span class="n">sp</span> <span class="o">=</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># half spacing between double line</span>
+        <span class="n">lf</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">lh</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">)</span>
+
+        <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">num_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">])</span>
+        <span class="n">inward</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+        <span class="n">to_rotate</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">90</span> <span class="o">+</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span>
+        <span class="n">sr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">to_rotate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">cr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">to_rotate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cr</span><span class="p">,</span> <span class="o">-</span><span class="n">sr</span><span class="p">],</span> <span class="p">[</span><span class="n">sr</span><span class="p">,</span> <span class="n">cr</span><span class="p">]])</span>
+
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">inward</span> <span class="o">*</span> <span class="n">lf</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="p">(</span><span class="ow">not</span> <span class="n">inward</span><span class="p">)</span> <span class="o">*</span> <span class="n">lf</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x2</span> <span class="o">+</span> <span class="p">(</span><span class="n">inward</span><span class="p">)</span> <span class="o">*</span> <span class="n">lh</span> <span class="o">-</span> <span class="p">(</span><span class="ow">not</span> <span class="n">inward</span><span class="p">)</span> <span class="o">*</span> <span class="n">lh</span>
+        <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x1</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+        <span class="n">ll</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x1</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">],</span> <span class="p">[</span><span class="n">sp</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="o">-</span><span class="n">sp</span><span class="p">,</span> <span class="o">-</span><span class="n">sp</span><span class="p">]])</span>
+
+        <span class="n">rl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">ll</span><span class="p">)</span>
+        <span class="n">rp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+
+        <span class="c1"># add coordinates of node</span>
+        <span class="k">if</span> <span class="n">deformed</span><span class="p">:</span>
+            <span class="c1"># get displacement of node for current analysis case</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">get_displacement</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+
+            <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">rp</span><span class="p">),</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NodalSupport.plot_imposed_rot"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport.plot_imposed_rot">[docs]</a>    <span class="k">def</span> <span class="nf">plot_imposed_rot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">get_support_angle</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">deformed</span><span class="p">,</span>
+                         <span class="n">def_scale</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots a graphical representation of an imposed rotation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax:                 Axes object on which to plot</span>
+<span class="sd">                                [matplotlib.axes.Axes].</span>
+<span class="sd">            small:              A dimension used for scaling [float].</span>
+<span class="sd">            get_support_angle:  A function handle that returns the support</span>
+<span class="sd">                                angle and the number of connected elements</span>
+<span class="sd">                                [function].</span>
+<span class="sd">            case_id:            Analysis case id [int].</span>
+<span class="sd">            deformed:           Represents whether or not the node locations</span>
+<span class="sd">                                are deformed based on the case id [bool].</span>
+<span class="sd">            def_scale:          Value used to scale deformations [float].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">lh</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head length</span>
+        <span class="n">wh</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head width</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">small</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="mf">1.2</span> <span class="o">*</span> <span class="n">small</span>
+        <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">num_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">ths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">261</span><span class="p">)</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+
+        <span class="c1"># make arrow tail around (0,0)</span>
+        <span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="n">r1</span> <span class="o">+</span> <span class="n">r2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">ll</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rr</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">),</span>
+                       <span class="n">rr</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)])</span>
+        <span class="n">l1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">),</span>
+                       <span class="n">r1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)])</span>
+        <span class="n">l2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">),</span>
+                       <span class="n">r2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)])</span>
+
+        <span class="c1"># make arrow head at (0,0)</span>
+        <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="n">lh</span><span class="p">,</span> <span class="o">-</span><span class="n">lh</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+        <span class="c1"># rotate arrow head around (0,0)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">thTip</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">-</span> <span class="n">ths</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+            <span class="n">xTip</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">l1</span> <span class="o">=</span> <span class="n">l1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">21</span><span class="p">]</span>
+            <span class="n">l2</span> <span class="o">=</span> <span class="n">l2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">21</span><span class="p">]</span>
+            <span class="n">ibase</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">thTip</span> <span class="o">=</span> <span class="n">ths</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">-</span> <span class="mi">90</span>
+            <span class="n">xTip</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">l1</span> <span class="o">=</span> <span class="n">l1</span><span class="p">[:,</span> <span class="mi">21</span><span class="p">:]</span>
+            <span class="n">l2</span> <span class="o">=</span> <span class="n">l2</span><span class="p">[:,</span> <span class="mi">21</span><span class="p">:]</span>
+            <span class="n">ibase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">l1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="n">cTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">thTip</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">sTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">thTip</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">rTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cTip</span><span class="p">,</span> <span class="o">-</span><span class="n">sTip</span><span class="p">],</span> <span class="p">[</span><span class="n">sTip</span><span class="p">,</span> <span class="n">cTip</span><span class="p">]])</span>
+        <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rTip</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+
+        <span class="c1"># shift arrow head to tip</span>
+        <span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">xTip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">xTip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># rotate arrow to align it with the node</span>
+        <span class="n">rl1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">l1</span><span class="p">)</span>
+        <span class="n">rl2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+        <span class="n">rp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+
+        <span class="c1"># add coordinates of node</span>
+        <span class="k">if</span> <span class="n">deformed</span><span class="p">:</span>
+            <span class="c1"># get displacement of node for current analysis case</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">get_displacement</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+
+            <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">rl1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">rl1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">rl2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">rl2</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">rl1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rl1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">rl2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rl2</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="c1"># shift arrow to node and plot</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rl1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">rl1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rl2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">rl2</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rl1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">ibase</span><span class="p">],</span> <span class="n">rl2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">ibase</span><span class="p">]),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rl1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">ibase</span><span class="p">],</span> <span class="n">rl2</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">ibase</span><span class="p">]),</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">rp</span><span class="p">),</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NodalSupport.plot_reaction"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport.plot_reaction">[docs]</a>    <span class="k">def</span> <span class="nf">plot_reaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">max_reaction</span><span class="p">,</span>
+                      <span class="n">get_support_angle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots a graphical representation of a reaction force and displays</span>
+<span class="sd">        the value of the reaction force. A straight arrow is plotted for a</span>
+<span class="sd">        translational reaction and a curved arrow is plotted for a rotational</span>
+<span class="sd">        reaction.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax:                 Axes object on which to plot</span>
+<span class="sd">                                [matplotlib.axes.Axes].</span>
+<span class="sd">            case_id:            Analysis case id [int].</span>
+<span class="sd">            small:              A dimension used for scaling [float].</span>
+<span class="sd">            max_reaction:       Maximum reaction force [float].</span>
+<span class="sd">            get_support_angle:  A function handle that returns the support</span>
+<span class="sd">                                angle and the number of connected elements</span>
+<span class="sd">                                [function].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get reaction force</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reaction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reaction</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">FEAInputError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="c1"># dont plot small reaction</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">reaction</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">reaction</span> <span class="o">/</span> <span class="n">max_reaction</span>
+
+            <span class="n">lf</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow length</span>
+            <span class="n">lh</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head length</span>
+            <span class="n">wh</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head width</span>
+            <span class="n">lf</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">lh</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">)</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">small</span>
+            <span class="n">xoff</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">yoff</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                <span class="n">va</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ha</span> <span class="o">=</span> <span class="s1">&#39;right&#39;</span>
+                    <span class="n">xoff</span> <span class="o">=</span> <span class="o">-</span><span class="n">offset</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ha</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span>
+                    <span class="n">xoff</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                <span class="n">ha</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">va</span> <span class="o">=</span> <span class="s1">&#39;top&#39;</span>
+                    <span class="n">yoff</span> <span class="o">=</span> <span class="o">-</span><span class="n">offset</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">va</span> <span class="o">=</span> <span class="s1">&#39;bottom&#39;</span>
+                    <span class="n">yoff</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">/</span> <span class="mi">2</span>
+
+            <span class="n">inward</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">ll</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">lf</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">offset</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">p0</span> <span class="o">+</span> <span class="n">lh</span>
+            <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">p1</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+            <span class="c1"># correct end of arrow line</span>
+            <span class="k">if</span> <span class="n">inward</span><span class="p">:</span>
+                <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lh</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">lh</span>
+
+            <span class="n">rl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">ll</span><span class="p">)</span>
+            <span class="n">rp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+            <span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">tl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xoff</span><span class="p">,</span> <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">yoff</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">num_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+
+            <span class="n">lh</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head length</span>
+            <span class="n">wh</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head width</span>
+            <span class="n">rr</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">small</span>
+            <span class="n">ths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">261</span><span class="p">)</span>
+            <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+
+            <span class="c1"># make arrow tail around (0,0)</span>
+            <span class="n">ll</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rr</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">),</span>
+                           <span class="n">rr</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)])</span>
+
+            <span class="c1"># make arrow head at (0,0)</span>
+            <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="n">lh</span><span class="p">,</span> <span class="o">-</span><span class="n">lh</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+            <span class="c1"># rotate arrow head around (0,0)</span>
+            <span class="k">if</span> <span class="n">reaction</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">thTip</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">-</span> <span class="n">ths</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+                <span class="n">xTip</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">thTip</span> <span class="o">=</span> <span class="n">ths</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">-</span> <span class="mi">90</span>
+                <span class="n">xTip</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">cTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">thTip</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="n">sTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">thTip</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="n">rTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cTip</span><span class="p">,</span> <span class="o">-</span><span class="n">sTip</span><span class="p">],</span> <span class="p">[</span><span class="n">sTip</span><span class="p">,</span> <span class="n">cTip</span><span class="p">]])</span>
+            <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rTip</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+
+            <span class="c1"># shift arrow head to tip</span>
+            <span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">xTip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">pp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">xTip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># rotate arrow to align it with the node</span>
+            <span class="n">rl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">ll</span><span class="p">)</span>
+            <span class="n">rp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+            <span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+
+            <span class="n">ha</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span>
+            <span class="n">va</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span>
+            <span class="n">tl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="n">e</span><span class="p">],</span> <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="n">e</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">rp</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">tl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">{:5.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reaction</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">horizontalalignment</span><span class="o">=</span><span class="n">ha</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="n">va</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NodalSupport.plot_xysupport"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalSupport.plot_xysupport">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xysupport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">roller</span><span class="p">,</span> <span class="n">hinge</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span>
+                       <span class="n">deformed</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots a hinged or roller support.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax:                 Axes object on which to plot</span>
+<span class="sd">                                [matplotlib.axes.Axes].</span>
+<span class="sd">            angle:              Angle to plot the support at [float].</span>
+<span class="sd">            roller:             Whether or not the support is a roller [bool].</span>
+<span class="sd">            hinge:              Whether or not there is a hinge at the</span>
+<span class="sd">                                support [bool].</span>
+<span class="sd">            small:              A dimension used for scaling [float].</span>
+<span class="sd">            case_id:            Analysis case id [int].</span>
+<span class="sd">            deformed:           Represents whether or not the node locations</span>
+<span class="sd">                                are deformed based on the case id [bool].</span>
+<span class="sd">            def_scale:          Value used to scale deformations [float].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># determine coordinates of node</span>
+        <span class="k">if</span> <span class="n">deformed</span><span class="p">:</span>
+            <span class="c1"># get displacement of node for current analysis case</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">get_displacement</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="c1"># determine coordinates of triangle</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">small</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">triangle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">h</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]])</span> <span class="o">*</span> <span class="n">dx</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+        <span class="n">rot_triangle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">triangle</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">roller</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">dx</span>
+            <span class="n">rot_line</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rot_line</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="n">rot_line</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4</span><span class="p">,</span> <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">-</span><span class="n">h</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">dx</span>
+            <span class="n">rot_rect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
+            <span class="n">rot_rect</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">x</span>
+            <span class="n">rot_rect</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">y</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">rot_rect</span><span class="p">),</span>
+                                 <span class="n">facecolor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rot_triangle</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="n">rot_triangle</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">hinge</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="NodalLoad"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalLoad">[docs]</a><span class="k">class</span> <span class="nc">NodalLoad</span><span class="p">(</span><span class="n">BoundaryCondition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for a neumann boundary condition acting at a node.</span>
+
+<span class="sd">    Provides methods for the FEA solver and post-processing.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        node:       The node object at which the nodal load acts [Node].</span>
+<span class="sd">        val:        The value of the nodal load [float].</span>
+<span class="sd">        dir:        The direction in which the nodal load acts [int].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;inits the NodalLoad class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            analysis:   fea analysis object [fea].</span>
+<span class="sd">            node_id:    Unique id of the node at which the nodal load is</span>
+<span class="sd">                        applied [int].</span>
+<span class="sd">            val:        The value of the nodal load [float].</span>
+<span class="sd">            dir:        The direction in which the nodal load acts [int].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NodalLoad.apply_load"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalLoad.apply_load">[docs]</a>    <span class="k">def</span> <span class="nf">apply_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_ext</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies the nodal load.</span>
+
+<span class="sd">        The external force vector is modified to apply the neumann boundary</span>
+<span class="sd">        condition to enforce f_ext = f_load.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            f_ext:  Global external force vector [numpy.ndarray - (N)].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># add load to f_ext, selecting the correct dof from dofs</span>
+        <span class="n">f_ext</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span></div>
+
+<div class="viewcode-block" id="NodalLoad.plot_load"><a class="viewcode-back" href="../../rst/bcs.html#fea.bcs.NodalLoad.plot_load">[docs]</a>    <span class="k">def</span> <span class="nf">plot_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">max_force</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span> <span class="n">get_support_angle</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span>
+                  <span class="n">deformed</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots a graphical representation of a nodal force. A straight arrow</span>
+<span class="sd">        is plotted for a translational load and a curved arrow is plotted for a</span>
+<span class="sd">        moment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax:                 Axes object on which to plot</span>
+<span class="sd">                                [matplotlib.axes.Axes].</span>
+<span class="sd">            max_reaction:       Maximum translational nodal load [float].</span>
+<span class="sd">            small:              A dimension used for scaling [float].</span>
+<span class="sd">            get_support_angle:  A function handle that returns the support</span>
+<span class="sd">                                angle and the number of connected elements</span>
+<span class="sd">                                [function].</span>
+<span class="sd">            case_id:            Analysis case id [int].</span>
+<span class="sd">            deformed:           Represents whether or not the node locations</span>
+<span class="sd">                                are deformed based on the case id [bool].</span>
+<span class="sd">            def_scale:          Value used to scale deformations [float].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            void</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># determine coordinates of node</span>
+        <span class="k">if</span> <span class="n">deformed</span><span class="p">:</span>
+            <span class="c1"># get displacement of node for current analysis case</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">get_displacement</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">def_scale</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">/</span> <span class="n">max_force</span>
+
+        <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">small</span>
+        <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">num_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+
+        <span class="c1"># plot nodal force</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">lf</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow length</span>
+            <span class="n">lh</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head length</span>
+            <span class="n">wh</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head width</span>
+            <span class="n">lf</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lf</span><span class="p">,</span> <span class="n">lh</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">)</span>
+
+            <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">])</span>
+            <span class="n">inward</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span>
+                      <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+            <span class="n">to_rotate</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">90</span> <span class="o">+</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">180</span>
+            <span class="n">sr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">to_rotate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="n">cr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">to_rotate</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cr</span><span class="p">,</span> <span class="o">-</span><span class="n">sr</span><span class="p">],</span> <span class="p">[</span><span class="n">sr</span><span class="p">,</span> <span class="n">cr</span><span class="p">]])</span>
+
+            <span class="n">ll</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">lf</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="p">(</span><span class="ow">not</span> <span class="n">inward</span><span class="p">)</span> <span class="o">*</span> <span class="n">lf</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">p0</span> <span class="o">+</span> <span class="p">(</span><span class="n">inward</span><span class="p">)</span> <span class="o">*</span> <span class="n">lh</span> <span class="o">-</span> <span class="p">(</span><span class="ow">not</span> <span class="n">inward</span><span class="p">)</span> <span class="o">*</span> <span class="n">lh</span>
+            <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">p1</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+            <span class="c1"># correct end of arrow line</span>
+            <span class="k">if</span> <span class="n">inward</span><span class="p">:</span>
+                <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lh</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ll</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">lh</span>
+
+            <span class="n">rl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">ll</span><span class="p">)</span>
+            <span class="n">rp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">x</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">y</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># plot nodal moment</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lh</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head length</span>
+            <span class="n">wh</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">small</span>  <span class="c1"># arrow head width</span>
+            <span class="n">rr</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">small</span>
+            <span class="n">ths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">261</span><span class="p">)</span>
+            <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+
+            <span class="c1"># make arrow tail around (0,0)</span>
+            <span class="n">ll</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rr</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">),</span>
+                           <span class="n">rr</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)])</span>
+
+            <span class="c1"># make arrow head at (0,0)</span>
+            <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="n">lh</span><span class="p">,</span> <span class="o">-</span><span class="n">lh</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+            <span class="c1"># rotate arrow head around (0,0)</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">thTip</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">-</span> <span class="n">ths</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+                <span class="n">xTip</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">thTip</span> <span class="o">=</span> <span class="n">ths</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">-</span> <span class="mi">90</span>
+                <span class="n">xTip</span> <span class="o">=</span> <span class="n">ll</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">cTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">thTip</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="n">sTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">thTip</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+            <span class="n">rTip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cTip</span><span class="p">,</span> <span class="o">-</span><span class="n">sTip</span><span class="p">],</span> <span class="p">[</span><span class="n">sTip</span><span class="p">,</span> <span class="n">cTip</span><span class="p">]])</span>
+            <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rTip</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+
+            <span class="c1"># shift arrow head to tip</span>
+            <span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">xTip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">pp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">xTip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># rotate arrow to align it with the node</span>
+            <span class="n">rl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">ll</span><span class="p">)</span>
+            <span class="n">rp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">x</span>
+            <span class="n">rp</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">y</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="n">e</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="n">rl</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="n">e</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">rp</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -5,6 +5,8 @@ Welcome to feastruct's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   rst/installation
+   rst/bcs
 
 
 Indices and tables

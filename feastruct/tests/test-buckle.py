@@ -1,9 +1,9 @@
 import sys
-sys.path.append('../')
-from fea.frame2d import Frame2D
-from solvers.linstatic import LinearStatic
-from solvers.linbuckling import LinearBuckling
-from post.post import PostProcessor
+sys.path.append('../../')
+from feastruct.fea.frame2d import Frame2D
+from feastruct.solvers.linstatic import LinearStatic
+from feastruct.solvers.linbuckling import LinearBuckling
+from feastruct.post.post import PostProcessor
 
 # N.B. using [N] and [mm]
 

@@ -1,5 +1,5 @@
-import fea.bcs as BCs
-from fea.exceptions import FEAInputError
+import feastruct.fea.bcs as BCs
+from feastruct.fea.exceptions import FEAInputError
 
 
 class Case:
