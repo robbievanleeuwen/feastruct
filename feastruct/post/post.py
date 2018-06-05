@@ -72,9 +72,8 @@ class PostProcessor:
         if supports:
             # plot supports
             for support in support_node_list:
-                support.plot_support(
-                    ax, max_disp, small, self.get_support_angle, case_id,
-                    deformed, def_scale)
+                support.plot_support(ax, small, self.get_support_angle,
+                                     case_id, deformed, def_scale)
 
             # plot imposed displacements
             for imposed_disp in imposed_disp_list:
