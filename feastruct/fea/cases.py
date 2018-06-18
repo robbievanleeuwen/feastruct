@@ -8,24 +8,21 @@ class Case:
     Provides an init method for the creation of different types of cases and
     also a method to add an item to the case list.
 
-    Attributes:
-        analysis:   An fea object in which the case is used [fea].
-        id:         A unique id that identifies the particular type of
-                    case [int].
-        items:      A list containing entries in the case, e.g. nodal supports
-                    or nodal loads.
+    :cvar analysis: Analysis object in which the case is used
+    :vartype analysis: :class:`feastruct.fea.fea.fea`
+    :cvar int id: A unique id that identifies the particular type of case
+    :cvar items: A list containing entries in the case
+    :vartype items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]
     """
 
     def __init__(self, analysis, id, items):
         """inits the Case class.
 
-        Args:
-            analysis:   fea analysis object [fea]
-            id:         Unique id of the case [int].
-            items:      A list of items to initialise the case with.
-
-        Returns:
-            void
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int id:  Unique id of the case
+        :param items: A list of items to initialise the case with
+        :type items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]
         """
 
         self.analysis = analysis
@@ -39,11 +36,8 @@ class Case:
     def add_item(self, item):
         """Appends an 'item' to the list of entries in the case.
 
-        Args:
-            item:   Entry to add to the current case.
-
-        Returns:
-            void
+        :param item: Entry to add to the current case
+        :type item: :class:`feastruct.fea.bcs.BoundaryCondition`
         """
 
         self.items.append(item)
@@ -56,24 +50,21 @@ class FreedomCase(Case):
     used in an analysis case. Methods are provided to add boundary conditions
     to the FreedomCase object.
 
-    Attributes:
-        analysis:   An fea object in which the case is used [fea].
-        id:         A unique id that identifies the particular type of
-                    case [int].
-        items:      A list containing entries in the case, e.g. nodal supports
-                    or nodal loads.
+    :cvar analysis: Analysis object in which the case is used
+    :vartype analysis: :class:`feastruct.fea.fea.fea`
+    :cvar int id: A unique id that identifies the particular type of case
+    :cvar items: A list containing entries in the case
+    :vartype items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]
     """
 
     def __init__(self, analysis, id, items):
         """inits the FreedomCase class.
 
-        Args:
-            analysis:   fea analysis object [fea]
-            id:         Unique id of the case [int].
-            items:      A list of items to initialise the case with.
-
-        Returns:
-            void
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int id:  Unique id of the case
+        :param items: A list of items to initialise the case with
+        :type items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]
         """
 
         super().__init__(analysis, id, items)
@@ -82,15 +73,10 @@ class FreedomCase(Case):
         """Adds a nodal dirichlet boundary condition to the current freedom
         case and to the node defined by the unique id 'node_id'.
 
-        Args:
-            node_id:    Unique id of the node at which the boundary condition
-                        is applied [int].
-            val:        The value of the boundary condition [float].
-            dir:        The direction in which the boundary condition
-                        acts [int].
-
-        Returns:
-            void
+        :param int node_id: Unique id of the node at which the boundary
+            condition is applied
+        :param float val: The value of the boundary condition
+        :param int dir: The direction in which the boundary condition acts
         """
 
         # TODO: check that the support does not already exist
@@ -107,24 +93,21 @@ class LoadCase(Case):
     used in an analysis case. Methods are provided to add loads to the
     LoadCase object.
 
-    Attributes:
-        analysis:   An fea object in which the case is used [fea].
-        id:         A unique id that identifies the particular type of
-                    case [int].
-        items:      A list containing entries in the case, e.g. nodal supports
-                    or nodal loads.
+    :cvar analysis: Analysis object in which the case is used
+    :vartype analysis: :class:`feastruct.fea.fea.fea`
+    :cvar int id: A unique id that identifies the particular type of case
+    :cvar items: A list containing entries in the case
+    :vartype items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]
     """
 
     def __init__(self, analysis, id, items):
         """inits the LoadCase class.
 
-        Args:
-            analysis:   fea analysis object [fea]
-            id:         Unique id of the case [int].
-            items:      A list of items to initialise the case with.
-
-        Returns:
-            void
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int id:  Unique id of the case
+        :param items: A list of items to initialise the case with
+        :type items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]
         """
 
         super().__init__(analysis, id, items)
@@ -133,15 +116,10 @@ class LoadCase(Case):
         """Adds a nodal neumann boundary condition to the current load
         case and to the node defined by the unique id 'node_id'.
 
-        Args:
-            node_id:    Unique id of the node at which the boundary condition
-                        is applied [int].
-            val:        The value of the boundary condition [float].
-            dir:        The direction in which the boundary condition
-                        acts [int].
-
-        Returns:
-            void
+        :param int node_id: Unique id of the node at which the nodal load is
+            applied
+        :param float val: The value of the nodal load
+        :param int dir: The direction in which the nodal load acts
         """
 
         # add an entry to the load case item list
@@ -155,34 +133,25 @@ class AnalysisCase:
     An analysis case contains a reference to a combination of a freedom case
     and a load case, which are both used to define a particular analysis case.
 
-    Attributes:
-        analysis:       An fea object in which the case is used [fea].
-        id:             A unique id that identifies the particular type of
-                        case [int].
-        freedom_case:   The FreedomCase object used in this analysis case
-                        [FreedomCase].
-        load_cae:       The LoadCase object used in this analysis case
-                        [LoadCase].
+    :cvar analysis: Analysis object in which the case is used
+    :vartype analysis: :class:`feastruct.fea.fea.fea`
+    :cvar int id: A unique id that identifies the particular type of case
+    :cvar freedom_case: The FreedomCase object used in this analysis case
+    :vartype freedom_case: :class:`feastruct.fea.cases.FreedomCase`
+    :cvar load_case: The LoadCase object used in this analysis case
+    :vartype load_case: :class:`feastruct.fea.cases.LoadCase`
     """
 
     def __init__(self, analysis, id, fc_id, lc_id):
         """inits the AnalysisCase class.
 
-        Args:
-            analysis:   fea analysis object [fea]
-            id:         Unique id of the case [int].
-            fc_id:      Unique id of freedom case used in this analysis
-                        case [int].
-            lc_id:      Unique id of load case used in this analysis
-                        case [int].
-
-        Returns:
-            void
-
-        Raises:
-            FEAInputError:  If the unique id corresponding to the freedom case
-                            or load case cannot be located in the analysis
-                            object.
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int id:  Unique id of the case
+        :param int fc_id:  Unique id of freedom case used in this analysis case
+        :param int lc_id:  Unique id of load case used in this analysis case
+        :raises FEAInputError: If the unique id corresponding to the freedom
+            case or load case cannot be located in the analysis object
         """
 
         self.analysis = analysis

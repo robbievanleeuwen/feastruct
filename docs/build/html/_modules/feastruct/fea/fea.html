@@ -1,0 +1,650 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>feastruct.fea.fea &mdash; feastruct 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame2D.html">Frame Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>feastruct.fea.fea</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for feastruct.fea.fea</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">feastruct.fea.node</span> <span class="k">import</span> <span class="n">Node</span>
+<span class="kn">import</span> <span class="nn">feastruct.fea.cases</span> <span class="k">as</span> <span class="nn">Cases</span>
+<span class="kn">from</span> <span class="nn">feastruct.post.results</span> <span class="k">import</span> <span class="n">ResultList</span><span class="p">,</span> <span class="n">FrameForceVector</span>
+<span class="kn">from</span> <span class="nn">feastruct.fea.exceptions</span> <span class="k">import</span> <span class="n">FEAInputError</span>
+
+
+<div class="viewcode-block" id="fea"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea">[docs]</a><span class="k">class</span> <span class="nc">fea</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for a finite element analysis.</span>
+
+<span class="sd">    Establishes a template for each different type of finite element analysis,</span>
+<span class="sd">    e.g. frame, membrane etc. and provides a number of generic methods which</span>
+<span class="sd">    are useful for all types of analyses.</span>
+
+<span class="sd">    :cvar nodes: Nodes used in the finite element analysis.</span>
+<span class="sd">    :vartype nodes: list[:class:`feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar elements: Elements used in the finite element analysis.</span>
+<span class="sd">    :vartype elements: list[:class:`feastruct.fea.fea.FiniteElement`]</span>
+<span class="sd">    :cvar freedom_cases: Freedom cases used in the finite element analysis.</span>
+<span class="sd">    :vartype freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]</span>
+<span class="sd">    :cvar load_cases: Load cases used in the finite element analysis.</span>
+<span class="sd">    :vartype load_cases: list[:class:`feastruct.fea.cases.LoadCase`]</span>
+<span class="sd">    :cvar analysis_cases: Analysis cases used in the finite element analysis.</span>
+<span class="sd">    :vartype analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]</span>
+<span class="sd">    :cvar bool non_linear: Boolean defining the type of analysis</span>
+<span class="sd">    :cvar int dofs: Number of degrees of freedom per node for the current</span>
+<span class="sd">        analysis type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="fea.__init__"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">freedom_cases</span><span class="p">,</span> <span class="n">load_cases</span><span class="p">,</span>
+                 <span class="n">analysis_cases</span><span class="p">,</span> <span class="n">non_linear</span><span class="p">,</span> <span class="n">dofs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the fea class.</span>
+
+<span class="sd">        :param nodes: List of nodes with which to initialise the class.</span>
+<span class="sd">        :type nodes: list[:class:`feastruct.fea.node.Node`]</span>
+<span class="sd">        :param elements: List of elements with which to initialise the class.</span>
+<span class="sd">        :type elements: list[:class:`feastruct.fea.fea.FiniteElement`]</span>
+<span class="sd">        :param freedom_cases: List of freedom cases with which to initialise</span>
+<span class="sd">            the class.</span>
+<span class="sd">        :type freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]</span>
+<span class="sd">        :param load_cases: List of load cases with which to initialise the</span>
+<span class="sd">            class.</span>
+<span class="sd">        :type load_cases: list[:class:`feastruct.fea.cases.LoadCase`]</span>
+<span class="sd">        :param analysis_cases: List of analysis cases with which to initialise</span>
+<span class="sd">            the class.</span>
+<span class="sd">        :type analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]</span>
+<span class="sd">        :param bool non_linear: Boolean defining the type of analysis</span>
+<span class="sd">        :param int dofs: Number of degrees of freedom per node for the current</span>
+<span class="sd">            analysis type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span>
+
+        <span class="k">if</span> <span class="n">elements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
+
+        <span class="k">if</span> <span class="n">freedom_cases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freedom_cases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freedom_cases</span> <span class="o">=</span> <span class="n">freedom_cases</span>
+
+        <span class="k">if</span> <span class="n">load_cases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_cases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_cases</span> <span class="o">=</span> <span class="n">load_cases</span>
+
+        <span class="k">if</span> <span class="n">analysis_cases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">analysis_cases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">analysis_cases</span> <span class="o">=</span> <span class="n">analysis_cases</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_linear</span> <span class="o">=</span> <span class="n">non_linear</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dofs</span> <span class="o">=</span> <span class="n">dofs</span></div>
+
+<div class="viewcode-block" id="fea.add_node"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.add_node">[docs]</a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">coord</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a node to the fea class.</span>
+
+<span class="sd">        Adds a :class:`feastruct.fea.node.Node` object to the fea object.</span>
+<span class="sd">        Checks for an exisiting id and ensures that a node is not already in</span>
+<span class="sd">        the desired location.</span>
+
+<span class="sd">        :param int id: Unique id identifying the node</span>
+<span class="sd">        :param coord: Cartesian coordinates of the node</span>
+<span class="sd">        :type coord: List[float, float]</span>
+<span class="sd">        :raises FEAInputError: If the id already exists or if a node</span>
+<span class="sd">            already exists at the desired location.</span>
+
+<span class="sd">        The following example creates an analysis object and creates a node at</span>
+<span class="sd">        x = 1 and y = 2::</span>
+
+<span class="sd">            analysis = fea()</span>
+<span class="sd">            analysis.add_node(id=1, coord=[1, 2])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: check that node id and location does not already exist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Node</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">coord</span><span class="p">))</span></div>
+
+        <span class="c1"># raise exception if duplicate added</span>
+
+<div class="viewcode-block" id="fea.add_element"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.add_element">[docs]</a>    <span class="k">def</span> <span class="nf">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds an element to the fea class.</span>
+
+<span class="sd">        Adds a :class:`feastruct.fea.fea.FiniteElement` object to the fea</span>
+<span class="sd">        object. Checks for an exisiting id.</span>
+
+<span class="sd">        :param element: Element to be added to the analysis object.</span>
+<span class="sd">        :type element: :class:`feastruct.fea.fea.FiniteElement`</span>
+<span class="sd">        :raises FEAInputError: If the specified element id already exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: check that element id does not already exist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span></div>
+
+        <span class="c1"># raise exception if duplicate added</span>
+
+<div class="viewcode-block" id="fea.add_freedom_case"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.add_freedom_case">[docs]</a>    <span class="k">def</span> <span class="nf">add_freedom_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a freedom case to the fea class.</span>
+
+<span class="sd">        Adds a :class:`feastruct.fea.cases.FreedomCase` object to the fea</span>
+<span class="sd">        object. Checks for an exisiting id.</span>
+
+<span class="sd">        :param int id: Freedom case unique id</span>
+<span class="sd">        :param items: List of items to initialise the freedom case with</span>
+<span class="sd">        :type item: list[:class:`feastruct.fea.bcs.BoundaryCondition`]</span>
+<span class="sd">        :return: A freedom case object</span>
+<span class="sd">        :rtype: :class:`feastruct.fea.cases.FreedomCase`</span>
+<span class="sd">        :raises FEAInputError: If the freedom case id already exists.</span>
+
+<span class="sd">        The following example creates an analysis object and creates a freedom</span>
+<span class="sd">        case with and id of 1::</span>
+
+<span class="sd">            analysis = fea()</span>
+<span class="sd">            fc1 = analysis.add_freedom_case(id=1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: check to see if id already exists and raise exception</span>
+
+        <span class="n">fc</span> <span class="o">=</span> <span class="n">Cases</span><span class="o">.</span><span class="n">FreedomCase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freedom_cases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fc</span></div>
+
+<div class="viewcode-block" id="fea.add_load_case"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.add_load_case">[docs]</a>    <span class="k">def</span> <span class="nf">add_load_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a load case to the fea class.</span>
+
+<span class="sd">        Adds a :class:`feastruct.fea.cases.LoadCase` object to the fea object.</span>
+<span class="sd">        Checks for an exisiting id.</span>
+
+<span class="sd">        :param int id: Load case unique id</span>
+<span class="sd">        :param items: List of items to initialise the load case with</span>
+<span class="sd">        :type item: list[:class:`feastruct.fea.bcs.BoundaryCondition`]</span>
+<span class="sd">        :return: A load case object</span>
+<span class="sd">        :rtype: :class:`feastruct.fea.cases.LoadCase`</span>
+<span class="sd">        :raises FEAInputError: If the load case id already exists.</span>
+
+<span class="sd">        The following example creates an analysis object and creates a load</span>
+<span class="sd">        case with and id of 1::</span>
+
+<span class="sd">            analysis = fea()</span>
+<span class="sd">            lc1 = analysis.add_load_case(id=1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: check to see if id already exists and raise exception</span>
+
+        <span class="n">lc</span> <span class="o">=</span> <span class="n">Cases</span><span class="o">.</span><span class="n">LoadCase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_cases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lc</span></div>
+
+<div class="viewcode-block" id="fea.add_analysis_case"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.add_analysis_case">[docs]</a>    <span class="k">def</span> <span class="nf">add_analysis_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">fc_id</span><span class="p">,</span> <span class="n">lc_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds an analysis case to the fea class.</span>
+
+<span class="sd">        Adds a :class:`feastruct.fea.cases.AnalysisCase` object to the fea</span>
+<span class="sd">        object. Checks for an exisiting id.</span>
+
+<span class="sd">        :param int id: Load case unique id</span>
+<span class="sd">        :param int fc_id: Freedom case id to add to the analysis case</span>
+<span class="sd">        :param int lc_id: Load case id to add to the analysis case</span>
+<span class="sd">        :raises FEAInputError: If the load case id already exists.</span>
+
+<span class="sd">        The following example creates an analysis object, a load and freedom</span>
+<span class="sd">        case, and an analysis case using these newly created load and freedom</span>
+<span class="sd">        cases::</span>
+
+<span class="sd">            analysis = fea()</span>
+<span class="sd">            fc1 = analysis.add_freedom_case(id=1)</span>
+<span class="sd">            lc1 = analysis.add_load_case(id=1)</span>
+<span class="sd">            analysis.add_analysis_case(id=1, fc_id=1, lc_id=1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: check to see if id already exists and raise exception</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_cases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Cases</span><span class="o">.</span><span class="n">AnalysisCase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">fc_id</span><span class="p">,</span> <span class="n">lc_id</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="fea.find_node"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.find_node">[docs]</a>    <span class="k">def</span> <span class="nf">find_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finds and returns the Node object given its node_id.</span>
+
+<span class="sd">        :param int node_id: Unique node id</span>
+<span class="sd">        :return: The Node object corresponding to the node_id</span>
+<span class="sd">        :rtype: :class:`feastruct.fea.node.Node`</span>
+<span class="sd">        :raises FEAInputError: If the Node corresponding to node_id cannot be</span>
+<span class="sd">            found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># return the Node object whose id matches the given node_id</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">node_id</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">node</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">FEAInputError</span><span class="p">(</span><span class="s2">&quot;Cannot find node_id: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node_id</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="fea.get_node_lims"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.get_node_lims">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_lims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finds and returns the minimum and maximum x and y values within the</span>
+<span class="sd">        current analysis.</span>
+
+<span class="sd">        :return: (xmin, xmax, ymin, ymax)</span>
+<span class="sd">        :rtype: tuple(float, float, float, float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">xmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">ymin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">y</span>
+        <span class="n">ymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">xmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">xmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">xmax</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">ymin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ymax</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="fea.find_analysis_case"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.fea.find_analysis_case">[docs]</a>    <span class="k">def</span> <span class="nf">find_analysis_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finds and returns the analysis case given its case_id</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :return: Analysis case corresponding to the case_id</span>
+<span class="sd">        :rtype: :class:`feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :raises FEAInputError: If the analysis case corresponding to case_id</span>
+<span class="sd">            cannot be found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># return the AnalysisCase object whose id matches the given case_id</span>
+        <span class="k">for</span> <span class="n">analysis_case</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_cases</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">analysis_case</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">case_id</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">analysis_case</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">FEAInputError</span><span class="p">(</span><span class="s2">&quot;Cannot find AnalysisCase id: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">case_id</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="FiniteElement"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement">[docs]</a><span class="k">class</span> <span class="nc">FiniteElement</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for a finite element.</span>
+
+<span class="sd">    Establishes a template for each different type of finite element,</span>
+<span class="sd">    e.g. frame element, membrane element, plate element etc. and provides a</span>
+<span class="sd">    number of generic methods which are useful for all types of elements.</span>
+
+<span class="sd">    :cvar analysis: Analysis object</span>
+<span class="sd">    :vartype analysis: :class:`feastruct.fea.fea.fea`</span>
+<span class="sd">    :cvar int id: Unique finite element id</span>
+<span class="sd">    :cvar nodes: List of node objects that define the geometry of the finite</span>
+<span class="sd">        element</span>
+<span class="sd">    :vartype nodes: list[:class:`feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar f_int: Internal force vector results for an arbitray number of</span>
+<span class="sd">        analysis cases</span>
+<span class="sd">    :vartype f_int: :class:`feastruct.post.results.ResultList`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FiniteElement.__init__"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">node_ids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;inits the FiniteElement class.</span>
+
+<span class="sd">        :param analysis: Analysis object</span>
+<span class="sd">        :type analysis: :class:`feastruct.fea.fea.fea`</span>
+<span class="sd">        :param int id: Unique finite element id</span>
+<span class="sd">        :param node_ids: A list of node ids defining the geometry of the</span>
+<span class="sd">            element</span>
+<span class="sd">        :type node_ids: list[int]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span> <span class="o">=</span> <span class="n">analysis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_int</span> <span class="o">=</span> <span class="n">ResultList</span><span class="p">()</span>
+
+        <span class="c1"># add references to the node objects</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_nodes</span><span class="p">(</span><span class="n">node_ids</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">FEAInputError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_nodes"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_ids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finds and returns a list of node objects corresponding to nodes with</span>
+<span class="sd">        ids in node_ids.</span>
+
+<span class="sd">        :param node_ids: A list of unique node ids</span>
+<span class="sd">        :type node_ids: list[int]</span>
+<span class="sd">        :return: A list of node objects corresponding to the list of node_ids</span>
+<span class="sd">        :rtype: list[:class:`feastruct.fea.node.Node`]</span>
+<span class="sd">        :raises FEAInputError: If a node with node_id cannot be find in the</span>
+<span class="sd">            analysis object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">node_ids</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">find_node</span><span class="p">(</span><span class="n">node_id</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">FEAInputError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in FiniteElement id: </span><span class="si">{}</span><span class="s2">. </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_node_coords"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_node_coords">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an array of the cartesian coordinates defining the geometry</span>
+<span class="sd">        of the finite element.</span>
+
+<span class="sd">        :return: An (n x 2) array of node coordinates, where n is the number of</span>
+<span class="sd">            nodes for the given finite element</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">coord_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">coord_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coord_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_nodal_displacements"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_nodal_displacements">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodal_displacements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an array of the nodal displacements of each degree of</span>
+<span class="sd">        freedom in the finite element for an analysis case defined by case_id.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :return: An (n x ndof) array of degree of freedom displacements, where</span>
+<span class="sd">            n is the number of nodes for the given finite element and ndof is</span>
+<span class="sd">            the number of degrees of freedom per node for the current analysis</span>
+<span class="sd">            type</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">disp_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of displacements</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">disp_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get_displacement</span><span class="p">(</span><span class="n">case_id</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">disp_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_buckling_results"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_buckling_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_buckling_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the eigenvalue corresponding to the buckling analysis</span>
+<span class="sd">        defined by the analysis case id and the buckling mode. Also returns an</span>
+<span class="sd">        array of eigenvector values corresponding to each degree of freedom in</span>
+<span class="sd">        the finite element for the given analysis case and buckling mode.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param int buckling_mode: Buckling mode number</span>
+<span class="sd">        :return: (w, v) A tuple containing the eigenvalue &#39;w&#39; and an (n x ndof)</span>
+<span class="sd">            array of degree of freedom eigenvector values &#39;v&#39;, where n is the</span>
+<span class="sd">            number of nodes for the given finite element and ndof is the number</span>
+<span class="sd">            of degrees of freedom per node for the current analysis type</span>
+<span class="sd">        :rtype: tuple(float, :class:`numpy.ndarray`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">v_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of eigenvectors</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_buckling_results</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">)</span>
+            <span class="n">v_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v_list</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_frequency_results"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the frequency corresponding to the natural frequency</span>
+<span class="sd">        analysis defined by the analysis case id and the frequency mode. Also</span>
+<span class="sd">        returns an array of eigenvector values corresponding to each degree of</span>
+<span class="sd">        freedom in the finite element for the given analysis case and frequency</span>
+<span class="sd">        mode.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param int frequency_mode: Frequency mode number</span>
+<span class="sd">        :return: (w, v) A tuple containing the frequency &#39;w&#39; and an (n x ndof)</span>
+<span class="sd">            array of degree of freedom eigenvector values &#39;v&#39;, where n is the</span>
+<span class="sd">            number of nodes for the given finite element and ndof is the number</span>
+<span class="sd">            of degrees of freedom per node for the current analysis type</span>
+<span class="sd">        :rtype: tuple(float, :class:`numpy.ndarray`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">v_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of eigenvectors</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_frequency_results</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">)</span>
+            <span class="n">v_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v_list</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_dofs"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_dofs">[docs]</a>    <span class="k">def</span> <span class="nf">get_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finds and returns an array of global degree of freedom numbers</span>
+<span class="sd">        corresponding to the degrees of freedom of the finite element.</span>
+
+<span class="sd">        :return: A integer array of degrees of freedom, with a length of</span>
+<span class="sd">            n*ndof, where n is the number of nodes for the given finite element</span>
+<span class="sd">            and ndof is the number of degrees of freedom per node for the</span>
+<span class="sd">            current analysis type</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dof_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">dof_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dof_list</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dof_list</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_fint"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_fint">[docs]</a>    <span class="k">def</span> <span class="nf">get_fint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the internal force vector corresponding to the analysis case</span>
+<span class="sd">        id.</span>
+
+<span class="sd">        :param int case_id: Unique analysis case id</span>
+<span class="sd">        :return: A result item containing the internal force vector</span>
+<span class="sd">        :rtype: :class:`feastruct.post.results.ResultItem`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_int</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FiniteElement.set_fint"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.set_fint">[docs]</a>    <span class="k">def</span> <span class="nf">set_fint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">f_int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves the internal force vector result corresponding to the analysis</span>
+<span class="sd">        case id.</span>
+
+<span class="sd">        :param int case_id: Unique analysis case id</span>
+<span class="sd">        :param f_int: Internal force vector array, with a length of n*ndof,</span>
+<span class="sd">            where n is the number of nodes for the given finite element</span>
+<span class="sd">            and ndof is the number of degrees of freedom per node for the</span>
+<span class="sd">            current analysis type</span>
+<span class="sd">        :type f_int: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># save internal force vector in global coordinate system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_int</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">FrameForceVector</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">f_int</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

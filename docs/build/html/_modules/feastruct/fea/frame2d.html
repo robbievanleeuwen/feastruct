@@ -1,0 +1,797 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>feastruct.fea.frame2d &mdash; feastruct 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame2D.html">Frame Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>feastruct.fea.frame2d</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for feastruct.fea.frame2d</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Polygon</span>
+<span class="kn">from</span> <span class="nn">feastruct.fea.fea</span> <span class="k">import</span> <span class="n">fea</span><span class="p">,</span> <span class="n">FiniteElement</span>
+<span class="kn">from</span> <span class="nn">feastruct.post.results</span> <span class="k">import</span> <span class="n">FrameForceVector</span>
+<span class="kn">from</span> <span class="nn">feastruct.fea.exceptions</span> <span class="k">import</span> <span class="n">FEAInputError</span>
+
+
+<div class="viewcode-block" id="Frame2D"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.Frame2D">[docs]</a><span class="k">class</span> <span class="nc">Frame2D</span><span class="p">(</span><span class="n">fea</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for a 2D frame analysis.</span>
+
+<span class="sd">    Includes a method for analysis initiation and a method for adding a frame</span>
+<span class="sd">    element to the analysis.</span>
+
+<span class="sd">    :cvar nodes: Nodes used in the finite element analysis.</span>
+<span class="sd">    :vartype nodes: list[:class:`feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar elements: Elements used in the finite element analysis.</span>
+<span class="sd">    :vartype elements: list[:class:`feastruct.fea.fea.FiniteElement`]</span>
+<span class="sd">    :cvar freedom_cases: Freedom cases used in the finite element analysis.</span>
+<span class="sd">    :vartype freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]</span>
+<span class="sd">    :cvar load_cases: Load cases used in the finite element analysis.</span>
+<span class="sd">    :vartype load_cases: list[:class:`feastruct.fea.cases.LoadCase`]</span>
+<span class="sd">    :cvar analysis_cases: Analysis cases used in the finite element analysis.</span>
+<span class="sd">    :vartype analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]</span>
+<span class="sd">    :cvar bool non_linear: Boolean defining the type of analysis</span>
+<span class="sd">    :cvar int dofs: Number of degrees of freedom per node for the current</span>
+<span class="sd">        analysis type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Frame2D.__init__"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.Frame2D.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">freedom_cases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">load_cases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">analysis_cases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">non_linear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Frame2D class.</span>
+
+<span class="sd">        :param nodes: List of nodes with which to initialise the class.</span>
+<span class="sd">        :type nodes: list[:class:`feastruct.fea.node.Node`]</span>
+<span class="sd">        :param elements: List of elements with which to initialise the class.</span>
+<span class="sd">        :type elements: list[:class:`feastruct.fea.fea.FiniteElement`]</span>
+<span class="sd">        :param freedom_cases: List of freedom cases with which to initialise</span>
+<span class="sd">            the class.</span>
+<span class="sd">        :type freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]</span>
+<span class="sd">        :param load_cases: List of load cases with which to initialise the</span>
+<span class="sd">            class.</span>
+<span class="sd">        :type load_cases: list[:class:`feastruct.fea.cases.LoadCase`]</span>
+<span class="sd">        :param analysis_cases: List of analysis cases with which to initialise</span>
+<span class="sd">            the class.</span>
+<span class="sd">        :type analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]</span>
+<span class="sd">        :param bool non_linear: Boolean defining the type of analysis</span>
+<span class="sd">        :param int dofs: Number of degrees of freedom per node for the current</span>
+<span class="sd">            analysis type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># initialise parent fea class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">freedom_cases</span><span class="p">,</span> <span class="n">load_cases</span><span class="p">,</span>
+                         <span class="n">analysis_cases</span><span class="p">,</span> <span class="n">non_linear</span><span class="p">,</span> <span class="n">dofs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Frame2D.add_element"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.Frame2D.add_element">[docs]</a>    <span class="k">def</span> <span class="nf">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">node_ids</span><span class="p">,</span> <span class="n">el_type</span><span class="o">=</span><span class="s1">&#39;EB2&#39;</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ixx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">G</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">A_s</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a frame element to a :class:`feastruct.fea.frame2d.Frame2D`</span>
+<span class="sd">        analysis. Possible element types include:</span>
+
+<span class="sd">        * &#39;EB2&#39;: 2 Noded Euler Bernoulli Frame Element</span>
+<span class="sd">            * Requires *E*, *A*, *ixx* for a static analysis</span>
+<span class="sd">            * Requires *rho* for a natrual frequency analysis, a dynamic</span>
+<span class="sd">              analysis, or if body loads are used</span>
+<span class="sd">        * &#39;TM2&#39;: 2 Noded Timoshenko Frame Element</span>
+<span class="sd">            * Requires *E*, *A*, *ixx*, *G*, *A_s* for a static analysis</span>
+<span class="sd">            * Requires *rho* for a natrual frequency analysis, a dynamic</span>
+<span class="sd">              analysis, or if body loads are used</span>
+
+<span class="sd">        :param int id: Unique element id</span>
+<span class="sd">        :param node_ids: List of unique node ids defining the element</span>
+<span class="sd">        :type node_ids: list[int, int]</span>
+<span class="sd">        :param string el_type: String characterising the type of frame element</span>
+<span class="sd">        :param float E: Elastic modulus</span>
+<span class="sd">        :param float A: Cross-sectional area</span>
+<span class="sd">        :param float ixx: Second moment of inertia</span>
+<span class="sd">        :param float G: Shear stiffness</span>
+<span class="sd">        :param float A_s: Shear Area</span>
+<span class="sd">        :param float rho: Material density</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">el_type</span> <span class="o">==</span> <span class="s1">&#39;EB2&#39;</span><span class="p">:</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">EulerBernoulliFrame2D</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">node_ids</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">ixx</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+        <span class="c1"># elif el_type == &#39;TM2&#39;:</span>
+        <span class="c1">#     element = TimoshenkoFrame2D(self, id, node_ids, E, A, ixx, G,</span>
+        <span class="c1">#                                 A_s, rho)</span>
+
+        <span class="n">fea</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="FrameElement"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement">[docs]</a><span class="k">class</span> <span class="nc">FrameElement</span><span class="p">(</span><span class="n">FiniteElement</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for a frame element.</span>
+
+<span class="sd">    Establishes a template for a frame element and provides a number of generic</span>
+<span class="sd">    methods that can be used for any frame element.</span>
+
+<span class="sd">    :cvar analysis: Analysis object</span>
+<span class="sd">    :vartype analysis: :class:`feastruct.fea.fea.fea`</span>
+<span class="sd">    :cvar int id: Unique finite element id</span>
+<span class="sd">    :cvar nodes: List of node objects that define the geometry of the finite</span>
+<span class="sd">        element</span>
+<span class="sd">    :vartype nodes: list[:class:`feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar f_int: Internal force vector results for an arbitray number of</span>
+<span class="sd">        analysis cases</span>
+<span class="sd">    :vartype f_int: :class:`feastruct.post.results.ResultList`</span>
+<span class="sd">    :cvar float E: Elastic modulus</span>
+<span class="sd">    :cvar float A: Cross-sectional area</span>
+<span class="sd">    :cvar float rho: Material density</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FrameElement.__init__"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">node_ids</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the FrameElement class.</span>
+
+<span class="sd">        :param analysis: Analysis object</span>
+<span class="sd">        :type analysis: :class:`feastruct.fea.fea.fea`</span>
+<span class="sd">        :param int id: Unique finite element id</span>
+<span class="sd">        :param node_ids: A list of node ids defining the geometry of the</span>
+<span class="sd">            element</span>
+<span class="sd">        :type node_ids: list[int]</span>
+<span class="sd">        :param float E: Elastic modulus</span>
+<span class="sd">        :param float A: Cross-sectional area</span>
+<span class="sd">        :param float rho: Material density</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># initialise parent class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">node_ids</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="n">E</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">A</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span></div>
+
+<div class="viewcode-block" id="FrameElement.get_geometric_properties"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement.get_geometric_properties">[docs]</a>    <span class="k">def</span> <span class="nf">get_geometric_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates geometric properties related to a frame element. Returns</span>
+<span class="sd">        the following:</span>
+
+<span class="sd">        * *node_coods*: An (n x 2) array of node coordinates, where n is the</span>
+<span class="sd">          number of nodes for the given finite element</span>
+<span class="sd">        * *dx*: An array consisting of the x and y distances between the nodes</span>
+<span class="sd">        * *l0*: The original length of the frame element</span>
+<span class="sd">        * *phi*: The angle of the frame element with respect to the global</span>
+<span class="sd">          x-axis</span>
+<span class="sd">        * *c*: The cosine of phi</span>
+<span class="sd">        * *s*: The sine of phi</span>
+
+<span class="sd">        :return: (node_coords, dx, l0, phi, c, s)</span>
+<span class="sd">        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`, float,</span>
+<span class="sd">            float, float, float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">node_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_coords</span><span class="p">()</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">l0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">dx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FrameElement.set_fint"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement.set_fint">[docs]</a>    <span class="k">def</span> <span class="nf">set_fint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">f_int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the internal force vector result for the result case defined by</span>
+<span class="sd">        case_id. The argument f_int is an array consisting of the following</span>
+<span class="sd">        items:</span>
+
+<span class="sd">        * *f_int[0]*: Force in the x-direction at node 1</span>
+<span class="sd">        * *f_int[1]*: Force in the y-direction at node 1</span>
+<span class="sd">        * *f_int[2]*: Moment at node 1</span>
+<span class="sd">        * *f_int[3]*: Force in the x-direction at node 2</span>
+<span class="sd">        * *f_int[4]*: Force in the y-direction at node 2</span>
+<span class="sd">        * *f_int[5]*: Moment at node 2</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param f_int: Internal force vector</span>
+<span class="sd">        :type f_int: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">,</span> <span class="o">-</span><span class="n">f_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span><span class="p">,</span>
+             <span class="n">f_int</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">,</span>
+             <span class="o">-</span><span class="n">f_int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span><span class="p">,</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_int</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">FrameForceVector</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FrameElement.plot_element"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_element">[docs]</a>    <span class="k">def</span> <span class="nf">plot_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots the undeformed frame element on the axis defined by ax.</span>
+
+<span class="sd">        :param ax: Axis object on which to draw the element</span>
+<span class="sd">        :type ax: :class:`matplotlib.axes.Axes`</span>
+<span class="sd">        :param string linestyle: Element linestyle</span>
+<span class="sd">        :param int linewidth: Element linewidth</span>
+<span class="sd">        :param string marker: Node marker type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_coords</span><span class="p">()</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FrameElement.plot_deformed_element"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_deformed_element">[docs]</a>    <span class="k">def</span> <span class="nf">plot_deformed_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots the element in its deformed configuration. This method adopts</span>
+<span class="sd">        a linear interpolation between the two end nodes.</span>
+
+<span class="sd">        :param ax: Axis object on which to draw the element</span>
+<span class="sd">        :type ax: :class:`matplotlib.axes.Axes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">pass</span></div>
+        <span class="c1"># TODO: IMPLEMENT DEFAULT LINEAR BEHAVIOUR</span>
+
+<div class="viewcode-block" id="FrameElement.plot_axial_force"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_axial_force">[docs]</a>    <span class="k">def</span> <span class="nf">plot_axial_force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">scalef</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots the axial force diagram from a static analysis defined by</span>
+<span class="sd">        case_id. N.B. this method is adopted from the MATLAB code by F.P. van</span>
+<span class="sd">        der Meer: plotNLine.m.</span>
+
+<span class="sd">        :param ax: Axis object on which to draw the element</span>
+<span class="sd">        :type ax: :class:`matplotlib.axes.Axes`</span>
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param float scalef: Factor by which to scale the axial force diagram</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get geometric properties</span>
+        <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># get internal force vector</span>
+        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fint</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="n">n1</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_int</span><span class="o">.</span><span class="n">N1</span>  <span class="c1"># axial force at node 1 (tension positive)</span>
+        <span class="n">n2</span> <span class="o">=</span> <span class="n">f_int</span><span class="o">.</span><span class="n">N2</span>  <span class="c1"># axial force at node 2 (tension positive)</span>
+
+        <span class="c1"># location of node 1 and node 2</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">p2</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># location of the axial force diagram end points</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span> <span class="n">dx</span><span class="p">)</span> <span class="o">/</span> <span class="n">l0</span>  <span class="c1"># direction vector</span>
+        <span class="n">p3</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">+</span> <span class="n">v</span> <span class="o">*</span> <span class="n">scalef</span> <span class="o">*</span> <span class="n">n2</span>
+        <span class="n">p4</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">+</span> <span class="n">v</span> <span class="o">*</span> <span class="n">scalef</span> <span class="o">*</span> <span class="n">n1</span>
+
+        <span class="c1"># plot axial force line and patch</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">,</span> <span class="n">p4</span><span class="p">]),</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">))</span>
+
+        <span class="c1"># plot text value of axial force</span>
+        <span class="n">mid1</span> <span class="o">=</span> <span class="p">(</span><span class="n">p1</span> <span class="o">+</span> <span class="n">p4</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">mid2</span> <span class="o">=</span> <span class="p">(</span><span class="n">p2</span> <span class="o">+</span> <span class="n">p3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">mid1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mid1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">{:5.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n1</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">mid2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mid2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">{:5.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n2</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FrameElement.plot_shear_force"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_shear_force">[docs]</a>    <span class="k">def</span> <span class="nf">plot_shear_force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">scalef</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots the axial force diagram from a static analysis defined by</span>
+<span class="sd">        case_id. N.B. this method is adopted from the MATLAB code by F.P. van</span>
+<span class="sd">        der Meer: plotVLine.m.</span>
+
+<span class="sd">        :param ax: Axis object on which to draw the element</span>
+<span class="sd">        :type ax: :class:`matplotlib.axes.Axes`</span>
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param float scalef: Factor by which to scale the shear force diagram</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get geometric properties</span>
+        <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># get internal force vector</span>
+        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fint</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">f_int</span><span class="o">.</span><span class="n">V1</span>  <span class="c1"># shear force at node 1 (cw positive)</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_int</span><span class="o">.</span><span class="n">V2</span>  <span class="c1"># shear force at node 2 (cw positive)</span>
+
+        <span class="c1"># location of node 1 and node 2</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">p2</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># location of the shear force diagram end points</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span> <span class="n">dx</span><span class="p">)</span> <span class="o">/</span> <span class="n">l0</span>  <span class="c1"># direction vector</span>
+        <span class="n">p3</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">+</span> <span class="n">v</span> <span class="o">*</span> <span class="n">scalef</span> <span class="o">*</span> <span class="n">v2</span>
+        <span class="n">p4</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">+</span> <span class="n">v</span> <span class="o">*</span> <span class="n">scalef</span> <span class="o">*</span> <span class="n">v1</span>
+
+        <span class="c1"># plot shear force line and patch</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">,</span> <span class="n">p4</span><span class="p">]),</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span>
+                             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">))</span>
+
+        <span class="c1"># plot text value of shear force</span>
+        <span class="n">mid1</span> <span class="o">=</span> <span class="p">(</span><span class="n">p1</span> <span class="o">+</span> <span class="n">p4</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">mid2</span> <span class="o">=</span> <span class="p">(</span><span class="n">p2</span> <span class="o">+</span> <span class="n">p3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">mid1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mid1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">{:5.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">mid2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mid2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">{:5.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v2</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FrameElement.plot_bending_moment"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_bending_moment">[docs]</a>    <span class="k">def</span> <span class="nf">plot_bending_moment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">scalef</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots the axial force diagram from a static analysis defined by</span>
+<span class="sd">        case_id. N.B. this method is adopted from the MATLAB code by F.P. van</span>
+<span class="sd">        der Meer: plotMLine.m.</span>
+
+<span class="sd">        :param ax: Axis object on which to draw the element</span>
+<span class="sd">        :type ax: :class:`matplotlib.axes.Axes`</span>
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param float scalef: Factor by which to scale the bending moment</span>
+<span class="sd">            diagram</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get geometric properties</span>
+        <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># get internal force vector</span>
+        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fint</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">f_int</span><span class="o">.</span><span class="n">M1</span>  <span class="c1"># bending moment at node 1 (tension positive)</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_int</span><span class="o">.</span><span class="n">M2</span>  <span class="c1"># bending moment at node 2 (tension positive)</span>
+
+        <span class="c1"># location of node 1 and node 2</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">p2</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># location of the bending moment diagram end points</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span> <span class="n">dx</span><span class="p">)</span> <span class="o">/</span> <span class="n">l0</span>  <span class="c1"># direction vector</span>
+        <span class="n">p3</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">+</span> <span class="n">v</span> <span class="o">*</span> <span class="n">scalef</span> <span class="o">*</span> <span class="n">m2</span>
+        <span class="n">p4</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">+</span> <span class="n">v</span> <span class="o">*</span> <span class="n">scalef</span> <span class="o">*</span> <span class="n">m1</span>
+
+        <span class="c1"># plot bending moment line and patch</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">p3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">,</span> <span class="n">p4</span><span class="p">]),</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span>
+                             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">))</span>
+
+        <span class="c1"># plot text value of bending moment</span>
+        <span class="n">mid1</span> <span class="o">=</span> <span class="p">(</span><span class="n">p1</span> <span class="o">+</span> <span class="n">p4</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">mid2</span> <span class="o">=</span> <span class="p">(</span><span class="n">p2</span> <span class="o">+</span> <span class="n">p3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">mid1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mid1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">{:5.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m1</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">mid2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mid2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">{:5.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m2</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="EulerBernoulliFrame2D"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D">[docs]</a><span class="k">class</span> <span class="nc">EulerBernoulliFrame2D</span><span class="p">(</span><span class="n">FrameElement</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Two dimensional frame element based on the Euler-Bernoulli beam</span>
+<span class="sd">    formulation for relatively thin beams. The element is defined by its two</span>
+<span class="sd">    end nodes and uses cubic polynomial shape functions to produce analytical</span>
+<span class="sd">    deformations.</span>
+
+<span class="sd">    :cvar analysis: Analysis object</span>
+<span class="sd">    :vartype analysis: :class:`feastruct.fea.fea.fea`</span>
+<span class="sd">    :cvar int id: Unique finite element id</span>
+<span class="sd">    :cvar nodes: List of node objects that define the geometry of the finite</span>
+<span class="sd">        element</span>
+<span class="sd">    :vartype nodes: list[:class:`feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar f_int: Internal force vector results for an arbitray number of</span>
+<span class="sd">        analysis cases</span>
+<span class="sd">    :vartype f_int: :class:`feastruct.post.results.ResultList`</span>
+<span class="sd">    :cvar float E: Elastic modulus</span>
+<span class="sd">    :cvar float A: Cross-sectional area</span>
+<span class="sd">    :cvar float ixx: Second moment of inertia</span>
+<span class="sd">    :cvar float rho: Material density</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EulerBernoulliFrame2D.__init__"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">node_ids</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">ixx</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the EulerBernoulliFrame2D class.</span>
+
+<span class="sd">        :param analysis: Analysis object</span>
+<span class="sd">        :type analysis: :class:`feastruct.fea.fea.fea`</span>
+<span class="sd">        :param int id: Unique finite element id</span>
+<span class="sd">        :param node_ids: A list of node ids defining the geometry of the</span>
+<span class="sd">            element</span>
+<span class="sd">        :type node_ids: list[int]</span>
+<span class="sd">        :param float E: Elastic modulus</span>
+<span class="sd">        :param float A: Cross-sectional area</span>
+<span class="sd">        :param float ixx: Second moment of inertia</span>
+<span class="sd">        :param float rho: Material density</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">node_ids</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ixx</span> <span class="o">=</span> <span class="n">ixx</span></div>
+
+<div class="viewcode-block" id="EulerBernoulliFrame2D.get_stiff_matrix"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_stiff_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_stiff_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the stiffness matrix for a 2D Euler-Bernoulli frame element.</span>
+<span class="sd">        The stiffness matrix has been analytically integrated so numerical</span>
+<span class="sd">        integration is not necessary.</span>
+
+<span class="sd">        :return: 6 x 6 element stiffness matrix</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">non_linear</span><span class="p">:</span>
+            <span class="c1"># compute geometric parameters</span>
+            <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+            <span class="c1"># use analytical integration result:</span>
+            <span class="c1"># compute bar stiffness</span>
+            <span class="n">k_el_bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">/</span> <span class="n">l0</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+
+            <span class="c1"># compute beam stiffness</span>
+            <span class="n">k_el_beam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ixx</span> <span class="o">/</span> <span class="p">(</span><span class="n">l0</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="n">l0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">l0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">l0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">l0</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="n">l0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span> <span class="o">*</span> <span class="n">l0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="n">l0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span> <span class="o">*</span> <span class="n">l0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span> <span class="o">*</span> <span class="n">l0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">l0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="n">l0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span> <span class="o">*</span> <span class="n">l0</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="n">l0</span><span class="p">]]))</span>
+
+            <span class="n">k_el</span> <span class="o">=</span> <span class="n">k_el_bar</span> <span class="o">+</span> <span class="n">k_el_beam</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+            <span class="c1"># TODO: implement non-linear stiffness matrix</span>
+
+        <span class="c1"># construct rotation matrix</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">k_el</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EulerBernoulliFrame2D.get_geometric_stiff_matrix"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_geometric_stiff_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_geometric_stiff_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the geometric stiffness matrix for a 2D Euler-Bernoulli frame</span>
+<span class="sd">        element. The stiffness matrix has been analytically integrated so</span>
+<span class="sd">        numerical integration is not necessary. The geometric stiffness matrix</span>
+<span class="sd">        requires an axial force so the case id from a static analysis must be</span>
+<span class="sd">        provided.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :return: 6 x 6 element geometric stiffness matrix</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># compute geometric parameters</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># get axial force</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fint</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">FEAInputError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="c1"># get axial force in element (take average of nodal values)</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="o">-</span><span class="n">f_int</span><span class="o">.</span><span class="n">N1</span><span class="p">,</span> <span class="n">f_int</span><span class="o">.</span><span class="n">N2</span><span class="p">])</span>
+
+        <span class="c1"># form geometric stiffness matrix</span>
+        <span class="n">k_el_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="n">l0</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">l0</span><span class="o">/</span><span class="mi">10</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">l0</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">l0</span><span class="o">*</span><span class="n">l0</span><span class="o">/</span><span class="mi">15</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">l0</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="n">l0</span><span class="o">*</span><span class="n">l0</span><span class="o">/</span><span class="mi">30</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="o">-</span><span class="n">l0</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="o">-</span><span class="n">l0</span><span class="o">/</span><span class="mi">10</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">l0</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="n">l0</span><span class="o">*</span><span class="n">l0</span><span class="o">/</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">l0</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">l0</span><span class="o">*</span><span class="n">l0</span><span class="o">/</span><span class="mi">15</span><span class="p">]])</span>
+        <span class="n">k_el_g</span> <span class="o">*=</span> <span class="n">N</span> <span class="o">/</span> <span class="n">l0</span>
+
+        <span class="c1"># construct rotation matrix</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">k_el_g</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EulerBernoulliFrame2D.get_mass_matrix"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_mass_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_mass_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the mass matrix for a 2D Euler-Bernoulli frame element. The</span>
+<span class="sd">        mass matrix has been analytically integrated so numerical integration</span>
+<span class="sd">        is not necessary.</span>
+
+<span class="sd">        :return: 6 x 6 element mass matrix</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># compute geometric parameters</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># compute element mass matrix</span>
+        <span class="n">m_el</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">140</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">156</span><span class="p">,</span> <span class="mi">22</span><span class="o">*</span><span class="n">l0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">54</span><span class="p">,</span> <span class="o">-</span><span class="mi">13</span><span class="o">*</span><span class="n">l0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">22</span><span class="o">*</span><span class="n">l0</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">l0</span><span class="o">*</span><span class="n">l0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">13</span><span class="o">*</span><span class="n">l0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">l0</span><span class="o">*</span><span class="n">l0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">54</span><span class="p">,</span> <span class="mi">13</span><span class="o">*</span><span class="n">l0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">156</span><span class="p">,</span> <span class="o">-</span><span class="mi">22</span><span class="o">*</span><span class="n">l0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">13</span><span class="o">*</span><span class="n">l0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">l0</span><span class="o">*</span><span class="n">l0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">22</span><span class="o">*</span><span class="n">l0</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">l0</span><span class="o">*</span><span class="n">l0</span><span class="p">]])</span>
+        <span class="n">m_el</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">/</span> <span class="mi">420</span>
+
+        <span class="c1"># construct rotation matrix</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">m_el</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EulerBernoulliFrame2D.plot_deformed_element"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.plot_deformed_element">[docs]</a>    <span class="k">def</span> <span class="nf">plot_deformed_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">,</span> <span class="n">u_el</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots the element in its deformed configuration for either a static</span>
+<span class="sd">        analysis defined by case_id, or the element displacement vector u_el.</span>
+<span class="sd">        The deformation is based on the element shape functions.</span>
+
+<span class="sd">        :param ax: Axis object on which to draw the element</span>
+<span class="sd">        :type ax: :class:`matplotlib.axes.Axes`</span>
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param int n: Number of linear subdivisions used to plot the element</span>
+<span class="sd">        :param float def_scale: Deformation scale</span>
+<span class="sd">        :param u_el: 2 x 3 element displacement vector</span>
+<span class="sd">        :type u_el: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># nodal displacements in xy</span>
+        <span class="k">if</span> <span class="n">u_el</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">u_el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nodal_displacements</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+
+        <span class="c1"># compute frame geometric parameters</span>
+        <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># rotate nodal displacements to local axis</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+        <span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+
+        <span class="c1"># allocate displacement vectors</span>
+        <span class="n">u_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">u_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># original location of frame station points</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># loop through stations on frame</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)):</span>
+            <span class="c1"># element shape functions</span>
+            <span class="n">N_u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>
+            <span class="n">N_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">xi</span><span class="p">),</span>
+                            <span class="mf">0.125</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">),</span>
+                            <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">xi</span><span class="p">),</span>
+                            <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)])</span>
+
+            <span class="c1"># compute local displacements</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N_u</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N_v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                                      <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]))</span>
+
+            <span class="c1"># scale displacements by deformation scale</span>
+            <span class="n">u</span> <span class="o">*=</span> <span class="n">def_scale</span>
+            <span class="n">v</span> <span class="o">*=</span> <span class="n">def_scale</span>
+
+            <span class="c1"># compute cartesian displacements at point i</span>
+            <span class="n">u_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span> <span class="o">*</span> <span class="n">c</span> <span class="o">-</span> <span class="n">v</span> <span class="o">*</span> <span class="n">s</span>
+            <span class="n">u_y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span> <span class="o">*</span> <span class="n">s</span> <span class="o">+</span> <span class="n">v</span> <span class="o">*</span> <span class="n">c</span>
+
+            <span class="c1"># compute location of point i</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">x0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">y0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># plot frame elements</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># plot end markers</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span></div></div>
+
+
+<span class="c1"># class TimoshenkoFrame2D(FrameElement):</span>
+<span class="c1">#     &quot;&quot;&quot; TODO: implement with proper shape functions</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, analysis, id, node_ids, E, A, ixx, G, A_s, rho):</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#         super().__init__(analysis, id, node_ids, E, A, rho)</span>
+<span class="c1">#         self.ixx = ixx</span>
+<span class="c1">#         self.G = G</span>
+<span class="c1">#         self.A_s = A_s</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,672 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Frame Analysis &mdash; feastruct 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Finite Element Analysis" href="fea.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frame Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Frame Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/frame2D.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="frame-analysis">
+<h1>Frame Analysis<a class="headerlink" href="#frame-analysis" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><span class="target" id="module-feastruct.fea.frame2d"></span><dl class="class">
+<dt id="feastruct.fea.frame2d.EulerBernoulliFrame2D">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame2d.</code><code class="descname">EulerBernoulliFrame2D</code><span class="sig-paren">(</span><em>analysis</em>, <em>id</em>, <em>node_ids</em>, <em>E</em>, <em>A</em>, <em>ixx</em>, <em>rho</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#EulerBernoulliFrame2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.EulerBernoulliFrame2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame2d.FrameElement" title="feastruct.fea.frame2d.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame2d.FrameElement</span></code></a></p>
+<p>Two dimensional frame element based on the Euler-Bernoulli beam
+formulation for relatively thin beams. The element is defined by its two
+end nodes and uses cubic polynomial shape functions to produce analytical
+deformations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
+<li><strong>id</strong> (<em>int</em>) – Unique finite element id</li>
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>]) – List of node objects that define the geometry of the finite
+element</li>
+<li><strong>f_int</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultList</span></code>) – Internal force vector results for an arbitray number of
+analysis cases</li>
+<li><strong>E</strong> (<em>float</em>) – Elastic modulus</li>
+<li><strong>A</strong> (<em>float</em>) – Cross-sectional area</li>
+<li><strong>ixx</strong> (<em>float</em>) – Second moment of inertia</li>
+<li><strong>rho</strong> (<em>float</em>) – Material density</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame2d.EulerBernoulliFrame2D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>id</em>, <em>node_ids</em>, <em>E</em>, <em>A</em>, <em>ixx</em>, <em>rho</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#EulerBernoulliFrame2D.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.EulerBernoulliFrame2D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the EulerBernoulliFrame2D class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
+<li><strong>id</strong> (<em>int</em>) – Unique finite element id</li>
+<li><strong>node_ids</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – A list of node ids defining the geometry of the
+element</li>
+<li><strong>E</strong> (<em>float</em>) – Elastic modulus</li>
+<li><strong>A</strong> (<em>float</em>) – Cross-sectional area</li>
+<li><strong>ixx</strong> (<em>float</em>) – Second moment of inertia</li>
+<li><strong>rho</strong> (<em>float</em>) – Material density</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.EulerBernoulliFrame2D.get_geometric_stiff_matrix">
+<code class="descname">get_geometric_stiff_matrix</code><span class="sig-paren">(</span><em>case_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#EulerBernoulliFrame2D.get_geometric_stiff_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_geometric_stiff_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the geometric stiffness matrix for a 2D Euler-Bernoulli frame
+element. The stiffness matrix has been analytically integrated so
+numerical integration is not necessary. The geometric stiffness matrix
+requires an axial force so the case id from a static analysis must be
+provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>case_id</strong> (<em>int</em>) – Unique case id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">6 x 6 element geometric stiffness matrix</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.EulerBernoulliFrame2D.get_mass_matrix">
+<code class="descname">get_mass_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#EulerBernoulliFrame2D.get_mass_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_mass_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the mass matrix for a 2D Euler-Bernoulli frame element. The
+mass matrix has been analytically integrated so numerical integration
+is not necessary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">6 x 6 element mass matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.EulerBernoulliFrame2D.get_stiff_matrix">
+<code class="descname">get_stiff_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#EulerBernoulliFrame2D.get_stiff_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_stiff_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the stiffness matrix for a 2D Euler-Bernoulli frame element.
+The stiffness matrix has been analytically integrated so numerical
+integration is not necessary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">6 x 6 element stiffness matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.EulerBernoulliFrame2D.plot_deformed_element">
+<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>case_id</em>, <em>n</em>, <em>def_scale</em>, <em>u_el=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#EulerBernoulliFrame2D.plot_deformed_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.EulerBernoulliFrame2D.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the element in its deformed configuration for either a static
+analysis defined by case_id, or the element displacement vector u_el.
+The deformation is based on the element shape functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>n</strong> (<em>int</em>) – Number of linear subdivisions used to plot the element</li>
+<li><strong>def_scale</strong> (<em>float</em>) – Deformation scale</li>
+<li><strong>u_el</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – 2 x 3 element displacement vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="feastruct.fea.frame2d.Frame2D">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame2d.</code><code class="descname">Frame2D</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>elements=None</em>, <em>freedom_cases=None</em>, <em>load_cases=None</em>, <em>analysis_cases=None</em>, <em>non_linear=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#Frame2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.Frame2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a></p>
+<p>Parent class for a 2D frame analysis.</p>
+<p>Includes a method for analysis initiation and a method for adding a frame
+element to the analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>]) – Nodes used in the finite element analysis.</li>
+<li><strong>elements</strong> (list[<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.FiniteElement</span></code></a>]) – Elements used in the finite element analysis.</li>
+<li><strong>freedom_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.FreedomCase" title="feastruct.fea.cases.FreedomCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.cases.FreedomCase</span></code></a>]) – Freedom cases used in the finite element analysis.</li>
+<li><strong>load_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.LoadCase" title="feastruct.fea.cases.LoadCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.cases.LoadCase</span></code></a>]) – Load cases used in the finite element analysis.</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.cases.AnalysisCase</span></code></a>]) – Analysis cases used in the finite element analysis.</li>
+<li><strong>non_linear</strong> (<em>bool</em>) – Boolean defining the type of analysis</li>
+<li><strong>dofs</strong> (<em>int</em>) – Number of degrees of freedom per node for the current
+analysis type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame2d.Frame2D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>elements=None</em>, <em>freedom_cases=None</em>, <em>load_cases=None</em>, <em>analysis_cases=None</em>, <em>non_linear=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#Frame2D.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.Frame2D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Frame2D class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>]) – List of nodes with which to initialise the class.</li>
+<li><strong>elements</strong> (list[<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.FiniteElement</span></code></a>]) – List of elements with which to initialise the class.</li>
+<li><strong>freedom_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.FreedomCase" title="feastruct.fea.cases.FreedomCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.cases.FreedomCase</span></code></a>]) – List of freedom cases with which to initialise
+the class.</li>
+<li><strong>load_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.LoadCase" title="feastruct.fea.cases.LoadCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.cases.LoadCase</span></code></a>]) – List of load cases with which to initialise the
+class.</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.cases.AnalysisCase</span></code></a>]) – List of analysis cases with which to initialise
+the class.</li>
+<li><strong>non_linear</strong> (<em>bool</em>) – Boolean defining the type of analysis</li>
+<li><strong>dofs</strong> (<em>int</em>) – Number of degrees of freedom per node for the current
+analysis type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.Frame2D.add_element">
+<code class="descname">add_element</code><span class="sig-paren">(</span><em>id</em>, <em>node_ids</em>, <em>el_type='EB2'</em>, <em>E=1</em>, <em>A=1</em>, <em>ixx=1</em>, <em>G=0</em>, <em>A_s=0</em>, <em>rho=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#Frame2D.add_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.Frame2D.add_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a frame element to a <a class="reference internal" href="#feastruct.fea.frame2d.Frame2D" title="feastruct.fea.frame2d.Frame2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame2d.Frame2D</span></code></a>
+analysis. Possible element types include:</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>‘EB2’: 2 Noded Euler Bernoulli Frame Element</dt>
+<dd><ul class="first last">
+<li>Requires <em>E</em>, <em>A</em>, <em>ixx</em> for a static analysis</li>
+<li>Requires <em>rho</em> for a natrual frequency analysis, a dynamic
+analysis, or if body loads are used</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>‘TM2’: 2 Noded Timoshenko Frame Element</dt>
+<dd><ul class="first last">
+<li>Requires <em>E</em>, <em>A</em>, <em>ixx</em>, <em>G</em>, <em>A_s</em> for a static analysis</li>
+<li>Requires <em>rho</em> for a natrual frequency analysis, a dynamic
+analysis, or if body loads are used</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> (<em>int</em>) – Unique element id</li>
+<li><strong>node_ids</strong> (<em>list</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – List of unique node ids defining the element</li>
+<li><strong>el_type</strong> (<em>string</em>) – String characterising the type of frame element</li>
+<li><strong>E</strong> (<em>float</em>) – Elastic modulus</li>
+<li><strong>A</strong> (<em>float</em>) – Cross-sectional area</li>
+<li><strong>ixx</strong> (<em>float</em>) – Second moment of inertia</li>
+<li><strong>G</strong> (<em>float</em>) – Shear stiffness</li>
+<li><strong>A_s</strong> (<em>float</em>) – Shear Area</li>
+<li><strong>rho</strong> (<em>float</em>) – Material density</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="feastruct.fea.frame2d.FrameElement">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame2d.</code><code class="descname">FrameElement</code><span class="sig-paren">(</span><em>analysis</em>, <em>id</em>, <em>node_ids</em>, <em>E</em>, <em>A</em>, <em>rho</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.FiniteElement</span></code></a></p>
+<p>Parent class for a frame element.</p>
+<p>Establishes a template for a frame element and provides a number of generic
+methods that can be used for any frame element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
+<li><strong>id</strong> (<em>int</em>) – Unique finite element id</li>
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>]) – List of node objects that define the geometry of the finite
+element</li>
+<li><strong>f_int</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultList</span></code>) – Internal force vector results for an arbitray number of
+analysis cases</li>
+<li><strong>E</strong> (<em>float</em>) – Elastic modulus</li>
+<li><strong>A</strong> (<em>float</em>) – Cross-sectional area</li>
+<li><strong>rho</strong> (<em>float</em>) – Material density</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame2d.FrameElement.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>id</em>, <em>node_ids</em>, <em>E</em>, <em>A</em>, <em>rho</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameElement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
+<li><strong>id</strong> (<em>int</em>) – Unique finite element id</li>
+<li><strong>node_ids</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – A list of node ids defining the geometry of the
+element</li>
+<li><strong>E</strong> (<em>float</em>) – Elastic modulus</li>
+<li><strong>A</strong> (<em>float</em>) – Cross-sectional area</li>
+<li><strong>rho</strong> (<em>float</em>) – Material density</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.FrameElement.get_geometric_properties">
+<code class="descname">get_geometric_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement.get_geometric_properties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement.get_geometric_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates geometric properties related to a frame element. Returns
+the following:</p>
+<ul class="simple">
+<li><em>node_coods</em>: An (n x 2) array of node coordinates, where n is the
+number of nodes for the given finite element</li>
+<li><em>dx</em>: An array consisting of the x and y distances between the nodes</li>
+<li><em>l0</em>: The original length of the frame element</li>
+<li><em>phi</em>: The angle of the frame element with respect to the global
+x-axis</li>
+<li><em>c</em>: The cosine of phi</li>
+<li><em>s</em>: The sine of phi</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(node_coords, dx, l0, phi, c, s)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, float,
+float, float, float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.FrameElement.plot_axial_force">
+<code class="descname">plot_axial_force</code><span class="sig-paren">(</span><em>ax</em>, <em>case_id</em>, <em>scalef</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement.plot_axial_force"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement.plot_axial_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by
+case_id. N.B. this method is adopted from the MATLAB code by F.P. van
+der Meer: plotNLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the axial force diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.FrameElement.plot_bending_moment">
+<code class="descname">plot_bending_moment</code><span class="sig-paren">(</span><em>ax</em>, <em>case_id</em>, <em>scalef</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement.plot_bending_moment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement.plot_bending_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by
+case_id. N.B. this method is adopted from the MATLAB code by F.P. van
+der Meer: plotMLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the bending moment
+diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.FrameElement.plot_deformed_element">
+<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement.plot_deformed_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the element in its deformed configuration. This method adopts
+a linear interpolation between the two end nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.FrameElement.plot_element">
+<code class="descname">plot_element</code><span class="sig-paren">(</span><em>ax</em>, <em>linestyle='-'</em>, <em>linewidth=2</em>, <em>marker='.'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement.plot_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement.plot_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the undeformed frame element on the axis defined by ax.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>linestyle</strong> (<em>string</em>) – Element linestyle</li>
+<li><strong>linewidth</strong> (<em>int</em>) – Element linewidth</li>
+<li><strong>marker</strong> (<em>string</em>) – Node marker type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.FrameElement.plot_shear_force">
+<code class="descname">plot_shear_force</code><span class="sig-paren">(</span><em>ax</em>, <em>case_id</em>, <em>scalef</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement.plot_shear_force"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement.plot_shear_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by
+case_id. N.B. this method is adopted from the MATLAB code by F.P. van
+der Meer: plotVLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the shear force diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame2d.FrameElement.set_fint">
+<code class="descname">set_fint</code><span class="sig-paren">(</span><em>case_id</em>, <em>f_int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame2d.html#FrameElement.set_fint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame2d.FrameElement.set_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the internal force vector result for the result case defined by
+case_id. The argument f_int is an array consisting of the following
+items:</p>
+<ul class="simple">
+<li><em>f_int[0]</em>: Force in the x-direction at node 1</li>
+<li><em>f_int[1]</em>: Force in the y-direction at node 1</li>
+<li><em>f_int[2]</em>: Moment at node 1</li>
+<li><em>f_int[3]</em>: Force in the x-direction at node 2</li>
+<li><em>f_int[4]</em>: Force in the y-direction at node 2</li>
+<li><em>f_int[5]</em>: Moment at node 2</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>f_int</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Internal force vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fea.html" class="btn btn-neutral float-right" title="Finite Element Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

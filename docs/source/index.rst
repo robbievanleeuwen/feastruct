@@ -6,7 +6,11 @@ Welcome to feastruct's documentation!
    :caption: Contents:
 
    rst/installation
+   rst/frame2D
+   rst/fea
    rst/bcs
+   rst/cases
+   rst/node
 
 
 Indices and tables

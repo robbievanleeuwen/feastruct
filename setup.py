@@ -17,7 +17,7 @@ setup(name='feastruct',
       license='MIT',
       packages=['feastruct'],
       install_requires=[
-          'numpy', 'scipy', 'matplotlib', 'meshpy'
+          'numpy', 'scipy', 'matplotlib'
       ],
       include_package_data=True,
       zip_safe=False)

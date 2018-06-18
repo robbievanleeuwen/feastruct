@@ -91,7 +91,7 @@ class Force(ResultItem):
         self.f = f
 
 
-class FrameForceVector((ResultItem)):
+class FrameForceVector(ResultItem):
     """
     """
 

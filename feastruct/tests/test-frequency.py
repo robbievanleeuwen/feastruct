@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../../')
 from feastruct.fea.frame2d import Frame2D
 from feastruct.solvers.naturalfrequency import NaturalFrequency
 from feastruct.post.post import PostProcessor

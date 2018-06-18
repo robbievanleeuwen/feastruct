@@ -29,7 +29,8 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="next" title="Cases" href="cases.html" />
+    <link rel="prev" title="Finite Element Analysis" href="fea.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -81,7 +82,9 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
 </ul>
 
             
@@ -152,7 +155,8 @@
 <div><span class="target" id="module-feastruct.fea.bcs"></span><dl class="class">
 <dt id="feastruct.fea.bcs.BoundaryCondition">
 <em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">BoundaryCondition</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#BoundaryCondition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.BoundaryCondition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parent class for supports and loads.</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parent class for supports and loads.</p>
 <p>Provides an init method for the creation of boundary conditions at nodes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -176,7 +180,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>analysis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code>) – Analysis object</li>
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
 <li><strong>node_id</strong> (<em>int</em>) – Unique id of the node at which the BC is applied</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the boundary condition</li>
 <li><strong>dir</strong> (<em>int</em>) – The direction in which the boundary condition acts</li>
@@ -192,7 +196,8 @@
 <dl class="class">
 <dt id="feastruct.fea.bcs.NodalLoad">
 <em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">NodalLoad</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for a neumann boundary condition acting at a node.</p>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.bcs.BoundaryCondition" title="feastruct.fea.bcs.BoundaryCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.bcs.BoundaryCondition</span></code></a></p>
+<p>Class for a neumann boundary condition acting at a node.</p>
 <p>Provides methods for the FEA solver and post-processing.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -216,7 +221,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>analysis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code>) – Analysis object</li>
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
 <li><strong>node_id</strong> (<em>int</em>) – Unique id of the node at which the nodal load is
 applied</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the nodal load</li>
@@ -276,7 +281,8 @@ deformed based on the results of case id</li>
 <dl class="class">
 <dt id="feastruct.fea.bcs.NodalSupport">
 <em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">NodalSupport</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for a dirichlet boundary condition acting at a node.</p>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.bcs.BoundaryCondition" title="feastruct.fea.bcs.BoundaryCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.bcs.BoundaryCondition</span></code></a></p>
+<p>Class for a dirichlet boundary condition acting at a node.</p>
 <p>Provides methods for the FEA solver and post-processing.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -301,7 +307,7 @@ deformed based on the results of case id</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>analysis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code>) – Analysis object</li>
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
 <li><strong>node_id</strong> (<em>int</em>) – Unique id of the node at which the boundary
 condition is applied</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the boundary condition</li>
@@ -516,8 +522,10 @@ deformed based on the results of case id</li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="cases.html" class="btn btn-neutral float-right" title="Cases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="fea.html" class="btn btn-neutral" title="Finite Element Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

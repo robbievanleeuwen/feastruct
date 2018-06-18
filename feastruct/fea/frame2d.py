@@ -6,12 +6,46 @@ from feastruct.fea.exceptions import FEAInputError
 
 
 class Frame2D(fea):
-    """
+    """Parent class for a 2D frame analysis.
+
+    Includes a method for analysis initiation and a method for adding a frame
+    element to the analysis.
+
+    :cvar nodes: Nodes used in the finite element analysis.
+    :vartype nodes: list[:class:`feastruct.fea.node.Node`]
+    :cvar elements: Elements used in the finite element analysis.
+    :vartype elements: list[:class:`feastruct.fea.fea.FiniteElement`]
+    :cvar freedom_cases: Freedom cases used in the finite element analysis.
+    :vartype freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]
+    :cvar load_cases: Load cases used in the finite element analysis.
+    :vartype load_cases: list[:class:`feastruct.fea.cases.LoadCase`]
+    :cvar analysis_cases: Analysis cases used in the finite element analysis.
+    :vartype analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]
+    :cvar bool non_linear: Boolean defining the type of analysis
+    :cvar int dofs: Number of degrees of freedom per node for the current
+        analysis type
     """
 
     def __init__(self, nodes=None, elements=None, freedom_cases=None,
                  load_cases=None, analysis_cases=None, non_linear=False):
-        """
+        """Inits the Frame2D class.
+
+        :param nodes: List of nodes with which to initialise the class.
+        :type nodes: list[:class:`feastruct.fea.node.Node`]
+        :param elements: List of elements with which to initialise the class.
+        :type elements: list[:class:`feastruct.fea.fea.FiniteElement`]
+        :param freedom_cases: List of freedom cases with which to initialise
+            the class.
+        :type freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]
+        :param load_cases: List of load cases with which to initialise the
+            class.
+        :type load_cases: list[:class:`feastruct.fea.cases.LoadCase`]
+        :param analysis_cases: List of analysis cases with which to initialise
+            the class.
+        :type analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]
+        :param bool non_linear: Boolean defining the type of analysis
+        :param int dofs: Number of degrees of freedom per node for the current
+            analysis type
         """
 
         # initialise parent fea class
@@ -20,36 +54,96 @@ class Frame2D(fea):
 
     def add_element(self, id, node_ids, el_type='EB2', E=1, A=1, ixx=1,
                     G=0, A_s=0, rho=1):
-        """
-        EB2: 2 Noded Euler Bernoulli Beam
-        TB2: 2 Noded Timoshenko Beam
-        """
+        """Adds a frame element to a :class:`feastruct.fea.frame2d.Frame2D`
+        analysis. Possible element types include:
 
-        # TODO: check value types e.g. id and node_ids are ints
+        * 'EB2': 2 Noded Euler Bernoulli Frame Element
+            * Requires *E*, *A*, *ixx* for a static analysis
+            * Requires *rho* for a natrual frequency analysis, a dynamic
+              analysis, or if body loads are used
+        * 'TM2': 2 Noded Timoshenko Frame Element
+            * Requires *E*, *A*, *ixx*, *G*, *A_s* for a static analysis
+            * Requires *rho* for a natrual frequency analysis, a dynamic
+              analysis, or if body loads are used
+
+        :param int id: Unique element id
+        :param node_ids: List of unique node ids defining the element
+        :type node_ids: list[int, int]
+        :param string el_type: String characterising the type of frame element
+        :param float E: Elastic modulus
+        :param float A: Cross-sectional area
+        :param float ixx: Second moment of inertia
+        :param float G: Shear stiffness
+        :param float A_s: Shear Area
+        :param float rho: Material density
+        """
 
         if el_type == 'EB2':
             element = EulerBernoulliFrame2D(self, id, node_ids, E, A, ixx, rho)
-        elif el_type == 'TB2':
-            element = TimoshenkoFrame2D(self, id, node_ids, E, A, ixx, G, A_s,
-                                        rho)
+        # elif el_type == 'TM2':
+        #     element = TimoshenkoFrame2D(self, id, node_ids, E, A, ixx, G,
+        #                                 A_s, rho)
 
         fea.add_element(self, element)
 
 
 class FrameElement(FiniteElement):
-    """asldkjaslkd
+    """Parent class for a frame element.
+
+    Establishes a template for a frame element and provides a number of generic
+    methods that can be used for any frame element.
+
+    :cvar analysis: Analysis object
+    :vartype analysis: :class:`feastruct.fea.fea.fea`
+    :cvar int id: Unique finite element id
+    :cvar nodes: List of node objects that define the geometry of the finite
+        element
+    :vartype nodes: list[:class:`feastruct.fea.node.Node`]
+    :cvar f_int: Internal force vector results for an arbitray number of
+        analysis cases
+    :vartype f_int: :class:`feastruct.post.results.ResultList`
+    :cvar float E: Elastic modulus
+    :cvar float A: Cross-sectional area
+    :cvar float rho: Material density
     """
 
     def __init__(self, analysis, id, node_ids, E, A, rho):
-        """
+        """Inits the FrameElement class.
+
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int id: Unique finite element id
+        :param node_ids: A list of node ids defining the geometry of the
+            element
+        :type node_ids: list[int]
+        :param float E: Elastic modulus
+        :param float A: Cross-sectional area
+        :param float rho: Material density
         """
 
+        # initialise parent class
         super().__init__(analysis, id, node_ids)
-        self.EA = E * A
-        self.rhoA = rho * A
+
+        self.E = E
+        self.A = A
+        self.rho = rho
 
     def get_geometric_properties(self):
-        """
+        """Calculates geometric properties related to a frame element. Returns
+        the following:
+
+        * *node_coods*: An (n x 2) array of node coordinates, where n is the
+          number of nodes for the given finite element
+        * *dx*: An array consisting of the x and y distances between the nodes
+        * *l0*: The original length of the frame element
+        * *phi*: The angle of the frame element with respect to the global
+          x-axis
+        * *c*: The cosine of phi
+        * *s*: The sine of phi
+
+        :return: (node_coords, dx, l0, phi, c, s)
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`, float,
+            float, float, float)
         """
 
         node_coords = self.get_node_coords()
@@ -61,14 +155,21 @@ class FrameElement(FiniteElement):
 
         return (node_coords, dx, l0, phi, c, s)
 
-    def get_fint(self, case_id):
-        """
-        """
-
-        return self.f_int.get_result(case_id)
-
     def set_fint(self, case_id, f_int):
-        """
+        """Sets the internal force vector result for the result case defined by
+        case_id. The argument f_int is an array consisting of the following
+        items:
+
+        * *f_int[0]*: Force in the x-direction at node 1
+        * *f_int[1]*: Force in the y-direction at node 1
+        * *f_int[2]*: Moment at node 1
+        * *f_int[3]*: Force in the x-direction at node 2
+        * *f_int[4]*: Force in the y-direction at node 2
+        * *f_int[5]*: Moment at node 2
+
+        :param int case_id: Unique case id
+        :param f_int: Internal force vector
+        :type f_int: :class:`numpy.ndarray`
         """
 
         (_, _, _, _, c, s) = self.get_geometric_properties()
@@ -80,7 +181,13 @@ class FrameElement(FiniteElement):
         self.f_int.set_result(FrameForceVector(case_id, f))
 
     def plot_element(self, ax, linestyle='-', linewidth=2, marker='.'):
-        """
+        """Plots the undeformed frame element on the axis defined by ax.
+
+        :param ax: Axis object on which to draw the element
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param string linestyle: Element linestyle
+        :param int linewidth: Element linewidth
+        :param string marker: Node marker type
         """
 
         coords = self.get_node_coords()
@@ -89,16 +196,25 @@ class FrameElement(FiniteElement):
                 linewidth=linewidth, marker=marker, markersize=8)
 
     def plot_deformed_element(self, ax):
+        """Plots the element in its deformed configuration. This method adopts
+        a linear interpolation between the two end nodes.
+
+        :param ax: Axis object on which to draw the element
+        :type ax: :class:`matplotlib.axes.Axes`
         """
-        """
+
         pass
         # TODO: IMPLEMENT DEFAULT LINEAR BEHAVIOUR
 
     def plot_axial_force(self, ax, case_id, scalef):
-        """alskdjaklsd
+        """Plots the axial force diagram from a static analysis defined by
+        case_id. N.B. this method is adopted from the MATLAB code by F.P. van
+        der Meer: plotNLine.m.
 
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotNLine.m.
+        :param ax: Axis object on which to draw the element
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param int case_id: Unique case id
+        :param float scalef: Factor by which to scale the axial force diagram
         """
 
         # get geometric properties
@@ -134,10 +250,14 @@ class FrameElement(FiniteElement):
                 verticalalignment='bottom')
 
     def plot_shear_force(self, ax, case_id, scalef):
-        """alskdjaklsd
+        """Plots the axial force diagram from a static analysis defined by
+        case_id. N.B. this method is adopted from the MATLAB code by F.P. van
+        der Meer: plotVLine.m.
 
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotVLine.m.
+        :param ax: Axis object on which to draw the element
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param int case_id: Unique case id
+        :param float scalef: Factor by which to scale the shear force diagram
         """
 
         # get geometric properties
@@ -174,10 +294,15 @@ class FrameElement(FiniteElement):
                 verticalalignment='bottom')
 
     def plot_bending_moment(self, ax, case_id, scalef):
-        """alskdjaklsd
+        """Plots the axial force diagram from a static analysis defined by
+        case_id. N.B. this method is adopted from the MATLAB code by F.P. van
+        der Meer: plotMLine.m.
 
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotMLine.m.
+        :param ax: Axis object on which to draw the element
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param int case_id: Unique case id
+        :param float scalef: Factor by which to scale the bending moment
+            diagram
         """
 
         # get geometric properties
@@ -215,20 +340,51 @@ class FrameElement(FiniteElement):
 
 
 class EulerBernoulliFrame2D(FrameElement):
-    """
-    """
+    """Two dimensional frame element based on the Euler-Bernoulli beam
+    formulation for relatively thin beams. The element is defined by its two
+    end nodes and uses cubic polynomial shape functions to produce analytical
+    deformations.
 
-    # TODO: properly implement EB with shape functions etc.
+    :cvar analysis: Analysis object
+    :vartype analysis: :class:`feastruct.fea.fea.fea`
+    :cvar int id: Unique finite element id
+    :cvar nodes: List of node objects that define the geometry of the finite
+        element
+    :vartype nodes: list[:class:`feastruct.fea.node.Node`]
+    :cvar f_int: Internal force vector results for an arbitray number of
+        analysis cases
+    :vartype f_int: :class:`feastruct.post.results.ResultList`
+    :cvar float E: Elastic modulus
+    :cvar float A: Cross-sectional area
+    :cvar float ixx: Second moment of inertia
+    :cvar float rho: Material density
+    """
 
     def __init__(self, analysis, id, node_ids, E, A, ixx, rho):
-        """
+        """Inits the EulerBernoulliFrame2D class.
+
+        :param analysis: Analysis object
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int id: Unique finite element id
+        :param node_ids: A list of node ids defining the geometry of the
+            element
+        :type node_ids: list[int]
+        :param float E: Elastic modulus
+        :param float A: Cross-sectional area
+        :param float ixx: Second moment of inertia
+        :param float rho: Material density
         """
 
         super().__init__(analysis, id, node_ids, E, A, rho)
-        self.EI = E * ixx
+        self.ixx = ixx
 
     def get_stiff_matrix(self):
-        """
+        """Gets the stiffness matrix for a 2D Euler-Bernoulli frame element.
+        The stiffness matrix has been analytically integrated so numerical
+        integration is not necessary.
+
+        :return: 6 x 6 element stiffness matrix
+        :rtype: :class:`numpy.ndarray`
         """
 
         if not self.analysis.non_linear:
@@ -237,15 +393,16 @@ class EulerBernoulliFrame2D(FrameElement):
 
             # use analytical integration result:
             # compute bar stiffness
-            k_el_bar = self.EA / l0 * np.array([[1, 0, 0, -1, 0, 0],
-                                                [0, 0, 0, 0, 0, 0],
-                                                [0, 0, 0, 0, 0, 0],
-                                                [-1, 0, 0, 1, 0, 0],
-                                                [0, 0, 0, 0, 0, 0],
-                                                [0, 0, 0, 0, 0, 0]])
+            k_el_bar = self.E * self.A / l0 * (
+                np.array([[1, 0, 0, -1, 0, 0],
+                          [0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0],
+                          [-1, 0, 0, 1, 0, 0],
+                          [0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0]]))
 
             # compute beam stiffness
-            k_el_beam = self.EI / (l0 * l0 * l0) * (
+            k_el_beam = self.E * self.ixx / (l0 * l0 * l0) * (
                 np.array([[0, 0, 0, 0, 0, 0],
                           [0, 12, 6 * l0, 0, -12, 6 * l0],
                           [0, 6 * l0, 4 * l0 * l0, 0, -6 * l0, 2 * l0 * l0],
@@ -255,18 +412,30 @@ class EulerBernoulliFrame2D(FrameElement):
 
             k_el = k_el_bar + k_el_beam
 
-            # construct rotation matrix
-            T = np.array([[c, s, 0, 0, 0, 0],
-                          [-s, c, 0, 0, 0, 0],
-                          [0, 0, 1, 0, 0, 0],
-                          [0, 0, 0, c, s, 0],
-                          [0, 0, 0, -s, c, 0],
-                          [0, 0, 0, 0, 0, 1]])
+        else:
+            pass
+            # TODO: implement non-linear stiffness matrix
 
-            return np.matmul(np.matmul(np.transpose(T), k_el), T)
+        # construct rotation matrix
+        T = np.array([[c, s, 0, 0, 0, 0],
+                      [-s, c, 0, 0, 0, 0],
+                      [0, 0, 1, 0, 0, 0],
+                      [0, 0, 0, c, s, 0],
+                      [0, 0, 0, -s, c, 0],
+                      [0, 0, 0, 0, 0, 1]])
+
+        return np.matmul(np.matmul(np.transpose(T), k_el), T)
 
     def get_geometric_stiff_matrix(self, case_id):
-        """
+        """Gets the geometric stiffness matrix for a 2D Euler-Bernoulli frame
+        element. The stiffness matrix has been analytically integrated so
+        numerical integration is not necessary. The geometric stiffness matrix
+        requires an axial force so the case id from a static analysis must be
+        provided.
+
+        :param int case_id: Unique case id
+        :return: 6 x 6 element geometric stiffness matrix
+        :rtype: :class:`numpy.ndarray`
         """
 
         # compute geometric parameters
@@ -301,7 +470,12 @@ class EulerBernoulliFrame2D(FrameElement):
         return np.matmul(np.matmul(np.transpose(T), k_el_g), T)
 
     def get_mass_matrix(self):
-        """
+        """Gets the mass matrix for a 2D Euler-Bernoulli frame element. The
+        mass matrix has been analytically integrated so numerical integration
+        is not necessary.
+
+        :return: 6 x 6 element mass matrix
+        :rtype: :class:`numpy.ndarray`
         """
 
         # compute geometric parameters
@@ -314,7 +488,7 @@ class EulerBernoulliFrame2D(FrameElement):
                          [70, 0, 0, 140, 0, 0],
                          [0, 54, 13*l0, 0, 156, -22*l0],
                          [0, -13*l0, -3*l0*l0, 0, -22*l0, 4*l0*l0]])
-        m_el *= self.rhoA * l0 / 420
+        m_el *= self.rho * self.A * l0 / 420
 
         # construct rotation matrix
         T = np.array([[c, s, 0, 0, 0, 0],
@@ -327,7 +501,17 @@ class EulerBernoulliFrame2D(FrameElement):
         return np.matmul(np.matmul(np.transpose(T), m_el), T)
 
     def plot_deformed_element(self, ax, case_id, n, def_scale, u_el=None):
-        """
+        """Plots the element in its deformed configuration for either a static
+        analysis defined by case_id, or the element displacement vector u_el.
+        The deformation is based on the element shape functions.
+
+        :param ax: Axis object on which to draw the element
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param int case_id: Unique case id
+        :param int n: Number of linear subdivisions used to plot the element
+        :param float def_scale: Deformation scale
+        :param u_el: 2 x 3 element displacement vector
+        :type u_el: :class:`numpy.ndarray`
         """
 
         # nodal displacements in xy
@@ -387,14 +571,15 @@ class EulerBernoulliFrame2D(FrameElement):
         ax.plot(x[-1], y[-1], 'k.', markersize=8)
 
 
-class TimoshenkoFrame2D(FrameElement):
-    """ TODO: implement with proper shape functions
-    """
-
-    def __init__(self, analysis, id, node_ids, E, A, ixx, G, A_s, rho):
-        """
-        """
-
-        super().__init__(analysis, id, node_ids, E, A, rho)
-        self.EI = E * ixx
-        self.GA_s = G * A_s
+# class TimoshenkoFrame2D(FrameElement):
+#     """ TODO: implement with proper shape functions
+#     """
+#
+#     def __init__(self, analysis, id, node_ids, E, A, ixx, G, A_s, rho):
+#         """
+#         """
+#
+#         super().__init__(analysis, id, node_ids, E, A, rho)
+#         self.ixx = ixx
+#         self.G = G
+#         self.A_s = A_s
