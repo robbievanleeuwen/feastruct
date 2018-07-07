@@ -85,6 +85,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/post.html">Post-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/results.html">Results</a></li>
 </ul>
 
             
@@ -254,8 +256,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">buckling_v</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">EigenResult</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span>
-            <span class="n">mode</span><span class="o">=</span><span class="n">buckling_mode</span><span class="p">)</span></div>
+            <span class="n">results</span><span class="o">.</span><span class="n">EigenResult</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Node.get_frequency_results"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.get_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the eigenvalue (w) and nodal eigenvector (v) for the</span>
@@ -285,8 +286,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">frequency_v</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">EigenResult</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span>
-            <span class="n">mode</span><span class="o">=</span><span class="n">frequency_mode</span><span class="p">)</span></div></div>
+            <span class="n">results</span><span class="o">.</span><span class="n">EigenResult</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span></div></div>
 </pre></div>
 
            </div>

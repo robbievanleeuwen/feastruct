@@ -1,0 +1,496 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Results &mdash; feastruct 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Post-Processing" href="post.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame2D.html">Frame Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Results</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Results</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/results.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="results">
+<h1>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><span class="target" id="module-feastruct.post.results"></span><dl class="class">
+<dt id="feastruct.post.results.Displacement">
+<em class="property">class </em><code class="descclassname">feastruct.post.results.</code><code class="descname">Displacement</code><span class="sig-paren">(</span><em>case_id</em>, <em>u</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#Displacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.Displacement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.post.results.ResultItem" title="feastruct.post.results.ResultItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultItem</span></code></a></p>
+<p>Class for a displacement result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>u</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Nodal displacement vector with length equal to the number of
+degrees of freedom</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.post.results.Displacement.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>case_id</em>, <em>u</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#Displacement.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.Displacement.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Displacement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>u</strong> – Nodal displacement vector with length equal to the number of
+degrees of freedom</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="feastruct.post.results.EigenResult">
+<em class="property">class </em><code class="descclassname">feastruct.post.results.</code><code class="descname">EigenResult</code><span class="sig-paren">(</span><em>case_id</em>, <em>mode</em>, <em>w</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#EigenResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.EigenResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.post.results.ResultItem" title="feastruct.post.results.ResultItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultItem</span></code></a></p>
+<p>Class for an eigenvalue and eigenvector result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>mode</strong> (<em>int</em>) – Buckling/frequency mode number</li>
+<li><strong>w</strong> (<em>float</em>) – Buckling load factor or natural frequency</li>
+<li><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Nodal eigenvector with length equal to the number of degrees of
+freedom</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.post.results.EigenResult.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>case_id</em>, <em>mode</em>, <em>w</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#EigenResult.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.EigenResult.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the EigenResult class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>mode</strong> (<em>int</em>) – Buckling/frequency mode number</li>
+<li><strong>w</strong> (<em>float</em>) – Buckling load factor or natural frequency</li>
+<li><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Nodal eigenvector with length equal to the number of degrees
+of freedom</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="feastruct.post.results.Force">
+<em class="property">class </em><code class="descclassname">feastruct.post.results.</code><code class="descname">Force</code><span class="sig-paren">(</span><em>case_id</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#Force"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.Force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.post.results.ResultItem" title="feastruct.post.results.ResultItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultItem</span></code></a></p>
+<p>Class for a scalar force result e.g. reaction force.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>f</strong> (<em>float</em>) – Scalar force result</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.post.results.Force.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>case_id</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#Force.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.Force.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Force class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>f</strong> (<em>float</em>) – Scalar force result</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="feastruct.post.results.FrameForceVector">
+<em class="property">class </em><code class="descclassname">feastruct.post.results.</code><code class="descname">FrameForceVector</code><span class="sig-paren">(</span><em>case_id</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#FrameForceVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.FrameForceVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.post.results.ResultItem" title="feastruct.post.results.ResultItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultItem</span></code></a></p>
+<p>Class for a frame element internal force vector. The sign conventions
+are as follows:</p>
+<ul class="simple">
+<li>Axial Force: Tension positive</li>
+<li>Shear Force: Clockwise shear deformation positive</li>
+<li>Bending Moment: Clockwise bending moment positive</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>N1</strong> (<em>float</em>) – Internal axial force at node 1</li>
+<li><strong>V1</strong> (<em>float</em>) – Internal shear force at node 1</li>
+<li><strong>M1</strong> (<em>float</em>) – Internal bending moment at node 1</li>
+<li><strong>N2</strong> (<em>float</em>) – Internal axial force at node 2</li>
+<li><strong>V2</strong> (<em>float</em>) – Internal shear force at node 2</li>
+<li><strong>M2</strong> (<em>float</em>) – Internal bending moment at node 2</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.post.results.FrameForceVector.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>case_id</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#FrameForceVector.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.FrameForceVector.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameForceVector class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>f</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Frame internal force vector with length (n x ndof) where n is
+the number of nodes for the given finite element and ndof is the
+number of degrees of freedom per node for the current analysis type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="feastruct.post.results.ResultItem">
+<em class="property">class </em><code class="descclassname">feastruct.post.results.</code><code class="descname">ResultItem</code><span class="sig-paren">(</span><em>case_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#ResultItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.ResultItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parent class for a finite element result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><strong>case_id</strong> (<em>int</em>) – Unique case id</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.post.results.ResultItem.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>case_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#ResultItem.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.ResultItem.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the ResultItem class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>case_id</strong> (<em>int</em>) – Unique case id</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="feastruct.post.results.ResultList">
+<em class="property">class </em><code class="descclassname">feastruct.post.results.</code><code class="descname">ResultList</code><a class="reference internal" href="../_modules/feastruct/post/results.html#ResultList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.ResultList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for storing a list of result items.</p>
+<p>Stores a list of results in class variable self.results. Provides methods
+for getting and setting results for static and buckling/frequency analyses
+and overwrites results if the case id and/or mode match.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><a class="reference internal" href="#module-feastruct.post.results" title="feastruct.post.results"><strong>results</strong></a> (list[<a class="reference internal" href="#feastruct.post.results.ResultItem" title="feastruct.post.results.ResultItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultItem</span></code></a>]) – List of result items</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.post.results.ResultList.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#ResultList.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.ResultList.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the ResultList class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.post.results.ResultList.get_result">
+<code class="descname">get_result</code><span class="sig-paren">(</span><em>case_id</em>, <em>mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#ResultList.get_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.ResultList.get_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a result in the result list defined by the result case case_id
+and the mode for buckling/frequency analyses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>mode</strong> (<em>int</em>) – Buckling/frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Result defined by case_id (and) mode.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#feastruct.post.results.ResultItem" title="feastruct.post.results.ResultItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultItem</span></code></a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>FEAInputError</strong> – If the case_id cannot be found in the list of
+results</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.post.results.ResultList.set_result">
+<code class="descname">set_result</code><span class="sig-paren">(</span><em>new_result</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/results.html#ResultList.set_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.results.ResultList.set_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a result in the result list. Replaces the result if the case id
+already exists and only replaces results for buckling/frequency
+analyses if both the case id and mode already exist. Appends the result
+if the case id does not yet exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_result</strong> (<a class="reference internal" href="#feastruct.post.results.ResultItem" title="feastruct.post.results.ResultItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultItem</span></code></a>) – Result to be appended to the result list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="post.html" class="btn btn-neutral" title="Post-Processing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

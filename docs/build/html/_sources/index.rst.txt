@@ -11,6 +11,8 @@ Welcome to feastruct's documentation!
    rst/bcs
    rst/cases
    rst/node
+   rst/post
+   rst/results
 
 
 Indices and tables

@@ -82,9 +82,13 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame2D.html">Frame Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Boundary Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">Results</a></li>
 </ul>
 
             
@@ -163,7 +167,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>node</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code>) – The node object at which the boundary condition acts</li>
+<li><a class="reference internal" href="node.html#module-feastruct.fea.node" title="feastruct.fea.node"><strong>node</strong></a> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>) – The node object at which the boundary condition acts</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the boundary condition</li>
 <li><strong>dir</strong> (<em>int</em>) – The direction in which the boundary condition acts</li>
 </ul>
@@ -204,7 +208,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>node</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code>) – The node object at which the nodal load acts</li>
+<li><a class="reference internal" href="node.html#module-feastruct.fea.node" title="feastruct.fea.node"><strong>node</strong></a> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>) – The node object at which the nodal load acts</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the nodal load</li>
 <li><strong>dir</strong> (<em>int</em>) – The direction in which the nodal load acts</li>
 </ul>
@@ -263,9 +267,9 @@ moment.</p>
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
 <li><strong>max_force</strong> (<em>float</em>) – Maximum translational nodal load</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code>) – A function that returns the support angle
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
 and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Analysis case id</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
 <li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
 deformed based on the results of case id</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
@@ -289,10 +293,10 @@ deformed based on the results of case id</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>node</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code>) – The node object at which the boundary condition acts</li>
+<li><a class="reference internal" href="node.html#module-feastruct.fea.node" title="feastruct.fea.node"><strong>node</strong></a> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>) – The node object at which the boundary condition acts</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the boundary condition</li>
 <li><strong>dir</strong> (<em>int</em>) – The direction in which the boundary condition acts</li>
-<li><strong>reaction</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultList</span></code>) – A result object containing reaction force results</li>
+<li><strong>reaction</strong> (<a class="reference internal" href="results.html#feastruct.post.results.ResultList" title="feastruct.post.results.ResultList"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultList</span></code></a>) – A result object containing reaction force results</li>
 </ul>
 </td>
 </tr>
@@ -349,7 +353,7 @@ case_id.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>case_id</strong> (<em>int</em>) – Case id corresponding to an analysis case</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>case_id</strong> (<em>int</em>) – Unique case id</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Reaction force at the node</td>
 </tr>
@@ -372,9 +376,9 @@ case_id.</p>
 <li><strong>max_disp</strong> (<em>float</em>) – Maximum imposed displacement in the analysis
 case</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code>) – A function that returns the support angle
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
 and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Analysis case id</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
 <li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
 deformed based on the results of case id</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
@@ -396,9 +400,9 @@ deformed based on the results of case id</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code>) – A function that returns the support angle
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
 and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Analysis case id</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
 <li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
 deformed based on the results of case id</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
@@ -424,9 +428,9 @@ reaction.</p>
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
 <li><strong>max_reaction</strong> (<em>float</em>) – Maximum reaction force in the analysis case</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code>) – A function that returns the support angle
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
 and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Analysis case id</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
 </ul>
 </td>
 </tr>
@@ -453,9 +457,9 @@ van der Meer’s code plotGeom.m.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code>) – A function that returns the support angle
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
 and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Analysis case id</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
 <li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
 deformed based on the results of case id</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
@@ -480,7 +484,7 @@ deformed based on the results of case id</li>
 <li><strong>roller</strong> (<em>bool</em>) – Whether or not the support is a roller</li>
 <li><strong>hinge</strong> (<em>bool</em>) – Whether or not there is a hinge at the support</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>case_id</strong> (<em>int</em>) – Analysis case id</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
 <li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
 deformed based on the results of case id</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
@@ -500,7 +504,7 @@ deformed based on the results of case id</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Case id corresponding to an analysis case</li>
+<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
 <li><strong>f</strong> (<em>float</em>) – Reaction for at the node</li>
 </ul>
 </td>

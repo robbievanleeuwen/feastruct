@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>feastruct.post.results &mdash; feastruct 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame2D.html">Frame Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/post.html">Post-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/results.html">Results</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>feastruct.post.results</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for feastruct.post.results</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">feastruct.fea.exceptions</span> <span class="k">import</span> <span class="n">FEAInputError</span>
+
+
+<div class="viewcode-block" id="ResultList"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.ResultList">[docs]</a><span class="k">class</span> <span class="nc">ResultList</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for storing a list of result items.</span>
+
+<span class="sd">    Stores a list of results in class variable self.results. Provides methods</span>
+<span class="sd">    for getting and setting results for static and buckling/frequency analyses</span>
+<span class="sd">    and overwrites results if the case id and/or mode match.</span>
+
+<span class="sd">    :cvar results: List of result items</span>
+<span class="sd">    :vartype results: list[:class:`feastruct.post.results.ResultItem`]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: check cvar results hyperlink in docs</span>
+
+<div class="viewcode-block" id="ResultList.__init__"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.ResultList.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the ResultList class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="ResultList.get_result"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.ResultList.get_result">[docs]</a>    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets a result in the result list defined by the result case case_id</span>
+<span class="sd">        and the mode for buckling/frequency analyses.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param int mode: Buckling/frequency mode number</span>
+<span class="sd">        :return: Result defined by case_id (and) mode.</span>
+<span class="sd">        :rtype: :class:`feastruct.post.results.ResultItem`</span>
+<span class="sd">        :raises FEAInputError: If the case_id cannot be found in the list of</span>
+<span class="sd">            results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># find case_id in results list</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">case_id</span> <span class="o">==</span> <span class="n">case_id</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">result</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">mode</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">result</span>
+
+        <span class="c1"># if case_id cannot be found</span>
+        <span class="k">raise</span> <span class="n">FEAInputError</span><span class="p">(</span><span class="s2">&quot;Cannot find a result for case_id: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">case_id</span><span class="p">))</span></div>
+
+        <span class="c1"># TODO: raise error if mode number cannot be found</span>
+
+<div class="viewcode-block" id="ResultList.set_result"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.ResultList.set_result">[docs]</a>    <span class="k">def</span> <span class="nf">set_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_result</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets a result in the result list. Replaces the result if the case id</span>
+<span class="sd">        already exists and only replaces results for buckling/frequency</span>
+<span class="sd">        analyses if both the case id and mode already exist. Appends the result</span>
+<span class="sd">        if the case id does not yet exist.</span>
+
+<span class="sd">        :param new_result: Result to be appended to the result list</span>
+<span class="sd">        :type new_result: :class:`feastruct.post.results.ResultItem`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check to see if case_id already exists</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">case_id</span> <span class="o">==</span> <span class="n">new_result</span><span class="o">.</span><span class="n">case_id</span><span class="p">:</span>
+                <span class="c1"># if the ResultItem has a mode (i.e. is an EigenResult)</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="ow">is</span> <span class="n">EigenResult</span><span class="p">:</span>
+                    <span class="c1"># replace result if the mode matches</span>
+                    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">new_result</span><span class="o">.</span><span class="n">mode</span><span class="p">:</span>
+                        <span class="n">result</span> <span class="o">=</span> <span class="n">new_result</span>
+                        <span class="k">return</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># append to result list if this is a new mode</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_result</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># replace result if case_id already exists</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">new_result</span>
+                    <span class="k">return</span>
+
+        <span class="c1"># append to result list if this is a new case_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_result</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ResultItem"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.ResultItem">[docs]</a><span class="k">class</span> <span class="nc">ResultItem</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for a finite element result.</span>
+
+<span class="sd">    :cvar int case_id: Unique case id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ResultItem.__init__"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.ResultItem.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the ResultItem class.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">case_id</span> <span class="o">=</span> <span class="n">case_id</span></div></div>
+
+
+<div class="viewcode-block" id="Displacement"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.Displacement">[docs]</a><span class="k">class</span> <span class="nc">Displacement</span><span class="p">(</span><span class="n">ResultItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for a displacement result.</span>
+
+<span class="sd">    :cvar int case_id: Unique case id</span>
+<span class="sd">    :cvar u: Nodal displacement vector with length equal to the number of</span>
+<span class="sd">        degrees of freedom</span>
+<span class="sd">    :vartype u: list[float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Displacement.__init__"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.Displacement.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Displacement class.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param u: Nodal displacement vector with length equal to the number of</span>
+<span class="sd">            degrees of freedom</span>
+<span class="sd">        :vartype u: list[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">u</span></div></div>
+
+
+<div class="viewcode-block" id="EigenResult"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.EigenResult">[docs]</a><span class="k">class</span> <span class="nc">EigenResult</span><span class="p">(</span><span class="n">ResultItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for an eigenvalue and eigenvector result.</span>
+
+<span class="sd">    :cvar int case_id: Unique case id</span>
+<span class="sd">    :cvar int mode: Buckling/frequency mode number</span>
+<span class="sd">    :cvar float w: Buckling load factor or natural frequency</span>
+<span class="sd">    :cvar v: Nodal eigenvector with length equal to the number of degrees of</span>
+<span class="sd">        freedom</span>
+<span class="sd">    :vartype v: list[float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EigenResult.__init__"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.EigenResult.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the EigenResult class.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param int mode: Buckling/frequency mode number</span>
+<span class="sd">        :param float w: Buckling load factor or natural frequency</span>
+<span class="sd">        :param v: Nodal eigenvector with length equal to the number of degrees</span>
+<span class="sd">            of freedom</span>
+<span class="sd">        :type v: list[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">v</span></div></div>
+
+
+<div class="viewcode-block" id="Force"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.Force">[docs]</a><span class="k">class</span> <span class="nc">Force</span><span class="p">(</span><span class="n">ResultItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for a scalar force result e.g. reaction force.</span>
+
+<span class="sd">    :cvar int case_id: Unique case id</span>
+<span class="sd">    :cvar float f: Scalar force result</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Force.__init__"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.Force.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Force class.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param float f: Scalar force result</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span></div></div>
+
+
+<div class="viewcode-block" id="FrameForceVector"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.FrameForceVector">[docs]</a><span class="k">class</span> <span class="nc">FrameForceVector</span><span class="p">(</span><span class="n">ResultItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for a frame element internal force vector. The sign conventions</span>
+<span class="sd">    are as follows:</span>
+
+<span class="sd">    * Axial Force: Tension positive</span>
+<span class="sd">    * Shear Force: Clockwise shear deformation positive</span>
+<span class="sd">    * Bending Moment: Clockwise bending moment positive</span>
+
+<span class="sd">    :cvar int case_id: Unique case id</span>
+<span class="sd">    :cvar float N1: Internal axial force at node 1</span>
+<span class="sd">    :cvar float V1: Internal shear force at node 1</span>
+<span class="sd">    :cvar float M1: Internal bending moment at node 1</span>
+<span class="sd">    :cvar float N2: Internal axial force at node 2</span>
+<span class="sd">    :cvar float V2: Internal shear force at node 2</span>
+<span class="sd">    :cvar float M2: Internal bending moment at node 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FrameForceVector.__init__"><a class="viewcode-back" href="../../../rst/results.html#feastruct.post.results.FrameForceVector.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the FrameForceVector class.</span>
+
+<span class="sd">        :param int case_id: Unique case id</span>
+<span class="sd">        :param f: Frame internal force vector with length (n x ndof) where n is</span>
+<span class="sd">            the number of nodes for the given finite element and ndof is the</span>
+<span class="sd">            number of degrees of freedom per node for the current analysis type</span>
+<span class="sd">        :type f: list[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N1</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V1</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M1</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N2</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V2</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M2</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

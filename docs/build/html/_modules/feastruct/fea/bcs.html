@@ -85,6 +85,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/post.html">Post-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/results.html">Results</a></li>
 </ul>
 
             
@@ -242,7 +244,7 @@
         <span class="sd">&quot;&quot;&quot;Gets the reaction force result corresponding to analysis case</span>
 <span class="sd">        case_id.</span>
 
-<span class="sd">        :param int case_id: Case id corresponding to an analysis case</span>
+<span class="sd">        :param int case_id: Unique case id</span>
 
 <span class="sd">        :return: Reaction force at the node</span>
 <span class="sd">        :rtype: float</span>
@@ -256,7 +258,7 @@
 <div class="viewcode-block" id="NodalSupport.set_reaction"><a class="viewcode-back" href="../../../rst/bcs.html#feastruct.fea.bcs.NodalSupport.set_reaction">[docs]</a>    <span class="k">def</span> <span class="nf">set_reaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the reaction force corresponding to analysis case case_id.</span>
 
-<span class="sd">        :param int case_id: Case id corresponding to an analysis case</span>
+<span class="sd">        :param int case_id: Unique case id</span>
 <span class="sd">        :param float f: Reaction for at the node</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -282,13 +284,13 @@
 <span class="sd">            and the number of connected elements</span>
 <span class="sd">        :type get_support_angle:</span>
 <span class="sd">            :func:`feastruct.post.post.PostProcessor.get_support_angle`</span>
-<span class="sd">        :param int case_id: Analysis case id</span>
+<span class="sd">        :param int case_id: Unique case id</span>
 <span class="sd">        :param bool deformed: Represents whether or not the node locations are</span>
 <span class="sd">            deformed based on the results of case id</span>
 <span class="sd">        :param float def_scale: Value used to scale deformations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
             <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">num_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
@@ -298,6 +300,7 @@
                                 <span class="n">deformed</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">fixity</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+            <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">num_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
             <span class="c1"># plot an x-roller</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># prefer support below</span>
                 <span class="n">angle</span> <span class="o">=</span> <span class="mi">90</span>
@@ -382,7 +385,7 @@
 <span class="sd">            and the number of connected elements</span>
 <span class="sd">        :type get_support_angle:</span>
 <span class="sd">            :func:`feastruct.post.post.PostProcessor.get_support_angle`</span>
-<span class="sd">        :param int case_id: Analysis case id</span>
+<span class="sd">        :param int case_id: Unique case id</span>
 <span class="sd">        :param bool deformed: Represents whether or not the node locations are</span>
 <span class="sd">            deformed based on the results of case id</span>
 <span class="sd">        :param float def_scale: Value used to scale deformations</span>
@@ -447,7 +450,7 @@
 <span class="sd">            and the number of connected elements</span>
 <span class="sd">        :type get_support_angle:</span>
 <span class="sd">            :func:`feastruct.post.post.PostProcessor.get_support_angle`</span>
-<span class="sd">        :param int case_id: Analysis case id</span>
+<span class="sd">        :param int case_id: Unique case id</span>
 <span class="sd">        :param bool deformed: Represents whether or not the node locations are</span>
 <span class="sd">            deformed based on the results of case id</span>
 <span class="sd">        :param float def_scale: Value used to scale deformations</span>
@@ -546,7 +549,7 @@
 <span class="sd">            and the number of connected elements</span>
 <span class="sd">        :type get_support_angle:</span>
 <span class="sd">            :func:`feastruct.post.post.PostProcessor.get_support_angle`</span>
-<span class="sd">        :param int case_id: Analysis case id</span>
+<span class="sd">        :param int case_id: Unique case id</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># get reaction force</span>
@@ -678,7 +681,7 @@
 <span class="sd">        :param bool roller: Whether or not the support is a roller</span>
 <span class="sd">        :param bool hinge: Whether or not there is a hinge at the support</span>
 <span class="sd">        :param float small: A dimension used to scale the support</span>
-<span class="sd">        :param int case_id: Analysis case id</span>
+<span class="sd">        :param int case_id: Unique case id</span>
 <span class="sd">        :param bool deformed: Represents whether or not the node locations are</span>
 <span class="sd">            deformed based on the results of case id</span>
 <span class="sd">        :param float def_scale: Value used to scale deformations</span>
@@ -774,7 +777,7 @@
 <span class="sd">            and the number of connected elements</span>
 <span class="sd">        :type get_support_angle:</span>
 <span class="sd">            :func:`feastruct.post.post.PostProcessor.get_support_angle`</span>
-<span class="sd">        :param int case_id: Analysis case id</span>
+<span class="sd">        :param int case_id: Unique case id</span>
 <span class="sd">        :param bool deformed: Represents whether or not the node locations are</span>
 <span class="sd">            deformed based on the results of case id</span>
 <span class="sd">        :param float def_scale: Value used to scale deformations</span>
