@@ -4,11 +4,26 @@ from feastruct.fea.exceptions import FEAInputError
 
 
 class PostProcessor:
-    """docstring for PostProcessor.
+    """Class for post processing methods.
+
+    This class provides some post-processing methods for a particular analysis
+    that can be used to visualise tthe structural geometry and the finite
+    element analysis results.
+
+    :cvar analysis: Analysis object for post-processing
+    :vartype analysis: :class:`feastruct.fea.fea.fea`
+    :cvar int n_subdiv: Number of subdivisions used to discretise frame
+        elements in post-processing, such that higher order shape functions can
+        be realised
     """
 
-    def __init__(self, analysis, n_subdiv=50):
-        """asldkjasld
+    def __init__(self, analysis, n_subdiv=20):
+        """Inits the fea class.
+
+        :param analysis: Analysis object for post-processing
+        :type analysis: :class:`feastruct.fea.fea.fea`
+        :param int n_subdiv: Number of subdivisions used to discretise frame
+            elements in post-processing
         """
 
         self.analysis = analysis
@@ -16,10 +31,24 @@ class PostProcessor:
 
     def plot_geom(self, case_id, ax=None, supports=True, loads=True,
                   undeformed=True, deformed=False, def_scale=1, dashed=False):
-        """askldjasld
+        """Method used to plot the structural mesh in the undeformed and/or
+        deformed state. If no axes object is provided, a new axes object is
+        created. N.B. this method is adopted from the MATLAB code by F.P. van
+        der Meer: plotGeom.m.
 
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
+        :param int case_id: Unique case id
+        :param ax: Axes object on which to plot
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param bool supports: Whether or not the freedom case supports are
+            rendered
+        :param bool loads: Whether or not the load case loads are rendered
+        :param bool undeformed: Whether or not the undeformed structure is
+            plotted
+        :param bool deformed: Whether or not the deformed structure is plotted
+        :param float def_scale: Deformation scale used for plotting the
+            deformed structure
+        :param bool dashed: Whether or not to plot the structure with dashed
+            lines if only the undeformed structure is to be plotted
         """
 
         # get analysis case
@@ -101,8 +130,8 @@ class PostProcessor:
 
         # plot layout
         plt.axis('tight')
-        ax.set_xlim(wide_lim(ax.get_xlim()))
-        ax.set_ylim(wide_lim(ax.get_ylim()))
+        ax.set_xlim(self.wide_lim(ax.get_xlim()))
+        ax.set_ylim(self.wide_lim(ax.get_ylim()))
 
         limratio = np.diff(ax.get_ylim())/np.diff(ax.get_xlim())
 
@@ -117,8 +146,10 @@ class PostProcessor:
         plt.box(on=None)
         plt.show()
 
-    def plot_reactions(self, case_id, scale=0.1):
-        """
+    def plot_reactions(self, case_id):
+        """Method used to generate a plot of the reaction forces.
+
+        :param int case_id: Unique case id
         """
 
         (fig, ax) = plt.subplots()
@@ -155,7 +186,17 @@ class PostProcessor:
 
     def plot_frame_forces(self, case_id, axial=False, shear=False,
                           moment=False, scale=0.1):
-        """
+        """Method used to plot internal frame actions resulting from the
+        analysis case case_id.
+
+        :param int case_id: Unique case id
+        :param bool axial: Whether or not the axial force diagram is displayed
+        :param bool shear: Whether or not the shear force diagram is displayed
+        :param bool moment: Whether or not the bending moment diagram is
+            displayed
+        :param float scale: Scale used for plotting internal force diagrams.
+            Corresponds to the fraction of the window that the largest action
+            takes up
         """
 
         # TODO: check that analysis object is Frame2D
@@ -203,7 +244,11 @@ class PostProcessor:
         self.plot_geom(case_id, ax=ax)
 
     def plot_buckling_eigenvector(self, case_id, buckling_mode=1):
-        """
+        """Method used to plot a buckling eigenvector. The undeformed structure
+        is plotted with a dahsed line.
+
+        :param int case_id: Unique case id
+        :param int buckling_mode: Buckling mode to plot
         """
 
         (fig, ax) = plt.subplots()
@@ -235,7 +280,11 @@ class PostProcessor:
         self.plot_geom(case_id, ax=ax, dashed=True)
 
     def plot_frequency_eigenvector(self, case_id, frequency_mode=1):
-        """
+        """Method used to plot a natural frequency eigenvector. The undeformed
+        structure is plotted with a dahsed line.
+
+        :param int case_id: Unique case id
+        :param int frequency_mode: Frequency mode to plot
         """
 
         (fig, ax) = plt.subplots()
@@ -267,10 +316,15 @@ class PostProcessor:
         self.plot_geom(case_id, ax=ax, dashed=True)
 
     def get_support_angle(self, node, prefer_dir=None):
-        """alskdjaklsd
+        """Given a node object, returns the optimal angle to plot a support.
+        Essentially finds the average angle of the connected elements and
+        considers a preferred plotting direction. N.B. this method is adopted
+        from the MATLAB code by F.P. van der Meer: plotGeom.m.
 
-        N.B. this method is adopted from the MATLAB code by F.P. van der Meer:
-        plotGeom.m.
+        :param node: Node object
+        :type node: :class:`feastruct.fea.node.node`
+        :param int prefer_dir: Preferred direction to plot the support, where 1
+            corresponds to the x-axis and 2 corresponds to the y-axis
         """
 
         # find angles to connected elements
@@ -306,10 +360,18 @@ class PostProcessor:
 
         return (angle, num_el)
 
+    def wide_lim(self, x):
+        """Returns a tuple corresponding to the axis limits (x) stretched by 2%
+        on either side.
 
-def wide_lim(x):
-    x2 = max(x)
-    x1 = min(x)
-    dx = x2-x1
-    f = 0.02
-    return (x1-f*dx, x2+f*dx)
+        :param x: List containing axis limits e.g. [xmin, xmax]
+        :type x: list[float, float]
+        :return: Stretched axis limits (x1, x2)
+        :rtype: tuple(float, float)
+        """
+
+        x2 = max(x)
+        x1 = min(x)
+        dx = x2-x1
+        f = 0.02
+        return (x1-f*dx, x2+f*dx)

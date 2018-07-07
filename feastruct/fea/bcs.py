@@ -92,7 +92,7 @@ class NodalSupport(BoundaryCondition):
         """Gets the reaction force result corresponding to analysis case
         case_id.
 
-        :param int case_id: Case id corresponding to an analysis case
+        :param int case_id: Unique case id
 
         :return: Reaction force at the node
         :rtype: float
@@ -106,7 +106,7 @@ class NodalSupport(BoundaryCondition):
     def set_reaction(self, case_id, f):
         """Sets the reaction force corresponding to analysis case case_id.
 
-        :param int case_id: Case id corresponding to an analysis case
+        :param int case_id: Unique case id
         :param float f: Reaction for at the node
         """
 
@@ -132,13 +132,13 @@ class NodalSupport(BoundaryCondition):
             and the number of connected elements
         :type get_support_angle:
             :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Analysis case id
+        :param int case_id: Unique case id
         :param bool deformed: Represents whether or not the node locations are
             deformed based on the results of case id
         :param float def_scale: Value used to scale deformations
         """
 
-        if self.node.fixity is not [1, 1, 0]:
+        if self.node.fixity not in ([1, 1, 0], [0, 1, 0]):
             (angle, num_el) = get_support_angle(self.node)
 
         if self.node.fixity == [1, 0, 0]:
@@ -148,6 +148,7 @@ class NodalSupport(BoundaryCondition):
                                 deformed, def_scale)
 
         elif self.node.fixity == [0, 1, 0]:
+            (angle, num_el) = get_support_angle(self.node, 2)
             # plot an x-roller
             if np.mod(angle + 1, 180) < 2:  # prefer support below
                 angle = 90
@@ -232,7 +233,7 @@ class NodalSupport(BoundaryCondition):
             and the number of connected elements
         :type get_support_angle:
             :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Analysis case id
+        :param int case_id: Unique case id
         :param bool deformed: Represents whether or not the node locations are
             deformed based on the results of case id
         :param float def_scale: Value used to scale deformations
@@ -297,7 +298,7 @@ class NodalSupport(BoundaryCondition):
             and the number of connected elements
         :type get_support_angle:
             :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Analysis case id
+        :param int case_id: Unique case id
         :param bool deformed: Represents whether or not the node locations are
             deformed based on the results of case id
         :param float def_scale: Value used to scale deformations
@@ -396,7 +397,7 @@ class NodalSupport(BoundaryCondition):
             and the number of connected elements
         :type get_support_angle:
             :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Analysis case id
+        :param int case_id: Unique case id
         """
 
         # get reaction force
@@ -528,7 +529,7 @@ class NodalSupport(BoundaryCondition):
         :param bool roller: Whether or not the support is a roller
         :param bool hinge: Whether or not there is a hinge at the support
         :param float small: A dimension used to scale the support
-        :param int case_id: Analysis case id
+        :param int case_id: Unique case id
         :param bool deformed: Represents whether or not the node locations are
             deformed based on the results of case id
         :param float def_scale: Value used to scale deformations
@@ -624,7 +625,7 @@ class NodalLoad(BoundaryCondition):
             and the number of connected elements
         :type get_support_angle:
             :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Analysis case id
+        :param int case_id: Unique case id
         :param bool deformed: Represents whether or not the node locations are
             deformed based on the results of case id
         :param float def_scale: Value used to scale deformations

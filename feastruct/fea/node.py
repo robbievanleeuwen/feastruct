@@ -104,8 +104,7 @@ class Node:
         """
 
         self.buckling_v.set_result(
-            results.EigenResult(case_id, buckling_mode, w, v),
-            mode=buckling_mode)
+            results.EigenResult(case_id, buckling_mode, w, v))
 
     def get_frequency_results(self, case_id, frequency_mode):
         """Returns the eigenvalue (w) and nodal eigenvector (v) for the
@@ -135,5 +134,4 @@ class Node:
         """
 
         self.frequency_v.set_result(
-            results.EigenResult(case_id, frequency_mode, w, v),
-            mode=frequency_mode)
+            results.EigenResult(case_id, frequency_mode, w, v))

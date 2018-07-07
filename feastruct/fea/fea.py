@@ -1,7 +1,7 @@
 import numpy as np
 from feastruct.fea.node import Node
 import feastruct.fea.cases as Cases
-from feastruct.post.results import ResultList, FrameForceVector
+from feastruct.post.results import ResultList
 from feastruct.fea.exceptions import FEAInputError
 
 
@@ -12,15 +12,15 @@ class fea:
     e.g. frame, membrane etc. and provides a number of generic methods which
     are useful for all types of analyses.
 
-    :cvar nodes: Nodes used in the finite element analysis.
+    :cvar nodes: Nodes used in the finite element analysis
     :vartype nodes: list[:class:`feastruct.fea.node.Node`]
-    :cvar elements: Elements used in the finite element analysis.
+    :cvar elements: Elements used in the finite element analysis
     :vartype elements: list[:class:`feastruct.fea.fea.FiniteElement`]
-    :cvar freedom_cases: Freedom cases used in the finite element analysis.
+    :cvar freedom_cases: Freedom cases used in the finite element analysis
     :vartype freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]
-    :cvar load_cases: Load cases used in the finite element analysis.
+    :cvar load_cases: Load cases used in the finite element analysis
     :vartype load_cases: list[:class:`feastruct.fea.cases.LoadCase`]
-    :cvar analysis_cases: Analysis cases used in the finite element analysis.
+    :cvar analysis_cases: Analysis cases used in the finite element analysis
     :vartype analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]
     :cvar bool non_linear: Boolean defining the type of analysis
     :cvar int dofs: Number of degrees of freedom per node for the current
@@ -31,18 +31,18 @@ class fea:
                  analysis_cases, non_linear, dofs):
         """Inits the fea class.
 
-        :param nodes: List of nodes with which to initialise the class.
+        :param nodes: List of nodes with which to initialise the class
         :type nodes: list[:class:`feastruct.fea.node.Node`]
-        :param elements: List of elements with which to initialise the class.
+        :param elements: List of elements with which to initialise the class
         :type elements: list[:class:`feastruct.fea.fea.FiniteElement`]
         :param freedom_cases: List of freedom cases with which to initialise
-            the class.
+            the class
         :type freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]
         :param load_cases: List of load cases with which to initialise the
-            class.
+            class
         :type load_cases: list[:class:`feastruct.fea.cases.LoadCase`]
         :param analysis_cases: List of analysis cases with which to initialise
-            the class.
+            the class
         :type analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]
         :param bool non_linear: Boolean defining the type of analysis
         :param int dofs: Number of degrees of freedom per node for the current
@@ -415,24 +415,9 @@ class FiniteElement:
         """Returns the internal force vector corresponding to the analysis case
         id.
 
-        :param int case_id: Unique analysis case id
+        :param int case_id: Unique case id
         :return: A result item containing the internal force vector
         :rtype: :class:`feastruct.post.results.ResultItem`
         """
 
         return self.f_int.get_result(case_id)
-
-    def set_fint(self, case_id, f_int):
-        """Saves the internal force vector result corresponding to the analysis
-        case id.
-
-        :param int case_id: Unique analysis case id
-        :param f_int: Internal force vector array, with a length of n*ndof,
-            where n is the number of nodes for the given finite element
-            and ndof is the number of degrees of freedom per node for the
-            current analysis type
-        :type f_int: :class:`numpy.ndarray`
-        """
-
-        # save internal force vector in global coordinate system
-        self.f_int.set_result(FrameForceVector(case_id, f_int))
