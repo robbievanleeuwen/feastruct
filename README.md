@@ -6,7 +6,7 @@ a python package for structural finite element analysis.
 ## Current Capabilities:
 
 ### Pre-Processor
-- [x] Python Interface
+- [x] Python API
 - [ ] Input File
 - [ ] .dxf Import
 - [ ] Triangular Meshing
