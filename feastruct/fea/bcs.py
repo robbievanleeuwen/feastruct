@@ -1,43 +1,32 @@
 import numpy as np
 from matplotlib.patches import Polygon
-from feastruct.post.results import ResultList, Force
-from feastruct.fea.exceptions import FEAInputError
+from feastruct.post.post import ScalarResult
 
 
 class BoundaryCondition:
     """Parent class for supports and loads.
 
-    Provides an init method for the creation of boundary conditions at nodes.
+    Provides an init method for the creation of boundary conditions.
 
     :cvar node: The node object at which the boundary condition acts
-    :vartype node: :class:`feastruct.fea.node.Node`
+    :vartype node: :class:`~feastruct.fea.node.Node`
     :cvar float val: The value of the boundary condition
-    :cvar int dir: The direction in which the boundary condition acts
+    :cvar int dof: The degree of freedom about which the boundary condition acts
     """
 
-    def __init__(self, analysis, node_id, val, dir):
-        """inits the :class:`feastruct.fea.bcs.BoundaryCondition` class.
+    def __init__(self, node, val, dof):
+        """Inits the BoundaryCondition class.
 
-        :param analysis: Analysis object
-        :type analysis: :class:`feastruct.fea.fea.fea`
-        :param int node_id:  Unique id of the node at which the BC is applied
+        :param node: The node object at which the boundary condition acts
+        :type node: :class:`~feastruct.fea.node.Node`
         :param float val: The value of the boundary condition
-        :param int dir: The direction in which the boundary condition acts
+        :param int dof: The degree of freedom about which the boundary condition acts
         """
 
-        # TODO: check value types e.g. node_id and dir are ints, check dir is
-        # within dofs limits.
-
-        # find the node object corresponding to node_id in the analysis object
-        try:
-            node = analysis.find_node(node_id)
-        except FEAInputError as error:
-            print(error)
-
-        # assign the node object, value and direction of the boundary condition
+        # assign the node object, value and dof of the boundary condition
         self.node = node
         self.val = val
-        self.dir = dir
+        self.dof = dof
 
 
 class NodalSupport(BoundaryCondition):
@@ -46,130 +35,137 @@ class NodalSupport(BoundaryCondition):
     Provides methods for the FEA solver and post-processing.
 
     :cvar node: The node object at which the boundary condition acts
-    :vartype node: :class:`feastruct.fea.node.Node`
+    :vartype node: :class:`~feastruct.fea.node.Node`
     :cvar float val: The value of the boundary condition
-    :cvar int dir: The direction in which the boundary condition acts
-    :cvar reaction: A result object containing reaction force results
-    :vartype reaction: :class:`feastruct.post.results.ResultList`
+    :cvar int dof: The degree of freedom about which the boundary condition acts
+    :cvar reactions: A list of reaction objects
+    :vartype reactions: list[:class:`~feastruct.post.post.ScalarResult`]
     """
 
-    def __init__(self, analysis, node_id, val, dir):
+    def __init__(self, node, val, dof):
         """inits the NodalSupport class.
 
-        :param analysis: Analysis object
-        :type analysis: :class:`feastruct.fea.fea.fea`
-        :param int node_id:  Unique id of the node at which the boundary
-            condition is applied
+        :param node: The node object at which the boundary condition acts
+        :type node: :class:`~feastruct.fea.node.Node`
         :param float val: The value of the boundary condition
-        :param int dir: The direction in which the boundary condition acts
+        :param int dof: The degree of freedom about which the boundary condition acts
         """
 
         # initialise the parent class
-        super().__init__(analysis, node_id, val, dir)
+        super().__init__(node, val, dof)
 
         # initialise the nodal reaction results
-        self.reaction = ResultList()
+        self.reactions = []
 
     def apply_support(self, K, f_ext):
         """Applies the nodal support.
 
-        The stiffness matrix and external force vector are modified to apply
-        the dirichlet boundary condition to enforce the displacement at the
-        chosen degree of freedom to be equal to the specified value.
+        The stiffness matrix and external force vector are modified to apply the dirichlet boundary
+        condition to enforce the displacement at the chosen degree of freedom to be equal to the
+        specified value.
 
-        :param K: Global stiffness matrix (size = N x N)
+        :param K: Global stiffness matrix of size *(N x N)*
         :type K: :class:`numpy.ndarray`
-        :param f_ext: Global external force vector (size = N)
+        :param f_ext: Global external force vector of size *N*
         :type f_ext: :class:`numpy.ndarray`
         """
 
+        # get gdof number for the support
+        gdof = self.node.dofs[self.dof].global_dof_num
+
         # modify stiffness matrix and f_ext
-        K[self.node.dofs[self.dir-1], :] = 0
-        K[self.node.dofs[self.dir-1], self.node.dofs[self.dir-1]] = 1
-        f_ext[self.node.dofs[self.dir-1]] = self.val
+        K[gdof, :] = 0
+        K[gdof, gdof] = 1
+        f_ext[gdof] = self.val
 
-    def get_reaction(self, case_id):
-        """Gets the reaction force result corresponding to analysis case
-        case_id.
+    def get_reaction(self, analysis_case):
+        """Gets the reaction force result corresponding to analysis_case.
 
-        :param int case_id: Unique case id
-
-        :return: Reaction force at the node
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :returns: Reaction force at the node
         :rtype: float
         """
 
-        try:
-            return self.reaction.get_result(case_id).f
-        except FEAInputError as error:
-            print(error)
+        # loop through reactions
+        for reaction in self.reactions:
+            if reaction.analysis_case == analysis_case:
+                return reaction.result
 
-    def set_reaction(self, case_id, f):
-        """Sets the reaction force corresponding to analysis case case_id.
+    def save_reaction(self, f, analysis_case):
+        """Saves the reaction force corresponding to analysis_case.
 
-        :param int case_id: Unique case id
-        :param float f: Reaction for at the node
+        :param float f: Reaction force at the node
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         """
 
-        self.reaction.set_result(Force(case_id, f))
+        # check to see if there is already a reaction for the current analysis_case
+        for reaction in self.reactions:
+            if reaction.analysis_case == analysis_case:
+                reaction.result = f
+                return
 
-    def plot_support(self, ax, small, get_support_angle, case_id, deformed,
-                     def_scale):
+        # if there isn't already a reaction for the current analysis_case
+        self.reactions.append(ScalarResult(result=f, analysis_case=analysis_case))
+
+    def plot_support(self, ax, small, get_support_angle, analysis_case, deformed, def_scale):
         """Plots a graphical representation of the nodal support.
 
-        Based on the type of support at the node, a graphical representation
-        of the support type is generated and plotted. Possible support types
-        include rollers, hinges, rotation restraints, fixed rollers and fully
-        fixed supports. The angle of the connecting elements is considered in
-        order to produce the most visually appealing representation. The
-        support location is displaced if a deformed plot is desired. Note that
-        some of the methods used to plot the supports are taken from Frans
-        van der Meer's code plotGeom.m.
+        Based on the type of support at the node, a graphical representation of the support type is
+        generated and plotted. Possible support types include rollers, hinges, rotation restraints,
+        fixed rollers and fully fixed supports. The angle of the connecting elements is considered
+        in order to produce the most visually appealing representation. The support location is
+        displaced if a deformed plot is desired. Note that some of the methods used to plot the
+        supports are taken from Frans van der Meer's code plotGeom.m.
 
         :param ax: Axes object on which to plot
         :type ax: :class:`matplotlib.axes.Axes`
         :param float small: A dimension used to scale the support
-        :param get_support_angle: A function that returns the support angle
-            and the number of connected elements
-        :type get_support_angle:
-            :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Unique case id
-        :param bool deformed: Represents whether or not the node locations are
-            deformed based on the results of case id
+        :param get_support_angle: A function that returns the support angle and the number of
+            connected elements
+        :type get_support_angle: :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param bool deformed: Represents whether or not the node locations are deformed based on
+            the results of analysis_case
         :param float def_scale: Value used to scale deformations
         """
 
-        if self.node.fixity not in ([1, 1, 0], [0, 1, 0]):
+        fixity = analysis_case.freedom_case.get_nodal_fixities(node=self.node)
+
+        if fixity not in ([1, 1, 0], [0, 1, 0]):
             (angle, num_el) = get_support_angle(self.node)
 
-        if self.node.fixity == [1, 0, 0]:
+        if fixity == [1, 0, 0]:
             # ploy a y-roller
             angle = round(angle / 180) * 180
-            self.plot_xysupport(ax, angle, True, num_el == 1, small, case_id,
-                                deformed, def_scale)
+            self.plot_xysupport(ax, angle, True, num_el == 1, small, analysis_case, deformed,
+                                def_scale)
 
-        elif self.node.fixity == [0, 1, 0]:
-            (angle, num_el) = get_support_angle(self.node, 2)
+        elif fixity == [0, 1, 0]:
+            (angle, num_el) = get_support_angle(self.node, 1)
             # plot an x-roller
             if np.mod(angle + 1, 180) < 2:  # prefer support below
                 angle = 90
             else:
                 angle = round((angle + 90) / 180) * 180 - 90
 
-            self.plot_xysupport(ax, angle, True, num_el == 1, small, case_id,
-                                deformed, def_scale)
+            self.plot_xysupport(ax, angle, True, num_el == 1, small, analysis_case, deformed,
+                                def_scale)
 
-        elif self.node.fixity == [1, 1, 0]:
+        elif fixity == [1, 1, 0]:
             # plot a hinge
-            (angle, num_el) = get_support_angle(self.node, 2)
-            self.plot_xysupport(ax, angle, False, num_el == 1, small, case_id,
-                                deformed, def_scale)
+            (angle, num_el) = get_support_angle(self.node, 1)
+            self.plot_xysupport(ax, angle, False, num_el == 1, small, analysis_case, deformed,
+                                def_scale)
 
-        elif self.node.fixity == [0, 0, 1]:
+        elif fixity == [0, 0, 1]:
             ax.plot(self.node.x, self.node.y, 'kx', markersize=8)
 
         else:
             # plot a support with moment fixity
-            if self.node.fixity == [1, 1, 1]:
+            if fixity == [1, 1, 1]:
                 # plot a fixed support
                 s = np.sin(angle * np.pi / 180)
                 c = np.cos(angle * np.pi / 180)
@@ -178,7 +174,7 @@ class NodalSupport(BoundaryCondition):
                 rect = np.array([[-0.6, -0.6, 0, 0], [-1, 1, 1, -1]]) * small
                 ec = 'none'
 
-            elif self.node.fixity == [1, 0, 1]:
+            elif fixity == [1, 0, 1]:
                 # plot y-roller block
                 angle = round(angle / 180) * 180
                 s = np.sin(angle * np.pi / 180)
@@ -188,7 +184,7 @@ class NodalSupport(BoundaryCondition):
                 rect = np.array([[-0.6, -0.6, 0, 0], [-1, 1, 1, -1]]) * small
                 ec = 'k'
 
-            elif self.node.fixity == [0, 1, 1]:
+            elif fixity == [0, 1, 1]:
                 # plot x-roller block
                 angle = round((angle + 90) / 180) * 180 - 90
                 s = np.sin(angle * np.pi / 180)
@@ -204,7 +200,9 @@ class NodalSupport(BoundaryCondition):
             # add coordinates of node
             if deformed:
                 # get displacement of node for current analysis case
-                u = self.node.get_displacement(case_id)
+                u = [0, 0]
+                u[0] = self.node.dofs[0].get_displacement(analysis_case)
+                u[1] = self.node.dofs[1].get_displacement(analysis_case)
 
                 rot_line[0, :] += self.node.x + u[0] * def_scale
                 rot_line[1, :] += self.node.y + u[1] * def_scale
@@ -217,25 +215,23 @@ class NodalSupport(BoundaryCondition):
                 rot_rect[1, :] += self.node.y
 
             ax.plot(rot_line[0, :], rot_line[1, :], 'k-', linewidth=1)
-            ax.add_patch(Polygon(np.transpose(rot_rect),
-                                 facecolor=(0.7, 0.7, 0.7), edgecolor=ec))
+            ax.add_patch(Polygon(np.transpose(rot_rect), facecolor=(0.7, 0.7, 0.7), edgecolor=ec))
 
-    def plot_imposed_disp(self, ax, max_disp, small, get_support_angle,
-                          case_id, deformed, def_scale):
+    def plot_imposed_disp(self, ax, max_disp, small, get_support_angle, analysis_case, deformed,
+                          def_scale):
         """Plots a graphical representation of an imposed translation.
 
         :param ax: Axes object on which to plot
         :type ax: :class:`matplotlib.axes.Axes`
-        :param float max_disp: Maximum imposed displacement in the analysis
-            case
+        :param float max_disp: Maximum imposed displacement in the analysis case
         :param float small: A dimension used to scale the support
-        :param get_support_angle: A function that returns the support angle
-            and the number of connected elements
-        :type get_support_angle:
-            :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Unique case id
-        :param bool deformed: Represents whether or not the node locations are
-            deformed based on the results of case id
+        :param get_support_angle: A function that returns the support angle and the number of
+            connected elements
+        :type get_support_angle: :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param bool deformed: Represents whether or not the node locations are deformed based on
+            the results of case id
         :param float def_scale: Value used to scale deformations
         """
 
@@ -252,9 +248,9 @@ class NodalSupport(BoundaryCondition):
         s = np.sin(angle * np.pi / 180)
         c = np.cos(angle * np.pi / 180)
         n = np.array([c, s])
-        inward = (n[self.dir-1] == 0 or np.sign(n[self.dir-1]) == np.sign(val))
+        inward = (n[self.dof] == 0 or np.sign(n[self.dof]) == np.sign(val))
 
-        to_rotate = (self.dir - 1) * 90 + (n[self.dir-1] >= 0) * 180
+        to_rotate = (self.dof) * 90 + (n[self.dof] >= 0) * 180
         sr = np.sin(to_rotate * np.pi / 180)
         cr = np.cos(to_rotate * np.pi / 180)
         rot_mat = np.array([[cr, -sr], [sr, cr]])
@@ -271,7 +267,9 @@ class NodalSupport(BoundaryCondition):
         # add coordinates of node
         if deformed:
             # get displacement of node for current analysis case
-            u = self.node.get_displacement(case_id)
+            u = [0, 0]
+            u[0] = self.node.dofs[0].get_displacement(analysis_case)
+            u[1] = self.node.dofs[1].get_displacement(analysis_case)
 
             rp[0, :] += self.node.x + u[0] * def_scale
             rp[1, :] += self.node.y + u[1] * def_scale
@@ -284,23 +282,21 @@ class NodalSupport(BoundaryCondition):
             rl[1, :] += self.node.y
 
         ax.plot(rl[0, :], rl[1, :], 'k-')
-        ax.add_patch(Polygon(np.transpose(rp),
-                             facecolor='none', linewidth=1, edgecolor='k'))
+        ax.add_patch(Polygon(np.transpose(rp), facecolor='none', linewidth=1, edgecolor='k'))
 
-    def plot_imposed_rot(self, ax, small, get_support_angle, case_id, deformed,
-                         def_scale):
+    def plot_imposed_rot(self, ax, small, get_support_angle, analysis_case, deformed, def_scale):
         """Plots a graphical representation of an imposed rotation.
 
         :param ax: Axes object on which to plot
         :type ax: :class:`matplotlib.axes.Axes`
         :param float small: A dimension used to scale the support
-        :param get_support_angle: A function that returns the support angle
-            and the number of connected elements
-        :type get_support_angle:
-            :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Unique case id
-        :param bool deformed: Represents whether or not the node locations are
-            deformed based on the results of case id
+        :param get_support_angle: A function that returns the support angle and the number of
+            connected elements
+        :type get_support_angle: :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param bool deformed: Represents whether or not the node locations are deformed based on
+            the results of case id
         :param float def_scale: Value used to scale deformations
         """
 
@@ -317,12 +313,9 @@ class NodalSupport(BoundaryCondition):
 
         # make arrow tail around (0,0)
         rr = (r1 + r2) / 2
-        ll = np.array([rr * np.cos(ths * np.pi / 180),
-                       rr * np.sin(ths * np.pi / 180)])
-        l1 = np.array([r1 * np.cos(ths * np.pi / 180),
-                       r1 * np.sin(ths * np.pi / 180)])
-        l2 = np.array([r2 * np.cos(ths * np.pi / 180),
-                       r2 * np.sin(ths * np.pi / 180)])
+        ll = np.array([rr * np.cos(ths * np.pi / 180), rr * np.sin(ths * np.pi / 180)])
+        l1 = np.array([r1 * np.cos(ths * np.pi / 180), r1 * np.sin(ths * np.pi / 180)])
+        l2 = np.array([r2 * np.cos(ths * np.pi / 180), r2 * np.sin(ths * np.pi / 180)])
 
         # make arrow head at (0,0)
         pp = np.array([[-lh, -lh, 0], [-wh / 2, wh / 2, 0]])
@@ -358,7 +351,9 @@ class NodalSupport(BoundaryCondition):
         # add coordinates of node
         if deformed:
             # get displacement of node for current analysis case
-            u = self.node.get_displacement(case_id)
+            u = [0, 0]
+            u[0] = self.node.dofs[0].get_displacement(analysis_case)
+            u[1] = self.node.dofs[1].get_displacement(analysis_case)
 
             rp[0, :] += self.node.x + u[0] * def_scale
             rp[1, :] += self.node.y + u[1] * def_scale
@@ -377,40 +372,34 @@ class NodalSupport(BoundaryCondition):
         # shift arrow to node and plot
         ax.plot(rl1[0, :], rl1[1, :], 'k-')
         ax.plot(rl2[0, :], rl2[1, :], 'k-')
-        ax.plot(np.append(rl1[0, ibase], rl2[0, ibase]),
-                np.append(rl1[1, ibase], rl2[1, ibase]), 'k-')
-        ax.add_patch(Polygon(np.transpose(rp),
-                             facecolor='none', linewidth=1, edgecolor='k'))
+        ax.plot(np.append(rl1[0, ibase], rl2[0, ibase]), np.append(rl1[1, ibase], rl2[1, ibase]),
+                'k-')
+        ax.add_patch(Polygon(np.transpose(rp), facecolor='none', linewidth=1, edgecolor='k'))
 
-    def plot_reaction(self, ax, max_reaction, small, get_support_angle,
-                      case_id):
-        """Plots a graphical representation of a reaction force and displays
-        the value of the reaction force. A straight arrow is plotted for a
-        translational reaction and a curved arrow is plotted for a rotational
-        reaction.
+    def plot_reaction(self, ax, max_reaction, small, get_support_angle, analysis_case):
+        """Plots a graphical representation of a reaction force and displays the value of the
+        reaction force. A straight arrow is plotted for a translational reaction and a curved arrow
+        is plotted for a rotational reaction.
 
         :param ax: Axes object on which to plot
         :type ax: :class:`matplotlib.axes.Axes`
         :param float max_reaction: Maximum reaction force in the analysis case
         :param float small: A dimension used to scale the support
-        :param get_support_angle: A function that returns the support angle
-            and the number of connected elements
-        :type get_support_angle:
-            :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Unique case id
+        :param get_support_angle: A function that returns the support angle and the number of
+            connected elements
+        :type get_support_angle: :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         """
 
         # get reaction force
-        try:
-            reaction = self.get_reaction(case_id)
-        except FEAInputError as error:
-            print(error)
+        reaction = self.get_reaction(analysis_case)
 
         # dont plot small reaction
         if abs(reaction) < 1e-6:
             return
 
-        if self.dir in (1, 2):
+        if self.dof in [0, 1]:
             val = reaction / max_reaction
 
             lf = abs(val) * 1.5 * small  # arrow length
@@ -421,7 +410,7 @@ class NodalSupport(BoundaryCondition):
             xoff = 0
             yoff = 0
 
-            if self.dir == 1:
+            if self.dof == 0:
                 rot_mat = np.array([[-1, 0], [0, -1]]) * np.sign(val)
                 va = 'center'
                 if val > 0:
@@ -430,7 +419,7 @@ class NodalSupport(BoundaryCondition):
                 else:
                     ha = 'left'
                     xoff = offset / 2
-            elif self.dir == 2:
+            elif self.dof == 1:
                 rot_mat = np.array([[0, 1], [-1, 0]]) * np.sign(val)
                 ha = 'center'
                 if val > 0:
@@ -516,11 +505,10 @@ class NodalSupport(BoundaryCondition):
 
         ax.plot(rl[0, s:e], rl[1, s:e], linewidth=1.5, color='r')
         ax.add_patch(Polygon(np.transpose(rp), facecolor='r'))
-        ax.text(tl[0], tl[1], "{:5.3g}".format(reaction), size=8,
-                horizontalalignment=ha, verticalalignment=va)
+        ax.text(tl[0], tl[1], "{:5.3g}".format(reaction), size=8, horizontalalignment=ha,
+                verticalalignment=va)
 
-    def plot_xysupport(self, ax, angle, roller, hinge, small, case_id,
-                       deformed, def_scale):
+    def plot_xysupport(self, ax, angle, roller, hinge, small, analysis_case, deformed, def_scale):
         """Plots a hinged or roller support.
 
         :param ax: Axes object on which to plot
@@ -529,16 +517,19 @@ class NodalSupport(BoundaryCondition):
         :param bool roller: Whether or not the support is a roller
         :param bool hinge: Whether or not there is a hinge at the support
         :param float small: A dimension used to scale the support
-        :param int case_id: Unique case id
-        :param bool deformed: Represents whether or not the node locations are
-            deformed based on the results of case id
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param bool deformed: Represents whether or not the node locations are deformed based on
+            the results of case id
         :param float def_scale: Value used to scale deformations
         """
 
         # determine coordinates of node
         if deformed:
             # get displacement of node for current analysis case
-            u = self.node.get_displacement(case_id)
+            u = [0, 0]
+            u[0] = self.node.dofs[0].get_displacement(analysis_case)
+            u[1] = self.node.dofs[1].get_displacement(analysis_case)
 
             x = self.node.x + u[0] * def_scale
             y = self.node.y + u[1] * def_scale
@@ -564,11 +555,9 @@ class NodalSupport(BoundaryCondition):
             rot_rect = np.matmul(rot_mat, rect)
             rot_rect[0, :] += x
             rot_rect[1, :] += y
-            ax.add_patch(Polygon(np.transpose(rot_rect),
-                                 facecolor=(0.7, 0.7, 0.7)))
+            ax.add_patch(Polygon(np.transpose(rot_rect), facecolor=(0.7, 0.7, 0.7)))
 
-        ax.plot(rot_triangle[0, :] + x, rot_triangle[1, :] + y, 'k-',
-                linewidth=1)
+        ax.plot(rot_triangle[0, :] + x, rot_triangle[1, :] + y, 'k-', linewidth=1)
 
         if hinge:
             ax.plot(x, y, 'ko', markerfacecolor='w', linewidth=1, markersize=4)
@@ -580,61 +569,61 @@ class NodalLoad(BoundaryCondition):
     Provides methods for the FEA solver and post-processing.
 
     :cvar node: The node object at which the nodal load acts
-    :vartype node: :class:`feastruct.fea.node.Node`
+    :vartype node: :class:`~feastruct.fea.node.Node`
     :cvar float val: The value of the nodal load
-    :cvar int dir: The direction in which the nodal load acts
+    :cvar int dof: The degree of freedom about which the nodal load acts
     """
 
-    def __init__(self, analysis, node_id, val, dir):
+    def __init__(self, node, val, dof):
         """inits the NodalLoad class.
 
-        :param analysis: Analysis object
-        :type analysis: :class:`feastruct.fea.fea.fea`
-        :param int node_id:  Unique id of the node at which the nodal load is
-            applied
+        :param node: The node object at which the nodal load acts
+        :type node: :class:`~feastruct.fea.node.Node`
         :param float val: The value of the nodal load
-        :param int dir: The direction in which the nodal load acts
+        :param int dof: The degree of freedom about which the nodal load acts
         """
 
-        super().__init__(analysis, node_id, val, dir)
+        super().__init__(node, val, dof)
 
     def apply_load(self, f_ext):
         """Applies the nodal load.
 
-        The external force vector is modified to apply the neumann boundary
-        condition.
+        The external force vector is modified to apply the neumann boundary condition.
 
-        :param f_ext: Global external force vector (size = N)
+        :param f_ext: Global external force vector of size *N*
         :type f_ext: :class:`numpy.ndarray`
         """
 
-        # add load to f_ext, selecting the correct dof from dofs
-        f_ext[self.node.dofs[self.dir-1]] = self.val
+        # get gdof number for the support
+        gdof = self.node.dofs[self.dof].global_dof_num
 
-    def plot_load(self, ax, max_force, small, get_support_angle, case_id,
-                  deformed, def_scale):
-        """Plots a graphical representation of a nodal force. A straight arrow
-        is plotted for a translational load and a curved arrow is plotted for a
-        moment.
+        # add load to f_ext, selecting the correct dof from dofs
+        f_ext[gdof] = self.val
+
+    def plot_load(self, ax, max_force, small, get_support_angle, analysis_case, deformed,
+                  def_scale):
+        """Plots a graphical representation of a nodal force. A straight arrow is plotted for a
+        translational load and a curved arrow is plotted for a moment.
 
         :param ax: Axes object on which to plot
         :type ax: :class:`matplotlib.axes.Axes`
         :param float max_force: Maximum translational nodal load
         :param float small: A dimension used to scale the support
-        :param get_support_angle: A function that returns the support angle
-            and the number of connected elements
-        :type get_support_angle:
-            :func:`feastruct.post.post.PostProcessor.get_support_angle`
-        :param int case_id: Unique case id
-        :param bool deformed: Represents whether or not the node locations are
-            deformed based on the results of case id
+        :param get_support_angle: A function that returns the support angle and the number of
+            connected elements
+        :type get_support_angle: :func:`feastruct.post.post.PostProcessor.get_support_angle`
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param bool deformed: Represents whether or not the node locations are deformed based on
+            the results of case id
         :param float def_scale: Value used to scale deformations
         """
 
         # determine coordinates of node
         if deformed:
-            # get displacement of node for current analysis case
-            u = self.node.get_displacement(case_id)
+            u = [0, 0]
+            u[0] = self.node.dofs[0].get_displacement(analysis_case)
+            u[1] = self.node.dofs[1].get_displacement(analysis_case)
 
             x = self.node.x + u[0] * def_scale
             y = self.node.y + u[1] * def_scale
@@ -650,17 +639,16 @@ class NodalLoad(BoundaryCondition):
         c = np.cos(angle * np.pi / 180)
 
         # plot nodal force
-        if self.dir in (1, 2):
+        if self.dof in [0, 1]:
             lf = abs(val) * 1.5 * small  # arrow length
             lh = 0.6 * small  # arrow head length
             wh = 0.6 * small  # arrow head width
             lf = max(lf, lh * 1.5)
 
             n = np.array([c, s])
-            inward = (n[self.dir-1] == 0 or
-                      np.sign(n[self.dir-1]) == np.sign(val))
+            inward = (n[self.dof] == 0 or np.sign(n[self.dof]) == np.sign(val))
 
-            to_rotate = (self.dir - 1) * 90 + (n[self.dir-1] > 0) * 180
+            to_rotate = (self.dof) * 90 + (n[self.dof] > 0) * 180
             sr = np.sin(to_rotate * np.pi / 180)
             cr = np.cos(to_rotate * np.pi / 180)
             rot_mat = np.array([[cr, -sr], [sr, cr]])
@@ -692,8 +680,7 @@ class NodalLoad(BoundaryCondition):
             rot_mat = np.array([[c, -s], [s, c]])
 
             # make arrow tail around (0,0)
-            ll = np.array([rr * np.cos(ths * np.pi / 180),
-                           rr * np.sin(ths * np.pi / 180)])
+            ll = np.array([rr * np.cos(ths * np.pi / 180), rr * np.sin(ths * np.pi / 180)])
 
             # make arrow head at (0,0)
             pp = np.array([[-lh, -lh, 0], [-wh / 2, wh / 2, 0]])

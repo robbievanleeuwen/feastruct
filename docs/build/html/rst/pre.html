@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pre &mdash; feastruct 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Node" href="node.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pre</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#materials">Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sections">Sections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Pre</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/pre.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pre">
+<h1>Pre<a class="headerlink" href="#pre" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="materials">
+<h2>Materials<a class="headerlink" href="#materials" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.pre.material.Material">
+<em class="property">class </em><code class="descclassname">feastruct.pre.material.</code><code class="descname">Material</code><span class="sig-paren">(</span><em>name</em>, <em>elastic_modulus</em>, <em>poissons_ratio</em>, <em>rho</em>, <em>colour='w'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/material.html#Material"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.material.Material" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for structural materials (assumed isotropic).</p>
+<p>Provides a way of storing material properties related to a specific material. The colour can be
+a multitude of different formats, refer to <a class="reference external" href="https://matplotlib.org/api/colors_api.html">https://matplotlib.org/api/colors_api.html</a> and
+<a class="reference external" href="https://matplotlib.org/examples/color/named_colors.html">https://matplotlib.org/examples/color/named_colors.html</a> for more information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) – Material name</li>
+<li><strong>elastic_modulus</strong> (<em>float</em>) – Material modulus of elasticity</li>
+<li><strong>poissons_ratio</strong> (<em>float</em>) – Material Poisson’s ratio</li>
+<li><strong>shear_modulus</strong> (<em>float</em>) – Material shear modulus, derived from the elastic modulus and
+Poisson’s ratio assuming an isotropic material</li>
+<li><strong>rho</strong> (<em>float</em>) – Material density</li>
+<li><strong>colour</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.colors</span></code>) – Material color for rendering</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.pre.material.Material.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>elastic_modulus</em>, <em>poissons_ratio</em>, <em>rho</em>, <em>colour='w'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/material.html#Material.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.material.Material.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Material class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) – Material name</li>
+<li><strong>elastic_modulus</strong> (<em>float</em>) – Material modulus of elasticity</li>
+<li><strong>poissons_ratio</strong> (<em>float</em>) – Material Poisson’s ratio</li>
+<li><strong>rho</strong> (<em>float</em>) – Material density</li>
+<li><strong>colour</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.colors</span></code>) – Material color for rendering</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="feastruct.pre.material.Steel">
+<em class="property">class </em><code class="descclassname">feastruct.pre.material.</code><code class="descname">Steel</code><a class="reference internal" href="../_modules/feastruct/pre/material.html#Steel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.material.Steel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.pre.material.Material</span></code></a></p>
+<p>Class for structural steel to AS4100-1998.</p>
+<p>Material properties:</p>
+<ul class="simple">
+<li>name: steel</li>
+<li>elastic_modulus: 200000 N/mm2</li>
+<li>poissons_ratio: 0.3</li>
+<li>rho: 7.85e-9 T/mm^3</li>
+<li>colour: lightgrey</li>
+</ul>
+<dl class="method">
+<dt id="feastruct.pre.material.Steel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/material.html#Steel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.material.Steel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Steel class.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="sections">
+<h2>Sections<a class="headerlink" href="#sections" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.pre.section.Section">
+<em class="property">class </em><code class="descclassname">feastruct.pre.section.</code><code class="descname">Section</code><span class="sig-paren">(</span><em>area=1</em>, <em>ixx=1</em>, <em>iyy=1</em>, <em>j=1</em>, <em>A_sx=1</em>, <em>A_sy=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/section.html#Section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.section.Section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for storing cross-section properties.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>area</strong> (<em>float</em>) – Cross-sectional area</li>
+<li><strong>ixx</strong> (<em>float</em>) – Second moment of area about the centroidal x-axis</li>
+<li><strong>iyy</strong> (<em>float</em>) – Second moment of area about the centroidal y-axis</li>
+<li><strong>j</strong> (<em>float</em>) – Torsion constant</li>
+<li><strong>A_sx</strong> (<em>float</em>) – Shear area about the x-axis</li>
+<li><strong>A_sy</strong> (<em>float</em>) – Shear area about the y-axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.pre.section.Section.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>area=1</em>, <em>ixx=1</em>, <em>iyy=1</em>, <em>j=1</em>, <em>A_sx=1</em>, <em>A_sy=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/section.html#Section.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.section.Section.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Section class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>area</strong> (<em>float</em>) – Cross-sectional area</li>
+<li><strong>ixx</strong> (<em>float</em>) – Second moment of area about the centroidal x-axis</li>
+<li><strong>iyy</strong> (<em>float</em>) – Second moment of area about the centroidal y-axis</li>
+<li><strong>j</strong> (<em>float</em>) – Torsion constant</li>
+<li><strong>A_sx</strong> (<em>float</em>) – Shear area about the x-axis</li>
+<li><strong>A_sy</strong> (<em>float</em>) – Shear area about the y-axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="node.html" class="btn btn-neutral float-right" title="Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>feastruct.pre.material &mdash; feastruct 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/pre.html">Pre</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/solvers.html">Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/post.html">Post-Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>feastruct.pre.material</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for feastruct.pre.material</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="Material"><a class="viewcode-back" href="../../../rst/pre.html#feastruct.pre.material.Material">[docs]</a><span></span><span class="k">class</span> <span class="nc">Material</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for structural materials (assumed isotropic).</span>
+
+<span class="sd">    Provides a way of storing material properties related to a specific material. The colour can be</span>
+<span class="sd">    a multitude of different formats, refer to https://matplotlib.org/api/colors_api.html and</span>
+<span class="sd">    https://matplotlib.org/examples/color/named_colors.html for more information.</span>
+
+<span class="sd">    :cvar string name: Material name</span>
+<span class="sd">    :cvar float elastic_modulus: Material modulus of elasticity</span>
+<span class="sd">    :cvar float poissons_ratio: Material Poisson&#39;s ratio</span>
+<span class="sd">    :cvar float shear_modulus: Material shear modulus, derived from the elastic modulus and</span>
+<span class="sd">        Poisson&#39;s ratio assuming an isotropic material</span>
+<span class="sd">    :cvar float rho: Material density</span>
+<span class="sd">    :cvar colour: Material color for rendering</span>
+<span class="sd">    :vartype colour: :class:`matplotlib.colors`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Material.__init__"><a class="viewcode-back" href="../../../rst/pre.html#feastruct.pre.material.Material.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">elastic_modulus</span><span class="p">,</span> <span class="n">poissons_ratio</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Material class.</span>
+
+<span class="sd">        :param string name: Material name</span>
+<span class="sd">        :param float elastic_modulus: Material modulus of elasticity</span>
+<span class="sd">        :param float poissons_ratio: Material Poisson&#39;s ratio</span>
+<span class="sd">        :param float rho: Material density</span>
+<span class="sd">        :param colour: Material color for rendering</span>
+<span class="sd">        :type colour: :class:`matplotlib.colors`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elastic_modulus</span> <span class="o">=</span> <span class="n">elastic_modulus</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poissons_ratio</span> <span class="o">=</span> <span class="n">poissons_ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">elastic_modulus</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">poissons_ratio</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colour</span> <span class="o">=</span> <span class="n">colour</span></div></div>
+
+
+<div class="viewcode-block" id="Steel"><a class="viewcode-back" href="../../../rst/pre.html#feastruct.pre.material.Steel">[docs]</a><span class="k">class</span> <span class="nc">Steel</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for structural steel to AS4100-1998.</span>
+
+<span class="sd">    Material properties:</span>
+
+<span class="sd">    * name: steel</span>
+<span class="sd">    * elastic_modulus: 200000 N/mm2</span>
+<span class="sd">    * poissons_ratio: 0.3</span>
+<span class="sd">    * rho: 7.85e-9 T/mm^3</span>
+<span class="sd">    * colour: lightgrey</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Steel.__init__"><a class="viewcode-back" href="../../../rst/pre.html#feastruct.pre.material.Steel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Steel class.&quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;steel&#39;</span><span class="p">,</span> <span class="n">elastic_modulus</span><span class="o">=</span><span class="mf">2e5</span><span class="p">,</span> <span class="n">poissons_ratio</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">7.85e-9</span><span class="p">,</span>
+                         <span class="n">colour</span><span class="o">=</span><span class="s1">&#39;lightgrey&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

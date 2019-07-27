@@ -29,8 +29,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Results" href="results.html" />
-    <link rel="prev" title="Node" href="node.html" /> 
+    <link rel="prev" title="Solvers" href="solvers.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -82,13 +81,19 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="frame2D.html">Frame Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a></li>
 <li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Post-Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Post-Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#post-processor">Post-Processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scalar-result">Scalar Result</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -155,21 +160,21 @@
             
   <div class="section" id="post-processing">
 <h1>Post-Processing<a class="headerlink" href="#post-processing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="post-processor">
+<h2>Post-Processor<a class="headerlink" href="#post-processor" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><span class="target" id="module-feastruct.post.post"></span><dl class="class">
+<div><dl class="class">
 <dt id="feastruct.post.post.PostProcessor">
 <em class="property">class </em><code class="descclassname">feastruct.post.post.</code><code class="descname">PostProcessor</code><span class="sig-paren">(</span><em>analysis</em>, <em>n_subdiv=20</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class for post processing methods.</p>
-<p>This class provides some post-processing methods for a particular analysis
-that can be used to visualise tthe structural geometry and the finite
-element analysis results.</p>
+<dd><p>Class for post processing methods.</p>
+<p>This class provides some post-processing methods for a particular analysis that can be used to
+visualise tthe structural geometry and the finite element analysis results.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object for post-processing</li>
+<li><strong>analysis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">fea</span></code>) – Analysis object for post-processing</li>
 <li><strong>n_subdiv</strong> (<em>int</em>) – Number of subdivisions used to discretise frame
 elements in post-processing, such that higher order shape functions can
 be realised</li>
@@ -187,9 +192,9 @@ be realised</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object for post-processing</li>
-<li><strong>n_subdiv</strong> (<em>int</em>) – Number of subdivisions used to discretise frame
-elements in post-processing</li>
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object for post-processing</li>
+<li><strong>n_subdiv</strong> (<em>int</em>) – Number of subdivisions used to discretise frame elements in
+post-processing</li>
 </ul>
 </td>
 </tr>
@@ -200,37 +205,17 @@ elements in post-processing</li>
 <dl class="method">
 <dt id="feastruct.post.post.PostProcessor.get_support_angle">
 <code class="descname">get_support_angle</code><span class="sig-paren">(</span><em>node</em>, <em>prefer_dir=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.get_support_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.get_support_angle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a node object, returns the optimal angle to plot a support.
-Essentially finds the average angle of the connected elements and
-considers a preferred plotting direction. N.B. this method is adopted
-from the MATLAB code by F.P. van der Meer: plotGeom.m.</p>
+<dd><p>Given a node object, returns the optimal angle to plot a support. Essentially finds the
+average angle of the connected elements and considers a preferred plotting direction. N.B.
+this method is adopted from the MATLAB code by F.P. van der Meer: plotGeom.m.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>node</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.node</span></code>) – Node object</li>
-<li><strong>prefer_dir</strong> (<em>int</em>) – Preferred direction to plot the support, where 1
-corresponds to the x-axis and 2 corresponds to the y-axis</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="feastruct.post.post.PostProcessor.plot_buckling_eigenvector">
-<code class="descname">plot_buckling_eigenvector</code><span class="sig-paren">(</span><em>case_id</em>, <em>buckling_mode=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_buckling_eigenvector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_buckling_eigenvector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method used to plot a buckling eigenvector. The undeformed structure
-is plotted with a dahsed line.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode to plot</li>
+<li><strong>node</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">node</span></code>) – Node object</li>
+<li><strong>prefer_dir</strong> (<em>int</em>) – Preferred direction to plot the support, where 0 corresponds to the
+x-axis and 1 corresponds to the y-axis</li>
 </ul>
 </td>
 </tr>
@@ -240,41 +225,19 @@ is plotted with a dahsed line.</p>
 
 <dl class="method">
 <dt id="feastruct.post.post.PostProcessor.plot_frame_forces">
-<code class="descname">plot_frame_forces</code><span class="sig-paren">(</span><em>case_id</em>, <em>axial=False</em>, <em>shear=False</em>, <em>moment=False</em>, <em>scale=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_frame_forces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_frame_forces" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method used to plot internal frame actions resulting from the
-analysis case case_id.</p>
+<code class="descname">plot_frame_forces</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>axial=False</em>, <em>shear=False</em>, <em>moment=False</em>, <em>scale=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_frame_forces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_frame_forces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to plot internal frame actions resulting from the analysis case.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
 <li><strong>axial</strong> (<em>bool</em>) – Whether or not the axial force diagram is displayed</li>
 <li><strong>shear</strong> (<em>bool</em>) – Whether or not the shear force diagram is displayed</li>
-<li><strong>moment</strong> (<em>bool</em>) – Whether or not the bending moment diagram is
-displayed</li>
-<li><strong>scale</strong> (<em>float</em>) – Scale used for plotting internal force diagrams.
-Corresponds to the fraction of the window that the largest action
-takes up</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="feastruct.post.post.PostProcessor.plot_frequency_eigenvector">
-<code class="descname">plot_frequency_eigenvector</code><span class="sig-paren">(</span><em>case_id</em>, <em>frequency_mode=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_frequency_eigenvector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_frequency_eigenvector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method used to plot a natural frequency eigenvector. The undeformed
-structure is plotted with a dahsed line.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode to plot</li>
+<li><strong>moment</strong> (<em>bool</em>) – Whether or not the bending moment diagram is displayed</li>
+<li><strong>scale</strong> (<em>float</em>) – Scale used for plotting internal force diagrams. Corresponds to the
+fraction of the window that the largest action takes up</li>
 </ul>
 </td>
 </tr>
@@ -284,28 +247,24 @@ structure is plotted with a dahsed line.</p>
 
 <dl class="method">
 <dt id="feastruct.post.post.PostProcessor.plot_geom">
-<code class="descname">plot_geom</code><span class="sig-paren">(</span><em>case_id</em>, <em>ax=None</em>, <em>supports=True</em>, <em>loads=True</em>, <em>undeformed=True</em>, <em>deformed=False</em>, <em>def_scale=1</em>, <em>dashed=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_geom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_geom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method used to plot the structural mesh in the undeformed and/or
-deformed state. If no axes object is provided, a new axes object is
-created. N.B. this method is adopted from the MATLAB code by F.P. van
-der Meer: plotGeom.m.</p>
+<code class="descname">plot_geom</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>ax=None</em>, <em>supports=True</em>, <em>loads=True</em>, <em>undeformed=True</em>, <em>deformed=False</em>, <em>def_scale=1</em>, <em>dashed=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_geom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_geom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to plot the structural mesh in the undeformed and/or deformed state. If no
+axes object is provided, a new axes object is created. N.B. this method is adopted from the
+MATLAB code by F.P. van der Meer: plotGeom.m.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
-<li><strong>supports</strong> (<em>bool</em>) – Whether or not the freedom case supports are
-rendered</li>
+<li><strong>supports</strong> (<em>bool</em>) – Whether or not the freedom case supports are rendered</li>
 <li><strong>loads</strong> (<em>bool</em>) – Whether or not the load case loads are rendered</li>
-<li><strong>undeformed</strong> (<em>bool</em>) – Whether or not the undeformed structure is
-plotted</li>
+<li><strong>undeformed</strong> (<em>bool</em>) – Whether or not the undeformed structure is plotted</li>
 <li><strong>deformed</strong> (<em>bool</em>) – Whether or not the deformed structure is plotted</li>
-<li><strong>def_scale</strong> (<em>float</em>) – Deformation scale used for plotting the
-deformed structure</li>
-<li><strong>dashed</strong> (<em>bool</em>) – Whether or not to plot the structure with dashed
-lines if only the undeformed structure is to be plotted</li>
+<li><strong>def_scale</strong> (<em>float</em>) – Deformation scale used for plotting the deformed structure</li>
+<li><strong>dashed</strong> (<em>bool</em>) – Whether or not to plot the structure with dashed lines if only the
+undeformed structure is to be plotted</li>
 </ul>
 </td>
 </tr>
@@ -315,13 +274,13 @@ lines if only the undeformed structure is to be plotted</li>
 
 <dl class="method">
 <dt id="feastruct.post.post.PostProcessor.plot_reactions">
-<code class="descname">plot_reactions</code><span class="sig-paren">(</span><em>case_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_reactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_reactions" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_reactions</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_reactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_reactions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method used to generate a plot of the reaction forces.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>case_id</strong> (<em>int</em>) – Unique case id</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</td>
 </tr>
 </tbody>
 </table>
@@ -330,8 +289,7 @@ lines if only the undeformed structure is to be plotted</li>
 <dl class="method">
 <dt id="feastruct.post.post.PostProcessor.wide_lim">
 <code class="descname">wide_lim</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.wide_lim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.wide_lim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a tuple corresponding to the axis limits (x) stretched by 2%
-on either side.</p>
+<dd><p>Returns a tuple corresponding to the axis limits (x) stretched by 2% on either side.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -350,6 +308,46 @@ on either side.</p>
 
 </div></blockquote>
 </div>
+<div class="section" id="scalar-result">
+<h2>Scalar Result<a class="headerlink" href="#scalar-result" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.post.post.ScalarResult">
+<em class="property">class </em><code class="descclassname">feastruct.post.post.</code><code class="descname">ScalarResult</code><span class="sig-paren">(</span><em>result</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#ScalarResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.ScalarResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for storing a scalar result for a specific analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>result</strong> (<em>float</em>) – Scalar result</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the result</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.post.post.ScalarResult.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>result</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#ScalarResult.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.ScalarResult.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the ScalarResult class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><strong>result</strong> (<em>float</em>) – Scalar result</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the result</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
 
 
            </div>
@@ -359,10 +357,8 @@ on either side.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="results.html" class="btn btn-neutral float-right" title="Results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="node.html" class="btn btn-neutral" title="Node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="solvers.html" class="btn btn-neutral" title="Solvers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

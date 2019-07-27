@@ -29,8 +29,8 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Cases" href="cases.html" />
-    <link rel="prev" title="Finite Element Analysis" href="fea.html" /> 
+    <link rel="next" title="Solvers" href="solvers.html" />
+    <link rel="prev" title="Cases" href="cases.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -82,13 +82,22 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="frame2D.html">Frame Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a></li>
 <li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Boundary Conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#boundary-condition">Boundary Condition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nodal-support">Nodal Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nodal-load">Nodal Load</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">Results</a></li>
 </ul>
 
             
@@ -155,21 +164,22 @@
             
   <div class="section" id="boundary-conditions">
 <h1>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="boundary-condition">
+<h2>Boundary Condition<a class="headerlink" href="#boundary-condition" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><span class="target" id="module-feastruct.fea.bcs"></span><dl class="class">
+<div><dl class="class">
 <dt id="feastruct.fea.bcs.BoundaryCondition">
-<em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">BoundaryCondition</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#BoundaryCondition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.BoundaryCondition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Parent class for supports and loads.</p>
-<p>Provides an init method for the creation of boundary conditions at nodes.</p>
+<em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">BoundaryCondition</code><span class="sig-paren">(</span><em>node</em>, <em>val</em>, <em>dof</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#BoundaryCondition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.BoundaryCondition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parent class for supports and loads.</p>
+<p>Provides an init method for the creation of boundary conditions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference internal" href="node.html#module-feastruct.fea.node" title="feastruct.fea.node"><strong>node</strong></a> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>) – The node object at which the boundary condition acts</li>
+<li><strong>node</strong> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – The node object at which the boundary condition acts</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the boundary condition</li>
-<li><strong>dir</strong> (<em>int</em>) – The direction in which the boundary condition acts</li>
+<li><strong>dof</strong> (<em>int</em>) – The degree of freedom about which the boundary condition acts</li>
 </ul>
 </td>
 </tr>
@@ -177,17 +187,16 @@
 </table>
 <dl class="method">
 <dt id="feastruct.fea.bcs.BoundaryCondition.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#BoundaryCondition.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.BoundaryCondition.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>inits the <a class="reference internal" href="#feastruct.fea.bcs.BoundaryCondition" title="feastruct.fea.bcs.BoundaryCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.bcs.BoundaryCondition</span></code></a> class.</p>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>node</em>, <em>val</em>, <em>dof</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#BoundaryCondition.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.BoundaryCondition.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the BoundaryCondition class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
-<li><strong>node_id</strong> (<em>int</em>) – Unique id of the node at which the BC is applied</li>
+<li><strong>node</strong> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – The node object at which the boundary condition acts</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the boundary condition</li>
-<li><strong>dir</strong> (<em>int</em>) – The direction in which the boundary condition acts</li>
+<li><strong>dof</strong> (<em>int</em>) – The degree of freedom about which the boundary condition acts</li>
 </ul>
 </td>
 </tr>
@@ -197,94 +206,13 @@
 
 </dd></dl>
 
-<dl class="class">
-<dt id="feastruct.fea.bcs.NodalLoad">
-<em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">NodalLoad</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.bcs.BoundaryCondition" title="feastruct.fea.bcs.BoundaryCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.bcs.BoundaryCondition</span></code></a></p>
-<p>Class for a neumann boundary condition acting at a node.</p>
-<p>Provides methods for the FEA solver and post-processing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference internal" href="node.html#module-feastruct.fea.node" title="feastruct.fea.node"><strong>node</strong></a> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>) – The node object at which the nodal load acts</li>
-<li><strong>val</strong> (<em>float</em>) – The value of the nodal load</li>
-<li><strong>dir</strong> (<em>int</em>) – The direction in which the nodal load acts</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="feastruct.fea.bcs.NodalLoad.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>inits the NodalLoad class.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
-<li><strong>node_id</strong> (<em>int</em>) – Unique id of the node at which the nodal load is
-applied</li>
-<li><strong>val</strong> (<em>float</em>) – The value of the nodal load</li>
-<li><strong>dir</strong> (<em>int</em>) – The direction in which the nodal load acts</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="feastruct.fea.bcs.NodalLoad.apply_load">
-<code class="descname">apply_load</code><span class="sig-paren">(</span><em>f_ext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad.apply_load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad.apply_load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies the nodal load.</p>
-<p>The external force vector is modified to apply the neumann boundary
-condition.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Global external force vector (size = N)</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="feastruct.fea.bcs.NodalLoad.plot_load">
-<code class="descname">plot_load</code><span class="sig-paren">(</span><em>ax</em>, <em>max_force</em>, <em>small</em>, <em>get_support_angle</em>, <em>case_id</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad.plot_load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad.plot_load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots a graphical representation of a nodal force. A straight arrow
-is plotted for a translational load and a curved arrow is plotted for a
-moment.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
-<li><strong>max_force</strong> (<em>float</em>) – Maximum translational nodal load</li>
-<li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
-and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
-deformed based on the results of case id</li>
-<li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
+</div></blockquote>
+<div class="section" id="nodal-support">
+<h3>Nodal Support<a class="headerlink" href="#nodal-support" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
 <dt id="feastruct.fea.bcs.NodalSupport">
-<em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">NodalSupport</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">NodalSupport</code><span class="sig-paren">(</span><em>node</em>, <em>val</em>, <em>dof</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#feastruct.fea.bcs.BoundaryCondition" title="feastruct.fea.bcs.BoundaryCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.bcs.BoundaryCondition</span></code></a></p>
 <p>Class for a dirichlet boundary condition acting at a node.</p>
 <p>Provides methods for the FEA solver and post-processing.</p>
@@ -293,10 +221,10 @@ deformed based on the results of case id</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference internal" href="node.html#module-feastruct.fea.node" title="feastruct.fea.node"><strong>node</strong></a> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.node.Node</span></code></a>) – The node object at which the boundary condition acts</li>
+<li><strong>node</strong> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – The node object at which the boundary condition acts</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the boundary condition</li>
-<li><strong>dir</strong> (<em>int</em>) – The direction in which the boundary condition acts</li>
-<li><strong>reaction</strong> (<a class="reference internal" href="results.html#feastruct.post.results.ResultList" title="feastruct.post.results.ResultList"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultList</span></code></a>) – A result object containing reaction force results</li>
+<li><strong>dof</strong> (<em>int</em>) – The degree of freedom about which the boundary condition acts</li>
+<li><strong>reactions</strong> (list[<a class="reference internal" href="post.html#feastruct.post.post.ScalarResult" title="feastruct.post.post.ScalarResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarResult</span></code></a>]) – A list of reaction objects</li>
 </ul>
 </td>
 </tr>
@@ -304,18 +232,16 @@ deformed based on the results of case id</li>
 </table>
 <dl class="method">
 <dt id="feastruct.fea.bcs.NodalSupport.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>node_id</em>, <em>val</em>, <em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>node</em>, <em>val</em>, <em>dof</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>inits the NodalSupport class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.fea" title="feastruct.fea.fea.fea"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.fea</span></code></a>) – Analysis object</li>
-<li><strong>node_id</strong> (<em>int</em>) – Unique id of the node at which the boundary
-condition is applied</li>
+<li><strong>node</strong> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – The node object at which the boundary condition acts</li>
 <li><strong>val</strong> (<em>float</em>) – The value of the boundary condition</li>
-<li><strong>dir</strong> (<em>int</em>) – The direction in which the boundary condition acts</li>
+<li><strong>dof</strong> (<em>int</em>) – The degree of freedom about which the boundary condition acts</li>
 </ul>
 </td>
 </tr>
@@ -327,16 +253,16 @@ condition is applied</li>
 <dt id="feastruct.fea.bcs.NodalSupport.apply_support">
 <code class="descname">apply_support</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.apply_support"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.apply_support" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies the nodal support.</p>
-<p>The stiffness matrix and external force vector are modified to apply
-the dirichlet boundary condition to enforce the displacement at the
-chosen degree of freedom to be equal to the specified value.</p>
+<p>The stiffness matrix and external force vector are modified to apply the dirichlet boundary
+condition to enforce the displacement at the chosen degree of freedom to be equal to the
+specified value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Global stiffness matrix (size = N x N)</li>
-<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Global external force vector (size = N)</li>
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Global stiffness matrix of size <em>(N x N)</em></li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Global external force vector of size <em>N</em></li>
 </ul>
 </td>
 </tr>
@@ -346,14 +272,13 @@ chosen degree of freedom to be equal to the specified value.</p>
 
 <dl class="method">
 <dt id="feastruct.fea.bcs.NodalSupport.get_reaction">
-<code class="descname">get_reaction</code><span class="sig-paren">(</span><em>case_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.get_reaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.get_reaction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the reaction force result corresponding to analysis case
-case_id.</p>
+<code class="descname">get_reaction</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.get_reaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.get_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the reaction force result corresponding to analysis_case.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>case_id</strong> (<em>int</em>) – Unique case id</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Reaction force at the node</td>
 </tr>
@@ -365,7 +290,7 @@ case_id.</p>
 
 <dl class="method">
 <dt id="feastruct.fea.bcs.NodalSupport.plot_imposed_disp">
-<code class="descname">plot_imposed_disp</code><span class="sig-paren">(</span><em>ax</em>, <em>max_disp</em>, <em>small</em>, <em>get_support_angle</em>, <em>case_id</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_imposed_disp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_imposed_disp" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_imposed_disp</code><span class="sig-paren">(</span><em>ax</em>, <em>max_disp</em>, <em>small</em>, <em>get_support_angle</em>, <em>analysis_case</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_imposed_disp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_imposed_disp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a graphical representation of an imposed translation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -373,14 +298,13 @@ case_id.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
-<li><strong>max_disp</strong> (<em>float</em>) – Maximum imposed displacement in the analysis
-case</li>
+<li><strong>max_disp</strong> (<em>float</em>) – Maximum imposed displacement in the analysis case</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
-and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
-deformed based on the results of case id</li>
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle and the number of
+connected elements</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are deformed based on
+the results of case id</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
 </ul>
 </td>
@@ -391,7 +315,7 @@ deformed based on the results of case id</li>
 
 <dl class="method">
 <dt id="feastruct.fea.bcs.NodalSupport.plot_imposed_rot">
-<code class="descname">plot_imposed_rot</code><span class="sig-paren">(</span><em>ax</em>, <em>small</em>, <em>get_support_angle</em>, <em>case_id</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_imposed_rot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_imposed_rot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_imposed_rot</code><span class="sig-paren">(</span><em>ax</em>, <em>small</em>, <em>get_support_angle</em>, <em>analysis_case</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_imposed_rot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_imposed_rot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a graphical representation of an imposed rotation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -400,11 +324,11 @@ deformed based on the results of case id</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
-and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
-deformed based on the results of case id</li>
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle and the number of
+connected elements</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are deformed based on
+the results of case id</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
 </ul>
 </td>
@@ -415,11 +339,10 @@ deformed based on the results of case id</li>
 
 <dl class="method">
 <dt id="feastruct.fea.bcs.NodalSupport.plot_reaction">
-<code class="descname">plot_reaction</code><span class="sig-paren">(</span><em>ax</em>, <em>max_reaction</em>, <em>small</em>, <em>get_support_angle</em>, <em>case_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_reaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_reaction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots a graphical representation of a reaction force and displays
-the value of the reaction force. A straight arrow is plotted for a
-translational reaction and a curved arrow is plotted for a rotational
-reaction.</p>
+<code class="descname">plot_reaction</code><span class="sig-paren">(</span><em>ax</em>, <em>max_reaction</em>, <em>small</em>, <em>get_support_angle</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_reaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a graphical representation of a reaction force and displays the value of the
+reaction force. A straight arrow is plotted for a translational reaction and a curved arrow
+is plotted for a rotational reaction.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -428,9 +351,9 @@ reaction.</p>
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
 <li><strong>max_reaction</strong> (<em>float</em>) – Maximum reaction force in the analysis case</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
-and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle and the number of
+connected elements</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
 </ul>
 </td>
 </tr>
@@ -440,16 +363,14 @@ and the number of connected elements</li>
 
 <dl class="method">
 <dt id="feastruct.fea.bcs.NodalSupport.plot_support">
-<code class="descname">plot_support</code><span class="sig-paren">(</span><em>ax</em>, <em>small</em>, <em>get_support_angle</em>, <em>case_id</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_support"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_support" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_support</code><span class="sig-paren">(</span><em>ax</em>, <em>small</em>, <em>get_support_angle</em>, <em>analysis_case</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_support"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_support" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a graphical representation of the nodal support.</p>
-<p>Based on the type of support at the node, a graphical representation
-of the support type is generated and plotted. Possible support types
-include rollers, hinges, rotation restraints, fixed rollers and fully
-fixed supports. The angle of the connecting elements is considered in
-order to produce the most visually appealing representation. The
-support location is displaced if a deformed plot is desired. Note that
-some of the methods used to plot the supports are taken from Frans
-van der Meer’s code plotGeom.m.</p>
+<p>Based on the type of support at the node, a graphical representation of the support type is
+generated and plotted. Possible support types include rollers, hinges, rotation restraints,
+fixed rollers and fully fixed supports. The angle of the connecting elements is considered
+in order to produce the most visually appealing representation. The support location is
+displaced if a deformed plot is desired. Note that some of the methods used to plot the
+supports are taken from Frans van der Meer’s code plotGeom.m.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -457,11 +378,11 @@ van der Meer’s code plotGeom.m.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle
-and the number of connected elements</li>
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
-deformed based on the results of case id</li>
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle and the number of
+connected elements</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are deformed based on
+the results of analysis_case</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
 </ul>
 </td>
@@ -472,7 +393,7 @@ deformed based on the results of case id</li>
 
 <dl class="method">
 <dt id="feastruct.fea.bcs.NodalSupport.plot_xysupport">
-<code class="descname">plot_xysupport</code><span class="sig-paren">(</span><em>ax</em>, <em>angle</em>, <em>roller</em>, <em>hinge</em>, <em>small</em>, <em>case_id</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_xysupport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_xysupport" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_xysupport</code><span class="sig-paren">(</span><em>ax</em>, <em>angle</em>, <em>roller</em>, <em>hinge</em>, <em>small</em>, <em>analysis_case</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.plot_xysupport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.plot_xysupport" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a hinged or roller support.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -484,9 +405,9 @@ deformed based on the results of case id</li>
 <li><strong>roller</strong> (<em>bool</em>) – Whether or not the support is a roller</li>
 <li><strong>hinge</strong> (<em>bool</em>) – Whether or not there is a hinge at the support</li>
 <li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are
-deformed based on the results of case id</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are deformed based on
+the results of case id</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
 </ul>
 </td>
@@ -496,16 +417,16 @@ deformed based on the results of case id</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.fea.bcs.NodalSupport.set_reaction">
-<code class="descname">set_reaction</code><span class="sig-paren">(</span><em>case_id</em>, <em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.set_reaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.set_reaction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the reaction force corresponding to analysis case case_id.</p>
+<dt id="feastruct.fea.bcs.NodalSupport.save_reaction">
+<code class="descname">save_reaction</code><span class="sig-paren">(</span><em>f</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalSupport.save_reaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalSupport.save_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the reaction force corresponding to analysis_case.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>f</strong> (<em>float</em>) – Reaction for at the node</li>
+<li><strong>f</strong> (<em>float</em>) – Reaction force at the node</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
 </ul>
 </td>
 </tr>
@@ -517,6 +438,94 @@ deformed based on the results of case id</li>
 
 </div></blockquote>
 </div>
+<div class="section" id="nodal-load">
+<h3>Nodal Load<a class="headerlink" href="#nodal-load" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.bcs.NodalLoad">
+<em class="property">class </em><code class="descclassname">feastruct.fea.bcs.</code><code class="descname">NodalLoad</code><span class="sig-paren">(</span><em>node</em>, <em>val</em>, <em>dof</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.bcs.BoundaryCondition" title="feastruct.fea.bcs.BoundaryCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.bcs.BoundaryCondition</span></code></a></p>
+<p>Class for a neumann boundary condition acting at a node.</p>
+<p>Provides methods for the FEA solver and post-processing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – The node object at which the nodal load acts</li>
+<li><strong>val</strong> (<em>float</em>) – The value of the nodal load</li>
+<li><strong>dof</strong> (<em>int</em>) – The degree of freedom about which the nodal load acts</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.bcs.NodalLoad.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>node</em>, <em>val</em>, <em>dof</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>inits the NodalLoad class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – The node object at which the nodal load acts</li>
+<li><strong>val</strong> (<em>float</em>) – The value of the nodal load</li>
+<li><strong>dof</strong> (<em>int</em>) – The degree of freedom about which the nodal load acts</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.bcs.NodalLoad.apply_load">
+<code class="descname">apply_load</code><span class="sig-paren">(</span><em>f_ext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad.apply_load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad.apply_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the nodal load.</p>
+<p>The external force vector is modified to apply the neumann boundary condition.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Global external force vector of size <em>N</em></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.bcs.NodalLoad.plot_load">
+<code class="descname">plot_load</code><span class="sig-paren">(</span><em>ax</em>, <em>max_force</em>, <em>small</em>, <em>get_support_angle</em>, <em>analysis_case</em>, <em>deformed</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/bcs.html#NodalLoad.plot_load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.bcs.NodalLoad.plot_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a graphical representation of a nodal force. A straight arrow is plotted for a
+translational load and a curved arrow is plotted for a moment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axes object on which to plot</li>
+<li><strong>max_force</strong> (<em>float</em>) – Maximum translational nodal load</li>
+<li><strong>small</strong> (<em>float</em>) – A dimension used to scale the support</li>
+<li><strong>get_support_angle</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor.get_support_angle" title="feastruct.post.post.PostProcessor.get_support_angle"><code class="xref py py-func docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor.get_support_angle()</span></code></a>) – A function that returns the support angle and the number of
+connected elements</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>deformed</strong> (<em>bool</em>) – Represents whether or not the node locations are deformed based on
+the results of case id</li>
+<li><strong>def_scale</strong> (<em>float</em>) – Value used to scale deformations</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+</div>
 
 
            </div>
@@ -526,10 +535,10 @@ deformed based on the results of case id</li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="cases.html" class="btn btn-neutral float-right" title="Cases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="solvers.html" class="btn btn-neutral float-right" title="Solvers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="fea.html" class="btn btn-neutral" title="Finite Element Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="cases.html" class="btn btn-neutral" title="Cases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -80,13 +80,15 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame2D.html">Frame Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/pre.html">Pre</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/solvers.html">Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/post.html">Post-Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/results.html">Results</a></li>
 </ul>
 
             
@@ -152,12 +154,12 @@
   <h1>Source code for feastruct.fea.frame2d</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Polygon</span>
-<span class="kn">from</span> <span class="nn">feastruct.fea.fea</span> <span class="k">import</span> <span class="n">fea</span><span class="p">,</span> <span class="n">FiniteElement</span>
+<span class="kn">from</span> <span class="nn">feastruct.fea.fea</span> <span class="k">import</span> <span class="n">Fea</span><span class="p">,</span> <span class="n">FiniteElement</span>
 <span class="kn">from</span> <span class="nn">feastruct.post.results</span> <span class="k">import</span> <span class="n">FrameForceVector</span>
 <span class="kn">from</span> <span class="nn">feastruct.fea.exceptions</span> <span class="k">import</span> <span class="n">FEAInputError</span>
 
 
-<div class="viewcode-block" id="Frame2D"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.Frame2D">[docs]</a><span class="k">class</span> <span class="nc">Frame2D</span><span class="p">(</span><span class="n">fea</span><span class="p">):</span>
+<div class="viewcode-block" id="Frame2D"><a class="viewcode-back" href="../../../rst/frame2D.html#feastruct.fea.frame2d.Frame2D">[docs]</a><span class="k">class</span> <span class="nc">Frame2D</span><span class="p">(</span><span class="n">Fea</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parent class for a 2D frame analysis.</span>
 
 <span class="sd">    Includes a method for analysis initiation and a method for adding a frame</span>

@@ -1,7 +1,22 @@
 Node
 ====
 
-  ..  automodule:: feastruct.fea.node
+Node
+----
+
+  ..  autoclass:: feastruct.fea.node.Node
       :members:
       :special-members: __init__
-      :show-inheritance:
+
+DoF
+---
+
+  ..  autoclass:: feastruct.fea.node.DoF
+      :members:
+      :special-members: __init__
+      
+Displacement
+------------
+  ..  autoclass:: feastruct.fea.node.Displacement
+      :members:
+      :special-members: __init__

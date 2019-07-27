@@ -21,11 +21,11 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'feastruct'
-copyright = '2018, Robbie van Leeuwen'
+copyright = '2019, Robbie van Leeuwen'
 author = 'Robbie van Leeuwen'
 
 # The short X.Y version
-version = ''
+version = '0.1'
 # The full version, including alpha/beta/rc tags
 release = '0.1'
 

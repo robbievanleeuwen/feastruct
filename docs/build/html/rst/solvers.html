@@ -1,0 +1,1193 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Solvers &mdash; feastruct 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Post-Processing" href="post.html" />
+    <link rel="prev" title="Boundary Conditions" href="bcs.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Solvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#parent-solver-class">Parent Solver Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#solver-settings">Solver Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linear-static-solver">Linear Static Solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linear-buckling-solver">Linear Buckling Solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#natural-frequency-solver">Natural Frequency Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Solvers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/solvers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="solvers">
+<h1>Solvers<a class="headerlink" href="#solvers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="parent-solver-class">
+<h2>Parent Solver Class<a class="headerlink" href="#parent-solver-class" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.solvers.feasolve.Solver">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.feasolve.</code><code class="descname">Solver</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parent class for a finite element solver.</p>
+<p>Provides a number of methods suitable for most finite element analysis solver types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+<li><strong>ndof</strong> (<em>int</em>) – Number of degrees of freedom in the analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Solver class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.apply_bcs">
+<code class="descname">apply_bcs</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.apply_bcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.apply_bcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the boundary conditions to the global stiffness matrix and external force
+vector for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The global stiffness matrix and external force vector, modified by the boundary
+conditions <em>(K, f_ext)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.assemble_fext">
+<code class="descname">assemble_fext</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.assemble_fext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.assemble_fext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the external force vector for analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case used to assemble the external force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The external force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.assemble_mass_matrix">
+<code class="descname">assemble_mass_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.assemble_mass_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.assemble_mass_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the global stiffness using the sparse COO format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The global mass matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.assemble_stiff_matrix">
+<code class="descname">assemble_stiff_matrix</code><span class="sig-paren">(</span><em>geometric=False</em>, <em>analysis_case=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.assemble_stiff_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.assemble_stiff_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the global stiffness using the sparse COO format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geometric</strong> (<em>bool</em>) – If set to True, also returns the global geometric stiffness matrix</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – If geometric is set to True, the static analysis case from which to
+use to build the geometric stiffness matrix</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The global stiffness matrix and, if desired, the global geometric stiffness
+matrix <em>(K, K_g)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.assign_dofs">
+<code class="descname">assign_dofs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.assign_dofs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.assign_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to assign global degrees of freedom to the nodes in the analysis object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.calculate_reactions">
+<code class="descname">calculate_reactions</code><span class="sig-paren">(</span><em>K</em>, <em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.calculate_reactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.calculate_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the reactions using the stiffness matrix <em>K</em> and the displacement vector <em>u</em>
+and saves the reactions for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Displacement vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.calculate_stresses">
+<code class="descname">calculate_stresses</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.calculate_stresses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.calculate_stresses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates and saves the element stresses for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.direct_solver">
+<code class="descname">direct_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.direct_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.direct_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Ku=f_ext for <em>u</em> using the direct method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Displacement vector <em>u</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.remove_constrained_dofs">
+<code class="descname">remove_constrained_dofs</code><span class="sig-paren">(</span><em>K</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.remove_constrained_dofs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.remove_constrained_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an initial matrix <em>K</em>, returns a new matrix with the constrained degrees of
+freedom removed. The constrained degrees of freedom are those with supports defined in the
+freedom case used in the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – Stiffness matrix</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A new stiffness matrix with the constrined dofs removed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.save_displacements">
+<code class="descname">save_displacements</code><span class="sig-paren">(</span><em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.save_displacements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.save_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the displacements <em>u</em> to the degree of freedom objects for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Displacement vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="solver-settings">
+<h2>Solver Settings<a class="headerlink" href="#solver-settings" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.solvers.feasolve.SolverSettings">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.feasolve.</code><code class="descname">SolverSettings</code><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#SolverSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.SolverSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for settings to be used in a finite element analysis.</p>
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.SolverSettings.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#SolverSettings.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.SolverSettings.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the SolverSettings class.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="linear-static-solver">
+<h2>Linear Static Solver<a class="headerlink" href="#linear-static-solver" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.solvers.linstatic.LinearStatic">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.linstatic.</code><code class="descname">LinearStatic</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linstatic.html#LinearStatic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.solvers.feasolve.Solver" title="feastruct.solvers.feasolve.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.Solver</span></code></a></p>
+<p>Class for a linear static solver.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+<li><strong>ndof</strong> (<em>int</em>) – Number of degrees of freedom in the analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linstatic.html#LinearStatic.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the LinearStatic class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.apply_bcs">
+<code class="descname">apply_bcs</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.apply_bcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the boundary conditions to the global stiffness matrix and external force
+vector for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The global stiffness matrix and external force vector, modified by the boundary
+conditions <em>(K, f_ext)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.assemble_fext">
+<code class="descname">assemble_fext</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.assemble_fext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the external force vector for analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case used to assemble the external force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The external force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.assemble_mass_matrix">
+<code class="descname">assemble_mass_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.assemble_mass_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the global stiffness using the sparse COO format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The global mass matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.assemble_stiff_matrix">
+<code class="descname">assemble_stiff_matrix</code><span class="sig-paren">(</span><em>geometric=False</em>, <em>analysis_case=None</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.assemble_stiff_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the global stiffness using the sparse COO format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geometric</strong> (<em>bool</em>) – If set to True, also returns the global geometric stiffness matrix</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – If geometric is set to True, the static analysis case from which to
+use to build the geometric stiffness matrix</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The global stiffness matrix and, if desired, the global geometric stiffness
+matrix <em>(K, K_g)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.assign_dofs">
+<code class="descname">assign_dofs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.assign_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to assign global degrees of freedom to the nodes in the analysis object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.calculate_reactions">
+<code class="descname">calculate_reactions</code><span class="sig-paren">(</span><em>K</em>, <em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.calculate_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the reactions using the stiffness matrix <em>K</em> and the displacement vector <em>u</em>
+and saves the reactions for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Displacement vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.calculate_stresses">
+<code class="descname">calculate_stresses</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.calculate_stresses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates and saves the element stresses for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.direct_solver">
+<code class="descname">direct_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.direct_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Ku=f_ext for <em>u</em> using the direct method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Displacement vector <em>u</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.remove_constrained_dofs">
+<code class="descname">remove_constrained_dofs</code><span class="sig-paren">(</span><em>K</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.remove_constrained_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an initial matrix <em>K</em>, returns a new matrix with the constrained degrees of
+freedom removed. The constrained degrees of freedom are those with supports defined in the
+freedom case used in the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – Stiffness matrix</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A new stiffness matrix with the constrined dofs removed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.save_displacements">
+<code class="descname">save_displacements</code><span class="sig-paren">(</span><em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.save_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the displacements <em>u</em> to the degree of freedom objects for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Displacement vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linstatic.html#LinearStatic.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the finite element solver and saves the relevant results.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="linear-buckling-solver">
+<h2>Linear Buckling Solver<a class="headerlink" href="#linear-buckling-solver" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.linbuckling.</code><code class="descname">LinearBuckling</code><span class="sig-paren">(</span><em>analysis</em>, <em>case_id</em>, <em>solver=None</em>, <em>settings={'maxiter': None</em>, <em>'n': 4</em>, <em>'shift': 0</em>, <em>'tol': 1e-06}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linbuckling.html#LinearBuckling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.solvers.feasolve.Solver" title="feastruct.solvers.feasolve.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.Solver</span></code></a></p>
+<p>asdkjasd</p>
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>case_id</em>, <em>solver=None</em>, <em>settings={'maxiter': None</em>, <em>'n': 4</em>, <em>'shift': 0</em>, <em>'tol': 1e-06}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linbuckling.html#LinearBuckling.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Solver class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.apply_bcs">
+<code class="descname">apply_bcs</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.apply_bcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the boundary conditions to the global stiffness matrix and external force
+vector for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The global stiffness matrix and external force vector, modified by the boundary
+conditions <em>(K, f_ext)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.assemble_fext">
+<code class="descname">assemble_fext</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.assemble_fext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the external force vector for analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case used to assemble the external force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The external force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.assemble_mass_matrix">
+<code class="descname">assemble_mass_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.assemble_mass_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the global stiffness using the sparse COO format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The global mass matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.assemble_stiff_matrix">
+<code class="descname">assemble_stiff_matrix</code><span class="sig-paren">(</span><em>geometric=False</em>, <em>analysis_case=None</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.assemble_stiff_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the global stiffness using the sparse COO format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geometric</strong> (<em>bool</em>) – If set to True, also returns the global geometric stiffness matrix</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – If geometric is set to True, the static analysis case from which to
+use to build the geometric stiffness matrix</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The global stiffness matrix and, if desired, the global geometric stiffness
+matrix <em>(K, K_g)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.assign_dofs">
+<code class="descname">assign_dofs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.assign_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to assign global degrees of freedom to the nodes in the analysis object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.calculate_reactions">
+<code class="descname">calculate_reactions</code><span class="sig-paren">(</span><em>K</em>, <em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.calculate_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the reactions using the stiffness matrix <em>K</em> and the displacement vector <em>u</em>
+and saves the reactions for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Displacement vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.calculate_stresses">
+<code class="descname">calculate_stresses</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.calculate_stresses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates and saves the element stresses for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.direct_solver">
+<code class="descname">direct_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.direct_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Ku=f_ext for <em>u</em> using the direct method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Displacement vector <em>u</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.remove_constrained_dofs">
+<code class="descname">remove_constrained_dofs</code><span class="sig-paren">(</span><em>K</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.remove_constrained_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an initial matrix <em>K</em>, returns a new matrix with the constrained degrees of
+freedom removed. The constrained degrees of freedom are those with supports defined in the
+freedom case used in the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – Stiffness matrix</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A new stiffness matrix with the constrined dofs removed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.save_displacements">
+<code class="descname">save_displacements</code><span class="sig-paren">(</span><em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.save_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the displacements <em>u</em> to the degree of freedom objects for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Displacement vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="natural-frequency-solver">
+<h2>Natural Frequency Solver<a class="headerlink" href="#natural-frequency-solver" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.naturalfrequency.</code><code class="descname">NaturalFrequency</code><span class="sig-paren">(</span><em>analysis</em>, <em>case_id</em>, <em>solver=None</em>, <em>settings={'maxiter': None</em>, <em>'n': 4</em>, <em>'shift': 0</em>, <em>'tol': 1e-06}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/naturalfrequency.html#NaturalFrequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.solvers.feasolve.Solver" title="feastruct.solvers.feasolve.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.Solver</span></code></a></p>
+<p>asdkjasd</p>
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>case_id</em>, <em>solver=None</em>, <em>settings={'maxiter': None</em>, <em>'n': 4</em>, <em>'shift': 0</em>, <em>'tol': 1e-06}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/naturalfrequency.html#NaturalFrequency.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Solver class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.apply_bcs">
+<code class="descname">apply_bcs</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.apply_bcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the boundary conditions to the global stiffness matrix and external force
+vector for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The global stiffness matrix and external force vector, modified by the boundary
+conditions <em>(K, f_ext)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_fext">
+<code class="descname">assemble_fext</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_fext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the external force vector for analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case used to assemble the external force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The external force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_mass_matrix">
+<code class="descname">assemble_mass_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_mass_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the global stiffness using the sparse COO format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The global mass matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_stiff_matrix">
+<code class="descname">assemble_stiff_matrix</code><span class="sig-paren">(</span><em>geometric=False</em>, <em>analysis_case=None</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_stiff_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembles the global stiffness using the sparse COO format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geometric</strong> (<em>bool</em>) – If set to True, also returns the global geometric stiffness matrix</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – If geometric is set to True, the static analysis case from which to
+use to build the geometric stiffness matrix</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The global stiffness matrix and, if desired, the global geometric stiffness
+matrix <em>(K, K_g)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.assign_dofs">
+<code class="descname">assign_dofs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.assign_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to assign global degrees of freedom to the nodes in the analysis object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.calculate_reactions">
+<code class="descname">calculate_reactions</code><span class="sig-paren">(</span><em>K</em>, <em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.calculate_reactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the reactions using the stiffness matrix <em>K</em> and the displacement vector <em>u</em>
+and saves the reactions for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Displacement vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.calculate_stresses">
+<code class="descname">calculate_stresses</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.calculate_stresses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates and saves the element stresses for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.direct_solver">
+<code class="descname">direct_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.direct_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Ku=f_ext for <em>u</em> using the direct method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Displacement vector <em>u</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.remove_constrained_dofs">
+<code class="descname">remove_constrained_dofs</code><span class="sig-paren">(</span><em>K</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.remove_constrained_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an initial matrix <em>K</em>, returns a new matrix with the constrained degrees of
+freedom removed. The constrained degrees of freedom are those with supports defined in the
+freedom case used in the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – Stiffness matrix</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A new stiffness matrix with the constrined dofs removed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.save_displacements">
+<code class="descname">save_displacements</code><span class="sig-paren">(</span><em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.save_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the displacements <em>u</em> to the degree of freedom objects for the analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Displacement vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="post.html" class="btn btn-neutral float-right" title="Post-Processing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="bcs.html" class="btn btn-neutral" title="Boundary Conditions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

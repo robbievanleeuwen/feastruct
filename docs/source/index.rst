@@ -6,13 +6,15 @@ Welcome to feastruct's documentation!
    :caption: Contents:
 
    rst/installation
-   rst/frame2D
-   rst/fea
-   rst/bcs
-   rst/cases
+   rst/pre
    rst/node
+   rst/fea
+   rst/utils
+   rst/frame
+   rst/cases
+   rst/bcs
+   rst/solvers
    rst/post
-   rst/results
 
 
 Indices and tables

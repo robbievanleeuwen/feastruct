@@ -80,13 +80,15 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame2D.html">Frame Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/pre.html">Pre</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/solvers.html">Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/post.html">Post-Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/results.html">Results</a></li>
 </ul>
 
             
@@ -150,35 +152,49 @@
            <div itemprop="articleBody">
             
   <h1>Source code for feastruct.fea.cases</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">feastruct.fea.bcs</span> <span class="k">as</span> <span class="nn">BCs</span>
-<span class="kn">from</span> <span class="nn">feastruct.fea.exceptions</span> <span class="k">import</span> <span class="n">FEAInputError</span>
+<span></span><span class="kn">import</span> <span class="nn">feastruct.fea.bcs</span> <span class="k">as</span> <span class="nn">bcs</span>
+
+
+<div class="viewcode-block" id="AnalysisCase"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.AnalysisCase">[docs]</a><span class="k">class</span> <span class="nc">AnalysisCase</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for storing a specific freedom and load case to be used in an analysis case.</span>
+
+<span class="sd">    An analysis case contains a reference to a specific freedom and load case, which are both used</span>
+<span class="sd">    to define a particular analysis case. Results are stored making reference to an AnalysisCase</span>
+<span class="sd">    object.</span>
+
+<span class="sd">    :cvar freedom_case: The FreedomCase object used in this analysis case</span>
+<span class="sd">    :vartype freedom_case: :class:`~feastruct.fea.cases.FreedomCase`</span>
+<span class="sd">    :cvar load_case: The LoadCase object used in this analysis case</span>
+<span class="sd">    :vartype load_case: :class:`~feastruct.fea.cases.LoadCase`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AnalysisCase.__init__"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.AnalysisCase.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freedom_case</span><span class="p">,</span> <span class="n">load_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the AnalysisCase class.</span>
+
+<span class="sd">        :param freedom_case: Freedom case used in this analysis case</span>
+<span class="sd">        :param load_case: Load case used in this analysis case</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">freedom_case</span> <span class="o">=</span> <span class="n">freedom_case</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_case</span> <span class="o">=</span> <span class="n">load_case</span></div></div>
 
 
 <div class="viewcode-block" id="Case"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.Case">[docs]</a><span class="k">class</span> <span class="nc">Case</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Parent class for cases.</span>
 
-<span class="sd">    Provides an init method for the creation of different types of cases and</span>
-<span class="sd">    also a method to add an item to the case list.</span>
+<span class="sd">    Provides an init method for the creation of different types of cases and also a method to add</span>
+<span class="sd">    an item to the case list.</span>
 
-<span class="sd">    :cvar analysis: Analysis object in which the case is used</span>
-<span class="sd">    :vartype analysis: :class:`feastruct.fea.fea.fea`</span>
-<span class="sd">    :cvar int id: A unique id that identifies the particular type of case</span>
-<span class="sd">    :cvar items: A list containing entries in the case</span>
-<span class="sd">    :vartype items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]</span>
+<span class="sd">    :cvar items: A list of BoundaryCondition items defining the case</span>
+<span class="sd">    :vartype items: list[:class:`~feastruct.fea.bcs.BoundaryCondition`]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Case.__init__"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.Case.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;inits the Case class.</span>
+<div class="viewcode-block" id="Case.__init__"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.Case.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Case class.</span>
 
-<span class="sd">        :param analysis: Analysis object</span>
-<span class="sd">        :type analysis: :class:`feastruct.fea.fea.fea`</span>
-<span class="sd">        :param int id:  Unique id of the case</span>
-<span class="sd">        :param items: A list of items to initialise the case with</span>
-<span class="sd">        :type items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]</span>
+<span class="sd">        :param items: A list of BoundaryConditions to initialise the case</span>
+<span class="sd">        :type items: list[:class:`~feastruct.fea.bcs.BoundaryCondition`]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span> <span class="o">=</span> <span class="n">analysis</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
         <span class="k">if</span> <span class="n">items</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
@@ -189,7 +205,7 @@
         <span class="sd">&quot;&quot;&quot;Appends an &#39;item&#39; to the list of entries in the case.</span>
 
 <span class="sd">        :param item: Entry to add to the current case</span>
-<span class="sd">        :type item: :class:`feastruct.fea.bcs.BoundaryCondition`</span>
+<span class="sd">        :type item: :class:`~feastruct.fea.bcs.BoundaryCondition`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div></div>
@@ -198,138 +214,86 @@
 <div class="viewcode-block" id="FreedomCase"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.FreedomCase">[docs]</a><span class="k">class</span> <span class="nc">FreedomCase</span><span class="p">(</span><span class="n">Case</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for storing a set dirichlet boundary conditions.</span>
 
-<span class="sd">    A freedom case contains a set of dirichlet boundary conditions that can be</span>
-<span class="sd">    used in an analysis case. Methods are provided to add boundary conditions</span>
-<span class="sd">    to the FreedomCase object.</span>
+<span class="sd">    A freedom case contains a set of dirichlet boundary conditions that can be used in an analysis</span>
+<span class="sd">    case. Methods are provided to add boundary conditions to the FreedomCase object.</span>
 
-<span class="sd">    :cvar analysis: Analysis object in which the case is used</span>
-<span class="sd">    :vartype analysis: :class:`feastruct.fea.fea.fea`</span>
-<span class="sd">    :cvar int id: A unique id that identifies the particular type of case</span>
-<span class="sd">    :cvar items: A list containing entries in the case</span>
-<span class="sd">    :vartype items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]</span>
+<span class="sd">    :cvar items: A list of BoundaryCondition items defining the freedom case</span>
+<span class="sd">    :vartype items: list[:class:`~feastruct.fea.bcs.BoundaryCondition`]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="FreedomCase.__init__"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.FreedomCase.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;inits the FreedomCase class.</span>
+<div class="viewcode-block" id="FreedomCase.__init__"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.FreedomCase.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the FreedomCase class.</span>
 
-<span class="sd">        :param analysis: Analysis object</span>
-<span class="sd">        :type analysis: :class:`feastruct.fea.fea.fea`</span>
-<span class="sd">        :param int id:  Unique id of the case</span>
-<span class="sd">        :param items: A list of items to initialise the case with</span>
-<span class="sd">        :type items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]</span>
+<span class="sd">        :param items: A list of BoundaryConditions to initialise the case</span>
+<span class="sd">        :type items: list[:class:`~feastruct.fea.bcs.BoundaryCondition`]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">items</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FreedomCase.add_nodal_support"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.FreedomCase.add_nodal_support">[docs]</a>    <span class="k">def</span> <span class="nf">add_nodal_support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds a nodal dirichlet boundary condition to the current freedom</span>
-<span class="sd">        case and to the node defined by the unique id &#39;node_id&#39;.</span>
+<div class="viewcode-block" id="FreedomCase.add_nodal_support"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.FreedomCase.add_nodal_support">[docs]</a>    <span class="k">def</span> <span class="nf">add_nodal_support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a nodal dirichlet boundary condition to the current freedom case.</span>
 
-<span class="sd">        :param int node_id: Unique id of the node at which the boundary</span>
-<span class="sd">            condition is applied</span>
-<span class="sd">        :param float val: The value of the boundary condition</span>
-<span class="sd">        :param int dir: The direction in which the boundary condition acts</span>
+<span class="sd">        :param node: The node object at which the nodal support acts</span>
+<span class="sd">        :type node: :class:`~feastruct.fea.node.Node`</span>
+<span class="sd">        :param float val: The value of the nodal support - zero indicates a fixed support, whereas</span>
+<span class="sd">            a non-zero value indicates a prescribed displacement</span>
+<span class="sd">        :param int dof: The degree of freedom about which the boundary condition acts</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># TODO: check that the support does not already exist</span>
         <span class="c1"># raise exception if duplicate added</span>
 
         <span class="c1"># add an entry to the freedom case items list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">BCs</span><span class="o">.</span><span class="n">NodalSupport</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">))</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">bcs</span><span class="o">.</span><span class="n">NodalSupport</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dof</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FreedomCase.get_nodal_fixities"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.FreedomCase.get_nodal_fixities">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodal_fixities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list defining the nodal fixity at the node for the current freedom case.</span>
+
+<span class="sd">        :param node: Node object</span>
+<span class="sd">        :type node: :class:`feastruct.fea.node.Node`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fixity</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># loop through all supports</span>
+        <span class="k">for</span> <span class="n">support</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="c1"># if the support is the node in question and the support is fixed</span>
+            <span class="k">if</span> <span class="n">support</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">support</span><span class="o">.</span><span class="n">node</span> <span class="o">==</span> <span class="n">node</span><span class="p">:</span>
+                <span class="n">fixity</span><span class="p">[</span><span class="n">support</span><span class="o">.</span><span class="n">dof</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">fixity</span></div></div>
 
 
 <div class="viewcode-block" id="LoadCase"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.LoadCase">[docs]</a><span class="k">class</span> <span class="nc">LoadCase</span><span class="p">(</span><span class="n">Case</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for storing a set neumann boundary conditions.</span>
 
-<span class="sd">    A load case contains a set of neumann boundary conditions that can be</span>
-<span class="sd">    used in an analysis case. Methods are provided to add loads to the</span>
-<span class="sd">    LoadCase object.</span>
+<span class="sd">    A load case contains a set of neumann boundary conditions that can be used in an analysis case.</span>
+<span class="sd">    Methods are provided to add loads to the LoadCase object.</span>
 
-<span class="sd">    :cvar analysis: Analysis object in which the case is used</span>
-<span class="sd">    :vartype analysis: :class:`feastruct.fea.fea.fea`</span>
-<span class="sd">    :cvar int id: A unique id that identifies the particular type of case</span>
-<span class="sd">    :cvar items: A list containing entries in the case</span>
-<span class="sd">    :vartype items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]</span>
+<span class="sd">    :cvar items: A list of BoundaryCondition items defining the freedom case</span>
+<span class="sd">    :vartype items: list[:class:`~feastruct.fea.bcs.BoundaryCondition`]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="LoadCase.__init__"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.LoadCase.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;inits the LoadCase class.</span>
+<div class="viewcode-block" id="LoadCase.__init__"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.LoadCase.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the LoadCase class.</span>
 
-<span class="sd">        :param analysis: Analysis object</span>
-<span class="sd">        :type analysis: :class:`feastruct.fea.fea.fea`</span>
-<span class="sd">        :param int id:  Unique id of the case</span>
-<span class="sd">        :param items: A list of items to initialise the case with</span>
-<span class="sd">        :type items: list[:class:`feastruct.fea.bcs.BoundaryCondition`]</span>
+<span class="sd">        :param items: A list of BoundaryConditions to initialise the case</span>
+<span class="sd">        :type items: list[:class:`~feastruct.fea.bcs.BoundaryCondition`]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">items</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LoadCase.add_nodal_load"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.LoadCase.add_nodal_load">[docs]</a>    <span class="k">def</span> <span class="nf">add_nodal_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds a nodal neumann boundary condition to the current load</span>
-<span class="sd">        case and to the node defined by the unique id &#39;node_id&#39;.</span>
+<div class="viewcode-block" id="LoadCase.add_nodal_load"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.LoadCase.add_nodal_load">[docs]</a>    <span class="k">def</span> <span class="nf">add_nodal_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dof</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a nodal neumann boundary condition to the current load case.</span>
 
-<span class="sd">        :param int node_id: Unique id of the node at which the nodal load is</span>
-<span class="sd">            applied</span>
+<span class="sd">        :param node: The node object at which the nodal load is applied</span>
+<span class="sd">        :type node: :class:`~feastruct.fea.node.Node`</span>
 <span class="sd">        :param float val: The value of the nodal load</span>
-<span class="sd">        :param int dir: The direction in which the nodal load acts</span>
+<span class="sd">        :param int dof: The degree of freedom about which the nodal load acts</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># add an entry to the load case item list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">BCs</span><span class="o">.</span><span class="n">NodalLoad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="p">,</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="nb">dir</span><span class="p">))</span></div></div>
-
-
-<div class="viewcode-block" id="AnalysisCase"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.AnalysisCase">[docs]</a><span class="k">class</span> <span class="nc">AnalysisCase</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for storing a specific freedom and load case to be used in an</span>
-<span class="sd">    analysis case.</span>
-
-<span class="sd">    An analysis case contains a reference to a combination of a freedom case</span>
-<span class="sd">    and a load case, which are both used to define a particular analysis case.</span>
-
-<span class="sd">    :cvar analysis: Analysis object in which the case is used</span>
-<span class="sd">    :vartype analysis: :class:`feastruct.fea.fea.fea`</span>
-<span class="sd">    :cvar int id: A unique id that identifies the particular type of case</span>
-<span class="sd">    :cvar freedom_case: The FreedomCase object used in this analysis case</span>
-<span class="sd">    :vartype freedom_case: :class:`feastruct.fea.cases.FreedomCase`</span>
-<span class="sd">    :cvar load_case: The LoadCase object used in this analysis case</span>
-<span class="sd">    :vartype load_case: :class:`feastruct.fea.cases.LoadCase`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="AnalysisCase.__init__"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.AnalysisCase.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">fc_id</span><span class="p">,</span> <span class="n">lc_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;inits the AnalysisCase class.</span>
-
-<span class="sd">        :param analysis: Analysis object</span>
-<span class="sd">        :type analysis: :class:`feastruct.fea.fea.fea`</span>
-<span class="sd">        :param int id:  Unique id of the case</span>
-<span class="sd">        :param int fc_id:  Unique id of freedom case used in this analysis case</span>
-<span class="sd">        :param int lc_id:  Unique id of load case used in this analysis case</span>
-<span class="sd">        :raises FEAInputError: If the unique id corresponding to the freedom</span>
-<span class="sd">            case or load case cannot be located in the analysis object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span> <span class="o">=</span> <span class="n">analysis</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># find freedom case</span>
-            <span class="k">for</span> <span class="n">fc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">freedom_cases</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">fc</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">fc_id</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">freedom_case</span> <span class="o">=</span> <span class="n">fc</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">FEAInputError</span><span class="p">(</span><span class="s2">&quot;Cannot find FreedomCase id: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">fc_id</span><span class="p">))</span>
-
-            <span class="c1"># find load case</span>
-            <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">load_cases</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">lc_id</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">load_case</span> <span class="o">=</span> <span class="n">lc</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">FEAInputError</span><span class="p">(</span><span class="s2">&quot;Cannot find LoadCase id: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">lc_id</span><span class="p">))</span>
-
-        <span class="k">except</span> <span class="n">FEAInputError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">bcs</span><span class="o">.</span><span class="n">NodalLoad</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dof</span><span class="p">))</span></div></div>
 </pre></div>
 
            </div>

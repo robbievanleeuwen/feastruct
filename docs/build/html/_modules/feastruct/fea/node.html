@@ -80,13 +80,15 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame2D.html">Frame Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/pre.html">Pre</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/solvers.html">Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../rst/post.html">Post-Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../rst/results.html">Results</a></li>
 </ul>
 
             
@@ -150,143 +152,156 @@
            <div itemprop="articleBody">
             
   <h1>Source code for feastruct.fea.node</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">feastruct.post.results</span> <span class="k">as</span> <span class="nn">results</span>
+<span></span><span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">itemgetter</span>
 
 
 <div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Class for a node to be used in finite element analyses.</span>
 
-<span class="sd">    A node object is defined by its position in cartesian space and can store</span>
-<span class="sd">    nodal displacement results from a static analysis, as well as eigenvector</span>
-<span class="sd">    results from an eigenvalue analysis.</span>
+<span class="sd">    A node object is defined by its position in 3D cartesian space and has six associated degrees</span>
+<span class="sd">    of freedom.</span>
 
-<span class="sd">    :cvar int id: Unique node id</span>
-<span class="sd">    :cvar coord: Cartesian coordinates of the node</span>
-<span class="sd">    :vartype coord: list[float, float]</span>
-<span class="sd">    :cvar dofs: Global degree of freedom numbers to be used in an analysis</span>
-<span class="sd">    :vartype dofs: list[float, float, float]</span>
-<span class="sd">    :cvar fixity: A list containing fixities for the nodal degrees of freedom</span>
-<span class="sd">        for post-processing visualisation of nodal supports</span>
-<span class="sd">    :vartype fixity: list[float, float, float]</span>
-<span class="sd">    :cvar u: Nodal displacement results for static analyses</span>
-<span class="sd">    :vartype u: :class:`feastruct.post.results.ResultList`</span>
-<span class="sd">    :cvar buckling_v: Eigenvector results for buckling analyses</span>
-<span class="sd">    :vartype buckling_v: :class:`feastruct.post.results.ResultList`</span>
-<span class="sd">    :cvar frequency_v: Eigenvector results for frequency analyses</span>
-<span class="sd">    :vartype frequency_v: :class:`feastruct.post.results.ResultList`</span>
+<span class="sd">    :cvar coords: Cartesian coordinates of the node</span>
+<span class="sd">    :vartype coords: list[float, float, float]</span>
+<span class="sd">    :cvar dofs: List of degrees of freedom for the node *(x, y, z, rx, ry, rz)*</span>
+<span class="sd">    :vartype dofs: list[:class:`~feastruct.fea.node.DoF`]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Node.__init__"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">coord</span><span class="p">):</span>
+<div class="viewcode-block" id="Node.__init__"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the Node class.</span>
 
-<span class="sd">        :param int id: Unique node id</span>
-<span class="sd">        :param coord: Cartesian coordinates of the node</span>
-<span class="sd">        :type coord: list[float, float]</span>
+<span class="sd">        :param coords: Cartesian coordinates of the node *([x], [x, y] or [x, y, z])*</span>
+<span class="sd">        :type coords: list[float]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">coord</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO: throw an error</span>
+            <span class="k">return</span>
+
+        <span class="c1"># create six dofs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dofs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fixity</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># for post processing only</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">ResultList</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">buckling_v</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">ResultList</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">frequency_v</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">ResultList</span><span class="p">()</span></div>
-        <span class="c1"># TODO: check value types and int &gt; 0</span>
 
-<span class="c1"># TODO: document properties...</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dofs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DoF</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_dof_num</span><span class="o">=</span><span class="n">i</span><span class="p">))</span></div>
 
+    <span class="c1"># get x-coordinate</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
+    <span class="c1"># get y-coordinate</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
+    <span class="c1"># get z-coordinate</span>
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Node.get_displacement"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.get_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">get_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the displacement vector of the current node from the</span>
-<span class="sd">        analysis defined by case_id.</span>
+<div class="viewcode-block" id="Node.get_dofs"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.get_dofs">[docs]</a>    <span class="k">def</span> <span class="nf">get_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_dof_nums</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the degree of freedom objects relating to the node_dof_nums list.</span>
 
-<span class="sd">        :param int case_id: Unique case id</span>
-<span class="sd">        :return: Nodal displacement vector</span>
-<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        :param node_dof_nums: Degree of freedom indices to return</span>
+<span class="sd">        :type node_dof_nums: list[int]</span>
+<span class="sd">        :returns: List containing degree of freedom objects</span>
+<span class="sd">        :rtype: list[:class:`~feastruct.fea.node.DoF`]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">case_id</span><span class="p">)</span><span class="o">.</span><span class="n">u</span></div>
+        <span class="c1"># get all dofs corresponding with indices in &#39;node_dof_nums&#39;</span>
+        <span class="n">dof_list</span> <span class="o">=</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="n">node_dof_nums</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Node.set_displacements"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.set_displacements">[docs]</a>    <span class="k">def</span> <span class="nf">set_displacements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves a displacement vector for the analysis defined by case_id.</span>
+        <span class="c1"># ensure a list is returned</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dof_list</span><span class="p">]</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dof_list</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">tuple</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">dof_list</span><span class="p">)</span></div></div>
 
-<span class="sd">        :param int case_id: Unique case id</span>
-<span class="sd">        :param u: Nodal displacement vector</span>
-<span class="sd">        :type u: :class:`numpy.ndarray`</span>
+
+<div class="viewcode-block" id="DoF"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF">[docs]</a><span class="k">class</span> <span class="nc">DoF</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for a degree of freedom to be used in finite element analyses.</span>
+
+<span class="sd">    A degree of freedom relates to a specific node and has a specific degree of freedom number used</span>
+<span class="sd">    in the finite element analysis. Displacement results are stored within the degree of freedom.</span>
+
+<span class="sd">    :cvar node: Parent node</span>
+<span class="sd">    :vartype node: :class:`~feastruct.fea.node.Node`</span>
+<span class="sd">    :cvar int node_dof_num: Node degree of freedom number</span>
+<span class="sd">    :cvar int global_dof_num: Global degree of freedom number</span>
+<span class="sd">    :cvar displacements: A list of displacement objects for the dof</span>
+<span class="sd">    :vartype displacements: list[:class:`~feastruct.fea.node.Displacement`]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DoF.__init__"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">node_dof_num</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the DoF class.</span>
+
+<span class="sd">        :param node: Parent node</span>
+<span class="sd">        :type node: :class:`~feastruct.fea.node.Node`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">Displacement</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">u</span><span class="p">))</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_dof_num</span> <span class="o">=</span> <span class="n">node_dof_num</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_dof_num</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span> <span class="o">=</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="Node.get_buckling_results"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.get_buckling_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_buckling_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the eigenvalue (w) and nodal eigenvector (v) for the</span>
-<span class="sd">        buckling analysis defined by case_id and the buckling mode defined by</span>
-<span class="sd">        buckling_mode.</span>
+<div class="viewcode-block" id="DoF.save_displacement"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.save_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">save_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disp</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves a displacement result to the DoF.</span>
 
-<span class="sd">        :param int case_id: Unique case id</span>
-<span class="sd">        :param int buckling_mode: Buckling mode number</span>
-<span class="sd">        :return: (w, v)</span>
-<span class="sd">        :rtype: tuple(float, :class:`numpy.ndarray`)</span>
+<span class="sd">        :param float disp: Value of the displacement</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the displacement</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buckling_v</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">buckling_mode</span><span class="p">)</span>
+        <span class="c1"># check to see if there is already a displacement for the current analysis_case</span>
+        <span class="k">for</span> <span class="n">displacement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">displacement</span><span class="o">.</span><span class="n">analysis_case</span> <span class="o">==</span> <span class="n">analysis_case</span><span class="p">:</span>
+                <span class="n">displacement</span><span class="o">.</span><span class="n">disp</span> <span class="o">=</span> <span class="n">disp</span>
+                <span class="k">return</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">v</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Displacement</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="n">disp</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Node.set_buckling_results"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.set_buckling_results">[docs]</a>    <span class="k">def</span> <span class="nf">set_buckling_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves the buckling eigenvalue and nodal eigenvector for the buckling</span>
-<span class="sd">        analysis defined by case_id and the buckling mode defined by</span>
-<span class="sd">        buckling_mode.</span>
+<div class="viewcode-block" id="DoF.get_displacement"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.get_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">get_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the displacement value relating to an :class:`~feastruct.fea.cases.AnalysisCase`.</span>
 
-<span class="sd">        :param int case_id: Unique case id</span>
-<span class="sd">        :param int buckling_mode: Buckling mode number</span>
-<span class="sd">        :param float w: Buckling eigenvalue</span>
-<span class="sd">        :param v: Buckling nodal eigenvector</span>
-<span class="sd">        :type v: :class:`numpy.ndarray`</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the displacement</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :return: Displacement value</span>
+<span class="sd">        :rtype: float</span>
+
+<span class="sd">        :raises Exception: If a displacement corresponding to analysis_case cannot be found</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">buckling_v</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">EigenResult</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span></div>
+        <span class="k">for</span> <span class="n">displacement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">analysis_case</span> <span class="o">==</span> <span class="n">displacement</span><span class="o">.</span><span class="n">analysis_case</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">displacement</span><span class="o">.</span><span class="n">disp</span>
 
-<div class="viewcode-block" id="Node.get_frequency_results"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.get_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the eigenvalue (w) and nodal eigenvector (v) for the</span>
-<span class="sd">        frequency analysis defined by case_id and the frequency mode defined by</span>
-<span class="sd">        frequency_mode.</span>
+        <span class="c1"># if nothing is found</span>
+        <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Displacement corresponding to dof </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="nb">str</span> <span class="o">+=</span> <span class="s1">&#39; could not be found for analysis case </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span></div></div>
 
-<span class="sd">        :param int case_id: Unique case id</span>
-<span class="sd">        :param int frequency_mode: Frequency mode number</span>
-<span class="sd">        :return: (w, v)</span>
-<span class="sd">        :rtype: tuple(float, :class:`numpy.ndarray`)</span>
+
+<div class="viewcode-block" id="Displacement"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Displacement">[docs]</a><span class="k">class</span> <span class="nc">Displacement</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for storing a displacement at a degree of freedom for a specific analysis case.</span>
+
+<span class="sd">    :cvar float disp: Displacement at a degree of freedom</span>
+<span class="sd">    :cvar analysis_case: Analysis case relating to the displacement</span>
+<span class="sd">    :vartype analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Displacement.__init__"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Displacement.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disp</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Displacement class.</span>
+
+<span class="sd">        :param float disp: Displacement at a degree of freedom</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the displacement</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency_v</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">frequency_mode</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">v</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Node.set_frequency_results"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Node.set_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">set_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case_id</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves the frequency eigenvalue and nodal eigenvector for the</span>
-<span class="sd">        frequency analysis defined by case_id and the frequency mode defined by</span>
-<span class="sd">        frequency_mode.</span>
-
-<span class="sd">        :param int case_id: Unique case id</span>
-<span class="sd">        :param int buckling_mode: Frequency mode number</span>
-<span class="sd">        :param float w: Frequency eigenvalue</span>
-<span class="sd">        :param v: Frequency nodal eigenvector</span>
-<span class="sd">        :type v: :class:`numpy.ndarray`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">frequency_v</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">EigenResult</span><span class="p">(</span><span class="n">case_id</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disp</span> <span class="o">=</span> <span class="n">disp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_case</span> <span class="o">=</span> <span class="n">analysis_case</span></div></div>
 </pre></div>
 
            </div>

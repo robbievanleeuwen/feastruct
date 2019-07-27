@@ -1,0 +1,2286 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Frame &mdash; feastruct 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Cases" href="cases.html" />
+    <link rel="prev" title="Finite Element Utilities" href="utils.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frame</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#frame-analysis">Frame Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Frame Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frame-analysis2d">Frame Analysis2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frame-analysis3d">Frame Analysis3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#frame-elements">Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#frame-element">Frame Element</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frame-element2d">Frame Element2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frame-element3d">Frame Element3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bar2d-2n">Bar2D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bar3d-2n">Bar3D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#eulerbernoulli2d-2n">EulerBernoulli2D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#eulerbernoulli3d-2n">EulerBernoulli3D_2N</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Frame</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rst/frame.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="frame">
+<h1>Frame<a class="headerlink" href="#frame" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="frame-analysis">
+<h2>Frame Analysis<a class="headerlink" href="#frame-analysis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Frame Analysis<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.FrameAnalysis">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">FrameAnalysis</code><span class="sig-paren">(</span><em>nodes</em>, <em>elements</em>, <em>dims</em>, <em>dofs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.FiniteElementAnalysis</span></code></a></p>
+<p>Parent class for a frame analysis.</p>
+<p>Includes a method for analysis initiation and a method for adding a frame element to the
+analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – Nodes used in the finite element analysis</li>
+<li><strong>elements</strong> (list[<a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></a>]) – Elements used in the finite element analysis</li>
+<li><strong>dims</strong> (<em>int</em>) – Number of dimensions used for the current analysis type</li>
+<li><strong>dofs</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of the degrees of freedom used in the current analysis type</li>
+<li><strong>post</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor" title="feastruct.post.post.PostProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor</span></code></a>) – Post-processor object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>elements</em>, <em>dims</em>, <em>dofs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameAnalysis.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameAnalysis class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of nodes with which to initialise the class</li>
+<li><strong>elements</strong> (list[<a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></a>]) – List of elements with which to initialise the class</li>
+<li><strong>dims</strong> (<em>int</em>) – Number of dimensions used for the current analysis type</li>
+<li><strong>dofs</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of the degrees of freedom used in the current analysis type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis.create_element">
+<code class="descname">create_element</code><span class="sig-paren">(</span><em>el_type</em>, <em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameAnalysis.create_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis.create_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a frame element and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Frame</span></code> object. Refer to ‘xxx’ for the possible element types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>el_type</strong> (<em>string</em>) – String characterising the type of frame element</li>
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FrameElement object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis.create_node">
+<code class="descname">create_node</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis.create_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a node and adds it to the Fea object.</p>
+<p>Creates and returns a <a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> object and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Fea</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Cartesian coordinates of the node <em>([x], [x, y] or [x, y, z])</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Node object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis.get_node_lims">
+<code class="descname">get_node_lims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis.get_node_lims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns the minimum and maximum x, y and z values within the current analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(xmin, xmax, ymin, ymax, zmin, zmax)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="frame-analysis2d">
+<h3>Frame Analysis2D<a class="headerlink" href="#frame-analysis2d" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.FrameAnalysis2D">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">FrameAnalysis2D</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>elements=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameAnalysis2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame.FrameAnalysis" title="feastruct.fea.frame.FrameAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame.FrameAnalysis</span></code></a></p>
+<p>Parent class for a 2D frame analysis.</p>
+<p>Includes a method for analysis initiation and a method for adding 2D frame elements to the
+analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – Nodes used in the finite element analysis</li>
+<li><strong>elements</strong> (list[<a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></a>]) – Elements used in the finite element analysis</li>
+<li><strong>dims</strong> (<em>int</em>) – Number of dimensions used for the current analysis type</li>
+<li><strong>dofs</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of the degrees of freedom used in the current analysis type</li>
+<li><strong>post</strong> (<a class="reference internal" href="post.html#feastruct.post.post.PostProcessor" title="feastruct.post.post.PostProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.post.PostProcessor</span></code></a>) – Post-processor object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis2D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>elements=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameAnalysis2D.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis2D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameAnalysis2D class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of nodes with which to initialise the class</li>
+<li><strong>elements</strong> (list[<a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></a>]) – List of elements with which to initialise the class</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis2D.create_element">
+<code class="descname">create_element</code><span class="sig-paren">(</span><em>el_type</em>, <em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameAnalysis2D.create_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis2D.create_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a 2D frame element and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Frame2D</span></code> object. Refer to ‘xxx’ for the possible 2D element
+types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>el_type</strong> (<em>string</em>) – String characterising the type of frame element</li>
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FrameElement object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis2D.create_node">
+<code class="descname">create_node</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis2D.create_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a node and adds it to the Fea object.</p>
+<p>Creates and returns a <a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> object and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Fea</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Cartesian coordinates of the node <em>([x], [x, y] or [x, y, z])</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Node object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis2D.get_node_lims">
+<code class="descname">get_node_lims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis2D.get_node_lims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns the minimum and maximum x, y and z values within the current analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(xmin, xmax, ymin, ymax, zmin, zmax)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="frame-analysis3d">
+<h3>Frame Analysis3D<a class="headerlink" href="#frame-analysis3d" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.FrameAnalysis3D">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">FrameAnalysis3D</code><span class="sig-paren">(</span><em>nodes</em>, <em>elements</em>, <em>dims</em>, <em>dofs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameAnalysis3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame.FrameAnalysis" title="feastruct.fea.frame.FrameAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame.FrameAnalysis</span></code></a></p>
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis3D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>elements</em>, <em>dims</em>, <em>dofs</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis3D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameAnalysis class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of nodes with which to initialise the class</li>
+<li><strong>elements</strong> (list[<a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></a>]) – List of elements with which to initialise the class</li>
+<li><strong>dims</strong> (<em>int</em>) – Number of dimensions used for the current analysis type</li>
+<li><strong>dofs</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of the degrees of freedom used in the current analysis type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis3D.create_element">
+<code class="descname">create_element</code><span class="sig-paren">(</span><em>el_type</em>, <em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis3D.create_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a frame element and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Frame</span></code> object. Refer to ‘xxx’ for the possible element types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>el_type</strong> (<em>string</em>) – String characterising the type of frame element</li>
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FrameElement object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis3D.create_node">
+<code class="descname">create_node</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis3D.create_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a node and adds it to the Fea object.</p>
+<p>Creates and returns a <a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> object and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Fea</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Cartesian coordinates of the node <em>([x], [x, y] or [x, y, z])</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Node object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameAnalysis3D.get_node_lims">
+<code class="descname">get_node_lims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameAnalysis3D.get_node_lims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns the minimum and maximum x, y and z values within the current analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(xmin, xmax, ymin, ymax, zmin, zmax)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="frame-elements">
+<h2>Frame Elements<a class="headerlink" href="#frame-elements" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="frame-element">
+<h3>Frame Element<a class="headerlink" href="#frame-element" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.FrameElement">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">FrameElement</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.FiniteElement</span></code></a></p>
+<p>Parent class for a frame element.</p>
+<p>Establishes a template for a frame element and provides a number of generic methods that can be
+used for any frame element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>f_int</strong> (list[<a class="reference internal" href="fea.html#feastruct.fea.fea.ForceVector" title="feastruct.fea.fea.ForceVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForceVector</span></code></a>]) – List of internal force vector results stored for each analysis case</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameElement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.get_dofs">
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
+finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of DoF objects, with a length of <em>(n_nodes x n_dof)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[list[<a class="reference internal" href="node.html#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.get_fint">
+<code class="descname">get_fint</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal force vector relating to an
+<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Internal force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.get_gdof_nums">
+<code class="descname">get_gdof_nums</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_gdof_nums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of global degree of freedom numbers corresponding to the degrees of
+freedom of the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A integer array of global degrees of freedom, with a length of <em>(1 x n)</em>, where n
+is <em>n_nodes x n_dof</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.get_geometric_properties">
+<code class="descname">get_geometric_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement.get_geometric_properties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_geometric_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates geometric properties related to a frame element. Returns
+the following:</p>
+<ul class="simple">
+<li><em>node_coords</em>: An <em>(n x 3)</em> array of node coordinates, where n is the number of nodes for
+the given finite element</li>
+<li><em>dx</em>: A <em>(1 x 3)</em> array consisting of the x, y and z distances between the nodes</li>
+<li><em>l0</em>: The original length of the frame element</li>
+<li><em>c</em>: A <em>(1 x 3)</em> array consisting of the cosines with respect to the x, y and z axes</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(node_coords, dx, l0, c)</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, float,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.get_nodal_displacements">
+<code class="descname">get_nodal_displacements</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_nodal_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the nodal displacements for each degree of freedom in the finite
+element for the analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An <em>(n_nodes x n_dof)</em> array of degree of freedom displacements</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.get_node_coords">
+<code class="descname">get_node_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_node_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n x 3)</em> array of node coordinates, where <em>n</em> is the number of nodes for the
+given finite element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.save_fint">
+<code class="descname">save_fint</code><span class="sig-paren">(</span><em>f</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.save_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an internal force vector result to the <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElement</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Internal force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="frame-element2d">
+<h3>Frame Element2D<a class="headerlink" href="#frame-element2d" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.FrameElement2D">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">FrameElement2D</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame.FrameElement</span></code></a></p>
+<p>Class for a 2D frame element.</p>
+<p>Provides a number of methods that can be used for a 2D frame element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>f_int</strong> (list[<a class="reference internal" href="fea.html#feastruct.fea.fea.ForceVector" title="feastruct.fea.fea.ForceVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForceVector</span></code></a>]) – List of internal force vector results stored for each analysis
+case</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameElement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.get_dofs">
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
+finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of DoF objects, with a length of <em>(n_nodes x n_dof)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[list[<a class="reference internal" href="node.html#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.get_fint">
+<code class="descname">get_fint</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal force vector relating to an
+<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Internal force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.get_gdof_nums">
+<code class="descname">get_gdof_nums</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_gdof_nums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of global degree of freedom numbers corresponding to the degrees of
+freedom of the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A integer array of global degrees of freedom, with a length of <em>(1 x n)</em>, where n
+is <em>n_nodes x n_dof</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.get_geometric_properties">
+<code class="descname">get_geometric_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_geometric_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates geometric properties related to a frame element. Returns
+the following:</p>
+<ul class="simple">
+<li><em>node_coords</em>: An <em>(n x 3)</em> array of node coordinates, where n is the number of nodes for
+the given finite element</li>
+<li><em>dx</em>: A <em>(1 x 3)</em> array consisting of the x, y and z distances between the nodes</li>
+<li><em>l0</em>: The original length of the frame element</li>
+<li><em>c</em>: A <em>(1 x 3)</em> array consisting of the cosines with respect to the x, y and z axes</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(node_coords, dx, l0, c)</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, float,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.get_nodal_displacements">
+<code class="descname">get_nodal_displacements</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D.get_nodal_displacements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_nodal_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the nodal displacements for each degree of freedom in the 2D frame
+element <em>([0, 1, 5])</em> for the analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n_nodes x 3)</em> array of degree of freedom displacements</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.get_node_coords">
+<code class="descname">get_node_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_node_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n x 3)</em> array of node coordinates, where <em>n</em> is the number of nodes for the
+given finite element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.plot_axial_force">
+<code class="descname">plot_axial_force</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D.plot_axial_force"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.plot_axial_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotNLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the axial force diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.plot_bending_moment">
+<code class="descname">plot_bending_moment</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D.plot_bending_moment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.plot_bending_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the bending moment diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.plot_deformed_element">
+<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D.plot_deformed_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a 2D frame element in its deformed configuration for the displacement vector
+defined by the analysis_case. The deformation is based on the element shape functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+<li><strong>n</strong> (<em>int</em>) – Number of linear subdivisions used to plot the element</li>
+<li><strong>def_scale</strong> (<em>float</em>) – Deformation scale</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.plot_element">
+<code class="descname">plot_element</code><span class="sig-paren">(</span><em>ax</em>, <em>linestyle='-'</em>, <em>linewidth=2</em>, <em>marker='.'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D.plot_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.plot_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the undeformed frame element on the axis defined by ax.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>linestyle</strong> (<em>string</em>) – Element linestyle</li>
+<li><strong>linewidth</strong> (<em>int</em>) – Element linewidth</li>
+<li><strong>marker</strong> (<em>string</em>) – Node marker type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.plot_shear_force">
+<code class="descname">plot_shear_force</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D.plot_shear_force"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.plot_shear_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotVLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the shear force diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.save_fint">
+<code class="descname">save_fint</code><span class="sig-paren">(</span><em>f</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.save_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an internal force vector result to the <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElement</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Internal force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="frame-element3d">
+<h3>Frame Element3D<a class="headerlink" href="#frame-element3d" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.FrameElement3D">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">FrameElement3D</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame.FrameElement" title="feastruct.fea.frame.FrameElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame.FrameElement</span></code></a></p>
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameElement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.get_dofs">
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
+finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of DoF objects, with a length of <em>(n_nodes x n_dof)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[list[<a class="reference internal" href="node.html#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.get_fint">
+<code class="descname">get_fint</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal force vector relating to an
+<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Internal force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.get_gdof_nums">
+<code class="descname">get_gdof_nums</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_gdof_nums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of global degree of freedom numbers corresponding to the degrees of
+freedom of the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A integer array of global degrees of freedom, with a length of <em>(1 x n)</em>, where n
+is <em>n_nodes x n_dof</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.get_geometric_properties">
+<code class="descname">get_geometric_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_geometric_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates geometric properties related to a frame element. Returns
+the following:</p>
+<ul class="simple">
+<li><em>node_coords</em>: An <em>(n x 3)</em> array of node coordinates, where n is the number of nodes for
+the given finite element</li>
+<li><em>dx</em>: A <em>(1 x 3)</em> array consisting of the x, y and z distances between the nodes</li>
+<li><em>l0</em>: The original length of the frame element</li>
+<li><em>c</em>: A <em>(1 x 3)</em> array consisting of the cosines with respect to the x, y and z axes</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(node_coords, dx, l0, c)</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, float,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.get_nodal_displacements">
+<code class="descname">get_nodal_displacements</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_nodal_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the nodal displacements for each degree of freedom in the finite
+element for the analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An <em>(n_nodes x n_dof)</em> array of degree of freedom displacements</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.get_node_coords">
+<code class="descname">get_node_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_node_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n x 3)</em> array of node coordinates, where <em>n</em> is the number of nodes for the
+given finite element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.save_fint">
+<code class="descname">save_fint</code><span class="sig-paren">(</span><em>f</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.save_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an internal force vector result to the <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElement</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Internal force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="bar2d-2n">
+<h3>Bar2D_2N<a class="headerlink" href="#bar2d-2n" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.Bar2D_2N">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">Bar2D_2N</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#Bar2D_2N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame.FrameElement2D" title="feastruct.fea.frame.FrameElement2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame.FrameElement2D</span></code></a></p>
+<p>Two noded, two dimensional bar element that can resist an axial force only. The element is
+defined by its two end nodes and uses two linear shape functions to obtain analytical results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>f_int</strong> (list[<a class="reference internal" href="fea.html#feastruct.fea.fea.ForceVector" title="feastruct.fea.fea.ForceVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForceVector</span></code></a>]) – List of internal force vector results stored for each analysis case</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#Bar2D_2N.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Bar2D_2N class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_dofs">
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
+finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of DoF objects, with a length of <em>(n_nodes x n_dof)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[list[<a class="reference internal" href="node.html#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_fint">
+<code class="descname">get_fint</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal force vector relating to an
+<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Internal force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_gdof_nums">
+<code class="descname">get_gdof_nums</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_gdof_nums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of global degree of freedom numbers corresponding to the degrees of
+freedom of the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A integer array of global degrees of freedom, with a length of <em>(1 x n)</em>, where n
+is <em>n_nodes x n_dof</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_geometric_properties">
+<code class="descname">get_geometric_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_geometric_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates geometric properties related to a frame element. Returns
+the following:</p>
+<ul class="simple">
+<li><em>node_coords</em>: An <em>(n x 3)</em> array of node coordinates, where n is the number of nodes for
+the given finite element</li>
+<li><em>dx</em>: A <em>(1 x 3)</em> array consisting of the x, y and z distances between the nodes</li>
+<li><em>l0</em>: The original length of the frame element</li>
+<li><em>c</em>: A <em>(1 x 3)</em> array consisting of the cosines with respect to the x, y and z axes</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(node_coords, dx, l0, c)</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, float,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_nodal_displacements">
+<code class="descname">get_nodal_displacements</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_nodal_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the nodal displacements for each degree of freedom in the 2D frame
+element <em>([0, 1, 5])</em> for the analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n_nodes x 3)</em> array of degree of freedom displacements</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_node_coords">
+<code class="descname">get_node_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_node_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n x 3)</em> array of node coordinates, where <em>n</em> is the number of nodes for the
+given finite element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_stiffness_matrix">
+<code class="descname">get_stiffness_matrix</code><span class="sig-paren">(</span><em>linear=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#Bar2D_2N.get_stiffness_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_stiffness_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the stiffness matrix for a two noded, 2D bar element. The stiffness matrix has been
+analytically integrated so numerical integration is not necessary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>linear</strong> (<em>bool</em>) – Whether a linear or non-linear stiffness matrix is required</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">4 x 4 element stiffness matrix</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.plot_axial_force">
+<code class="descname">plot_axial_force</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.plot_axial_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotNLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the axial force diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.plot_bending_moment">
+<code class="descname">plot_bending_moment</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.plot_bending_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the bending moment diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.plot_deformed_element">
+<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a 2D frame element in its deformed configuration for the displacement vector
+defined by the analysis_case. The deformation is based on the element shape functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+<li><strong>n</strong> (<em>int</em>) – Number of linear subdivisions used to plot the element</li>
+<li><strong>def_scale</strong> (<em>float</em>) – Deformation scale</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.plot_element">
+<code class="descname">plot_element</code><span class="sig-paren">(</span><em>ax</em>, <em>linestyle='-'</em>, <em>linewidth=2</em>, <em>marker='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.plot_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the undeformed frame element on the axis defined by ax.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>linestyle</strong> (<em>string</em>) – Element linestyle</li>
+<li><strong>linewidth</strong> (<em>int</em>) – Element linewidth</li>
+<li><strong>marker</strong> (<em>string</em>) – Node marker type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.plot_shear_force">
+<code class="descname">plot_shear_force</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.plot_shear_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotVLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the shear force diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.save_fint">
+<code class="descname">save_fint</code><span class="sig-paren">(</span><em>f</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.save_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an internal force vector result to the <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElement</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Internal force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="bar3d-2n">
+<h3>Bar3D_2N<a class="headerlink" href="#bar3d-2n" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.Bar3D_2N">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">Bar3D_2N</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#Bar3D_2N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame.FrameElement3D" title="feastruct.fea.frame.FrameElement3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame.FrameElement3D</span></code></a></p>
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameElement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.get_dofs">
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
+finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of DoF objects, with a length of <em>(n_nodes x n_dof)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[list[<a class="reference internal" href="node.html#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.get_fint">
+<code class="descname">get_fint</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal force vector relating to an
+<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Internal force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.get_gdof_nums">
+<code class="descname">get_gdof_nums</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_gdof_nums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of global degree of freedom numbers corresponding to the degrees of
+freedom of the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A integer array of global degrees of freedom, with a length of <em>(1 x n)</em>, where n
+is <em>n_nodes x n_dof</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.get_geometric_properties">
+<code class="descname">get_geometric_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_geometric_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates geometric properties related to a frame element. Returns
+the following:</p>
+<ul class="simple">
+<li><em>node_coords</em>: An <em>(n x 3)</em> array of node coordinates, where n is the number of nodes for
+the given finite element</li>
+<li><em>dx</em>: A <em>(1 x 3)</em> array consisting of the x, y and z distances between the nodes</li>
+<li><em>l0</em>: The original length of the frame element</li>
+<li><em>c</em>: A <em>(1 x 3)</em> array consisting of the cosines with respect to the x, y and z axes</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(node_coords, dx, l0, c)</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, float,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.get_nodal_displacements">
+<code class="descname">get_nodal_displacements</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_nodal_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the nodal displacements for each degree of freedom in the finite
+element for the analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An <em>(n_nodes x n_dof)</em> array of degree of freedom displacements</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.get_node_coords">
+<code class="descname">get_node_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_node_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n x 3)</em> array of node coordinates, where <em>n</em> is the number of nodes for the
+given finite element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.save_fint">
+<code class="descname">save_fint</code><span class="sig-paren">(</span><em>f</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.save_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an internal force vector result to the <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElement</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Internal force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="eulerbernoulli2d-2n">
+<h3>EulerBernoulli2D_2N<a class="headerlink" href="#eulerbernoulli2d-2n" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">EulerBernoulli2D_2N</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#EulerBernoulli2D_2N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame.FrameElement2D" title="feastruct.fea.frame.FrameElement2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame.FrameElement2D</span></code></a></p>
+<p>Two noded, two dimensional frame element based on the Euler-Bernoulli beam formulation for
+relatively thin beams. The element is defined by its two end nodes and uses four cubic
+polynomial shape functions to obtain analytical results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>f_int</strong> (list[<a class="reference internal" href="fea.html#feastruct.fea.fea.ForceVector" title="feastruct.fea.fea.ForceVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForceVector</span></code></a>]) – List of internal force vector results stored for each analysis case</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#EulerBernoulli2D_2N.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the EulerBernoulli2D_2N class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_dofs">
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
+finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of DoF objects, with a length of <em>(n_nodes x n_dof)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[list[<a class="reference internal" href="node.html#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_fint">
+<code class="descname">get_fint</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal force vector relating to an
+<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Internal force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_gdof_nums">
+<code class="descname">get_gdof_nums</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_gdof_nums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of global degree of freedom numbers corresponding to the degrees of
+freedom of the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A integer array of global degrees of freedom, with a length of <em>(1 x n)</em>, where n
+is <em>n_nodes x n_dof</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_geometric_properties">
+<code class="descname">get_geometric_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_geometric_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates geometric properties related to a frame element. Returns
+the following:</p>
+<ul class="simple">
+<li><em>node_coords</em>: An <em>(n x 3)</em> array of node coordinates, where n is the number of nodes for
+the given finite element</li>
+<li><em>dx</em>: A <em>(1 x 3)</em> array consisting of the x, y and z distances between the nodes</li>
+<li><em>l0</em>: The original length of the frame element</li>
+<li><em>c</em>: A <em>(1 x 3)</em> array consisting of the cosines with respect to the x, y and z axes</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(node_coords, dx, l0, c)</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, float,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_geometric_stiff_matrix">
+<code class="descname">get_geometric_stiff_matrix</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#EulerBernoulli2D_2N.get_geometric_stiff_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_geometric_stiff_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the geometric stiffness matrix for a two noded 2D Euler-Bernoulli frame element.
+The stiffness matrix has been analytically integrated so numerical integration is not
+necessary. The geometric stiffness matrix requires an axial force so the analysis_case from
+a static analysis must be provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case from which to extract the axial force</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">6 x 6 element geometric stiffness matrix</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">class:</th><td class="field-body"><cite>numpy.ndarray</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_internal_actions">
+<code class="descname">get_internal_actions</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#EulerBernoulli2D_2N.get_internal_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_internal_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal actions for a frame element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array containing the internal actions for the element
+<em>(N1, V1, M1, N2, V2, M2)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_mass_matrix">
+<code class="descname">get_mass_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#EulerBernoulli2D_2N.get_mass_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_mass_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the mass matrix for a for a two noded 2D Euler-Bernoulli frame element. The mass
+matrix has been analytically integrated so numerical integration is not necessary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">6 x 6 element mass matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">: class: <cite>numpy.ndarray</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_nodal_displacements">
+<code class="descname">get_nodal_displacements</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_nodal_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the nodal displacements for each degree of freedom in the 2D frame
+element <em>([0, 1, 5])</em> for the analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n_nodes x 3)</em> array of degree of freedom displacements</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_node_coords">
+<code class="descname">get_node_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_node_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n x 3)</em> array of node coordinates, where <em>n</em> is the number of nodes for the
+given finite element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_stiffness_matrix">
+<code class="descname">get_stiffness_matrix</code><span class="sig-paren">(</span><em>linear=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#EulerBernoulli2D_2N.get_stiffness_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_stiffness_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the stiffness matrix for a two noded 2D Euler-Bernoulli frame element. The
+stiffness matrix has been analytically integrated so numerical integration is not
+necessary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>linear</strong> (<em>bool</em>) – Whether a linear or non-linear stiffness matrix is required</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">6 x 6 element stiffness matrix</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">class:</th><td class="field-body"><cite>numpy.ndarray</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.plot_axial_force">
+<code class="descname">plot_axial_force</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.plot_axial_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotNLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the axial force diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.plot_bending_moment">
+<code class="descname">plot_bending_moment</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.plot_bending_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the bending moment diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.plot_deformed_element">
+<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a 2D frame element in its deformed configuration for the displacement vector
+defined by the analysis_case. The deformation is based on the element shape functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+<li><strong>n</strong> (<em>int</em>) – Number of linear subdivisions used to plot the element</li>
+<li><strong>def_scale</strong> (<em>float</em>) – Deformation scale</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.plot_element">
+<code class="descname">plot_element</code><span class="sig-paren">(</span><em>ax</em>, <em>linestyle='-'</em>, <em>linewidth=2</em>, <em>marker='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.plot_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the undeformed frame element on the axis defined by ax.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code>) – Axis object on which to draw the element</li>
+<li><strong>linestyle</strong> (<em>string</em>) – Element linestyle</li>
+<li><strong>linewidth</strong> (<em>int</em>) – Element linewidth</li>
+<li><strong>marker</strong> (<em>string</em>) – Node marker type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.plot_shear_force">
+<code class="descname">plot_shear_force</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>scalef</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.plot_shear_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the axial force diagram from a static analysis defined by case_id. N.B. this
+method is adopted from the MATLAB code by F.P. van der Meer: plotVLine.m.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ax</strong> (: class: <cite>matplotlib.axes.Axes</cite>) – Axis object on which to draw the element</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>scalef</strong> (<em>float</em>) – Factor by which to scale the shear force diagram</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.save_fint">
+<code class="descname">save_fint</code><span class="sig-paren">(</span><em>f</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.save_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an internal force vector result to the <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElement</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Internal force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="eulerbernoulli3d-2n">
+<h3>EulerBernoulli3D_2N<a class="headerlink" href="#eulerbernoulli3d-2n" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame.</code><code class="descname">EulerBernoulli3D_2N</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#EulerBernoulli3D_2N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame.FrameElement3D" title="feastruct.fea.frame.FrameElement3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame.FrameElement3D</span></code></a></p>
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameElement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_dofs">
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
+finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of DoF objects, with a length of <em>(n_nodes x n_dof)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[list[<a class="reference internal" href="node.html#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_fint">
+<code class="descname">get_fint</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal force vector relating to an
+<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Internal force vector</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_gdof_nums">
+<code class="descname">get_gdof_nums</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_gdof_nums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of global degree of freedom numbers corresponding to the degrees of
+freedom of the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A integer array of global degrees of freedom, with a length of <em>(1 x n)</em>, where n
+is <em>n_nodes x n_dof</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_geometric_properties">
+<code class="descname">get_geometric_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_geometric_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates geometric properties related to a frame element. Returns
+the following:</p>
+<ul class="simple">
+<li><em>node_coords</em>: An <em>(n x 3)</em> array of node coordinates, where n is the number of nodes for
+the given finite element</li>
+<li><em>dx</em>: A <em>(1 x 3)</em> array consisting of the x, y and z distances between the nodes</li>
+<li><em>l0</em>: The original length of the frame element</li>
+<li><em>c</em>: A <em>(1 x 3)</em> array consisting of the cosines with respect to the x, y and z axes</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>(node_coords, dx, l0, c)</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, float,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_nodal_displacements">
+<code class="descname">get_nodal_displacements</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_nodal_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the nodal displacements for each degree of freedom in the finite
+element for the analysis_case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An <em>(n_nodes x n_dof)</em> array of degree of freedom displacements</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_node_coords">
+<code class="descname">get_node_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_node_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n x 3)</em> array of node coordinates, where <em>n</em> is the number of nodes for the
+given finite element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.save_fint">
+<code class="descname">save_fint</code><span class="sig-paren">(</span><em>f</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.save_fint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an internal force vector result to the <a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElement" title="feastruct.fea.fea.FiniteElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElement</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>f</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Internal force vector</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the internal force vector</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cases.html" class="btn btn-neutral float-right" title="Cases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="utils.html" class="btn btn-neutral" title="Finite Element Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -81,13 +81,15 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="rst/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rst/frame2D.html">Frame Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rst/fea.html">Finite Element Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rst/bcs.html">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rst/pre.html">Pre</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rst/node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rst/fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rst/utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rst/frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rst/cases.html">Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rst/bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rst/solvers.html">Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rst/post.html">Post-Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rst/results.html">Results</a></li>
 </ul>
 
             
@@ -163,6 +165,7 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -190,29 +193,55 @@
 </li>
         <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.__init__">(feastruct.fea.fea.FiniteElement method)</a>
 </li>
-        <li><a href="rst/fea.html#feastruct.fea.fea.fea.__init__">(feastruct.fea.fea.fea method)</a>
+        <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.__init__">(feastruct.fea.fea.FiniteElementAnalysis method)</a>
 </li>
-        <li><a href="rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.__init__">(feastruct.fea.frame2d.EulerBernoulliFrame2D method)</a>
+        <li><a href="rst/fea.html#feastruct.fea.fea.ForceVector.__init__">(feastruct.fea.fea.ForceVector method)</a>
 </li>
-        <li><a href="rst/frame2D.html#feastruct.fea.frame2d.Frame2D.__init__">(feastruct.fea.frame2d.Frame2D method)</a>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.__init__">(feastruct.fea.frame.Bar2D_2N method)</a>
 </li>
-        <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement.__init__">(feastruct.fea.frame2d.FrameElement method)</a>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N.__init__">(feastruct.fea.frame.Bar3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.__init__">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N.__init__">(feastruct.fea.frame.EulerBernoulli3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis.__init__">(feastruct.fea.frame.FrameAnalysis method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis2D.__init__">(feastruct.fea.frame.FrameAnalysis2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis3D.__init__">(feastruct.fea.frame.FrameAnalysis3D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement.__init__">(feastruct.fea.frame.FrameElement method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.__init__">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D.__init__">(feastruct.fea.frame.FrameElement3D method)</a>
+</li>
+        <li><a href="rst/node.html#feastruct.fea.node.Displacement.__init__">(feastruct.fea.node.Displacement method)</a>
+</li>
+        <li><a href="rst/node.html#feastruct.fea.node.DoF.__init__">(feastruct.fea.node.DoF method)</a>
 </li>
         <li><a href="rst/node.html#feastruct.fea.node.Node.__init__">(feastruct.fea.node.Node method)</a>
 </li>
         <li><a href="rst/post.html#feastruct.post.post.PostProcessor.__init__">(feastruct.post.post.PostProcessor method)</a>
 </li>
-        <li><a href="rst/results.html#feastruct.post.results.Displacement.__init__">(feastruct.post.results.Displacement method)</a>
+        <li><a href="rst/post.html#feastruct.post.post.ScalarResult.__init__">(feastruct.post.post.ScalarResult method)</a>
 </li>
-        <li><a href="rst/results.html#feastruct.post.results.EigenResult.__init__">(feastruct.post.results.EigenResult method)</a>
+        <li><a href="rst/pre.html#feastruct.pre.material.Material.__init__">(feastruct.pre.material.Material method)</a>
 </li>
-        <li><a href="rst/results.html#feastruct.post.results.Force.__init__">(feastruct.post.results.Force method)</a>
+        <li><a href="rst/pre.html#feastruct.pre.material.Steel.__init__">(feastruct.pre.material.Steel method)</a>
 </li>
-        <li><a href="rst/results.html#feastruct.post.results.FrameForceVector.__init__">(feastruct.post.results.FrameForceVector method)</a>
+        <li><a href="rst/pre.html#feastruct.pre.section.Section.__init__">(feastruct.pre.section.Section method)</a>
 </li>
-        <li><a href="rst/results.html#feastruct.post.results.ResultItem.__init__">(feastruct.post.results.ResultItem method)</a>
+        <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.__init__">(feastruct.solvers.feasolve.Solver method)</a>
 </li>
-        <li><a href="rst/results.html#feastruct.post.results.ResultList.__init__">(feastruct.post.results.ResultList method)</a>
+        <li><a href="rst/solvers.html#feastruct.solvers.feasolve.SolverSettings.__init__">(feastruct.solvers.feasolve.SolverSettings method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.__init__">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.__init__">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.__init__">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -221,40 +250,88 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea.add_analysis_case">add_analysis_case() (feastruct.fea.fea.fea method)</a>
-</li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea.add_element">add_element() (feastruct.fea.fea.fea method)</a>
+      <li><a href="rst/cases.html#feastruct.fea.cases.Case.add_item">add_item() (feastruct.fea.cases.Case method)</a>
 
       <ul>
-        <li><a href="rst/frame2D.html#feastruct.fea.frame2d.Frame2D.add_element">(feastruct.fea.frame2d.Frame2D method)</a>
+        <li><a href="rst/cases.html#feastruct.fea.cases.FreedomCase.add_item">(feastruct.fea.cases.FreedomCase method)</a>
+</li>
+        <li><a href="rst/cases.html#feastruct.fea.cases.LoadCase.add_item">(feastruct.fea.cases.LoadCase method)</a>
 </li>
       </ul></li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea.add_freedom_case">add_freedom_case() (feastruct.fea.fea.fea method)</a>
-</li>
-      <li><a href="rst/cases.html#feastruct.fea.cases.Case.add_item">add_item() (feastruct.fea.cases.Case method)</a>
-</li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea.add_load_case">add_load_case() (feastruct.fea.fea.fea method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="rst/cases.html#feastruct.fea.cases.LoadCase.add_nodal_load">add_nodal_load() (feastruct.fea.cases.LoadCase method)</a>
 </li>
       <li><a href="rst/cases.html#feastruct.fea.cases.FreedomCase.add_nodal_support">add_nodal_support() (feastruct.fea.cases.FreedomCase method)</a>
 </li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea.add_node">add_node() (feastruct.fea.fea.fea method)</a>
-</li>
       <li><a href="rst/cases.html#feastruct.fea.cases.AnalysisCase">AnalysisCase (class in feastruct.fea.cases)</a>
 </li>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.apply_bcs">apply_bcs() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.apply_bcs">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.apply_bcs">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.apply_bcs">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalLoad.apply_load">apply_load() (feastruct.fea.bcs.NodalLoad method)</a>
 </li>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalSupport.apply_support">apply_support() (feastruct.fea.bcs.NodalSupport method)</a>
 </li>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.assemble_fext">assemble_fext() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.assemble_fext">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.assemble_fext">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_fext">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.assemble_mass_matrix">assemble_mass_matrix() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.assemble_mass_matrix">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.assemble_mass_matrix">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_mass_matrix">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.assemble_stiff_matrix">assemble_stiff_matrix() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.assemble_stiff_matrix">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.assemble_stiff_matrix">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.assemble_stiff_matrix">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.assign_dofs">assign_dofs() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.assign_dofs">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.assign_dofs">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.assign_dofs">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N">Bar2D_2N (class in feastruct.fea.frame)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N">Bar3D_2N (class in feastruct.fea.frame)</a>
+</li>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.BoundaryCondition">BoundaryCondition (class in feastruct.fea.bcs)</a>
 </li>
   </ul></td>
@@ -263,15 +340,71 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.calculate_reactions">calculate_reactions() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.calculate_reactions">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.calculate_reactions">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.calculate_reactions">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.calculate_stresses">calculate_stresses() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.calculate_stresses">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.calculate_stresses">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.calculate_stresses">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="rst/cases.html#feastruct.fea.cases.Case">Case (class in feastruct.fea.cases)</a>
 </li>
+      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.create_element">create_element() (feastruct.fea.fea.FiniteElementAnalysis method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis.create_element">(feastruct.fea.frame.FrameAnalysis method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis2D.create_element">(feastruct.fea.frame.FrameAnalysis2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis3D.create_element">(feastruct.fea.frame.FrameAnalysis3D method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.create_node">create_node() (feastruct.fea.fea.FiniteElementAnalysis method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis.create_node">(feastruct.fea.frame.FrameAnalysis method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis2D.create_node">(feastruct.fea.frame.FrameAnalysis2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis3D.create_node">(feastruct.fea.frame.FrameAnalysis3D method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/results.html#feastruct.post.results.Displacement">Displacement (class in feastruct.post.results)</a>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.direct_solver">direct_solver() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.direct_solver">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.direct_solver">(feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.direct_solver">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/node.html#feastruct.fea.node.Displacement">Displacement (class in feastruct.fea.node)</a>
+</li>
+      <li><a href="rst/node.html#feastruct.fea.node.DoF">DoF (class in feastruct.fea.node)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -279,11 +412,11 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/results.html#feastruct.post.results.EigenResult">EigenResult (class in feastruct.post.results)</a>
+      <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N">EulerBernoulli2D_2N (class in feastruct.fea.frame)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D">EulerBernoulliFrame2D (class in feastruct.fea.frame2d)</a>
+      <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N">EulerBernoulli3D_2N (class in feastruct.fea.frame)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -291,37 +424,27 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea">fea (class in feastruct.fea.fea)</a>
-</li>
-      <li><a href="rst/bcs.html#module-feastruct.fea.bcs">feastruct.fea.bcs (module)</a>
-</li>
-      <li><a href="rst/cases.html#module-feastruct.fea.cases">feastruct.fea.cases (module)</a>
-</li>
-      <li><a href="rst/fea.html#module-feastruct.fea.fea">feastruct.fea.fea (module)</a>
-</li>
-      <li><a href="rst/frame2D.html#module-feastruct.fea.frame2d">feastruct.fea.frame2d (module)</a>
-</li>
-      <li><a href="rst/node.html#module-feastruct.fea.node">feastruct.fea.node (module)</a>
-</li>
-      <li><a href="rst/post.html#module-feastruct.post.post">feastruct.post.post (module)</a>
-</li>
-      <li><a href="rst/results.html#module-feastruct.post.results">feastruct.post.results (module)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea.find_analysis_case">find_analysis_case() (feastruct.fea.fea.fea method)</a>
-</li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea.find_node">find_node() (feastruct.fea.fea.fea method)</a>
+      <li><a href="rst/utils.html#module-feastruct.fea.utils">feastruct.fea.utils (module)</a>
 </li>
       <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement">FiniteElement (class in feastruct.fea.fea)</a>
 </li>
-      <li><a href="rst/results.html#feastruct.post.results.Force">Force (class in feastruct.post.results)</a>
+      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis">FiniteElementAnalysis (class in feastruct.fea.fea)</a>
 </li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.Frame2D">Frame2D (class in feastruct.fea.frame2d)</a>
+      <li><a href="rst/fea.html#feastruct.fea.fea.ForceVector">ForceVector (class in feastruct.fea.fea)</a>
 </li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement">FrameElement (class in feastruct.fea.frame2d)</a>
+      <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis">FrameAnalysis (class in feastruct.fea.frame)</a>
 </li>
-      <li><a href="rst/results.html#feastruct.post.results.FrameForceVector">FrameForceVector (class in feastruct.post.results)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis2D">FrameAnalysis2D (class in feastruct.fea.frame)</a>
+</li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis3D">FrameAnalysis3D (class in feastruct.fea.frame)</a>
+</li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement">FrameElement (class in feastruct.fea.frame)</a>
+</li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D">FrameElement2D (class in feastruct.fea.frame)</a>
+</li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D">FrameElement3D (class in feastruct.fea.frame)</a>
 </li>
       <li><a href="rst/cases.html#feastruct.fea.cases.FreedomCase">FreedomCase (class in feastruct.fea.cases)</a>
 </li>
@@ -331,46 +454,146 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_buckling_results">get_buckling_results() (feastruct.fea.fea.FiniteElement method)</a>
-
-      <ul>
-        <li><a href="rst/node.html#feastruct.fea.node.Node.get_buckling_results">(feastruct.fea.node.Node method)</a>
+      <li><a href="rst/utils.html#feastruct.fea.utils.gauss_points">gauss_points() (in module feastruct.fea.utils)</a>
 </li>
-      </ul></li>
-      <li><a href="rst/node.html#feastruct.fea.node.Node.get_displacement">get_displacement() (feastruct.fea.node.Node method)</a>
+      <li><a href="rst/node.html#feastruct.fea.node.DoF.get_displacement">get_displacement() (feastruct.fea.node.DoF method)</a>
 </li>
       <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_dofs">get_dofs() (feastruct.fea.fea.FiniteElement method)</a>
-</li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_fint">get_fint() (feastruct.fea.fea.FiniteElement method)</a>
-</li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_frequency_results">get_frequency_results() (feastruct.fea.fea.FiniteElement method)</a>
 
       <ul>
-        <li><a href="rst/node.html#feastruct.fea.node.Node.get_frequency_results">(feastruct.fea.node.Node method)</a>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_dofs">(feastruct.fea.frame.Bar2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_dofs">(feastruct.fea.frame.Bar3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_dofs">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N.get_dofs">(feastruct.fea.frame.EulerBernoulli3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement.get_dofs">(feastruct.fea.frame.FrameElement method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.get_dofs">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D.get_dofs">(feastruct.fea.frame.FrameElement3D method)</a>
+</li>
+        <li><a href="rst/node.html#feastruct.fea.node.Node.get_dofs">(feastruct.fea.node.Node method)</a>
 </li>
       </ul></li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement.get_geometric_properties">get_geometric_properties() (feastruct.fea.frame2d.FrameElement method)</a>
+      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_fint">get_fint() (feastruct.fea.fea.FiniteElement method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_fint">(feastruct.fea.frame.Bar2D_2N method)</a>
 </li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_geometric_stiff_matrix">get_geometric_stiff_matrix() (feastruct.fea.frame2d.EulerBernoulliFrame2D method)</a>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_fint">(feastruct.fea.frame.Bar3D_2N method)</a>
 </li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_fint">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N.get_fint">(feastruct.fea.frame.EulerBernoulli3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement.get_fint">(feastruct.fea.frame.FrameElement method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.get_fint">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D.get_fint">(feastruct.fea.frame.FrameElement3D method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_gdof_nums">get_gdof_nums() (feastruct.fea.fea.FiniteElement method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_gdof_nums">(feastruct.fea.frame.Bar2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_gdof_nums">(feastruct.fea.frame.Bar3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_gdof_nums">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N.get_gdof_nums">(feastruct.fea.frame.EulerBernoulli3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement.get_gdof_nums">(feastruct.fea.frame.FrameElement method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.get_gdof_nums">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D.get_gdof_nums">(feastruct.fea.frame.FrameElement3D method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_geometric_properties">get_geometric_properties() (feastruct.fea.frame.Bar2D_2N method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_geometric_properties">(feastruct.fea.frame.Bar3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_geometric_properties">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N.get_geometric_properties">(feastruct.fea.frame.EulerBernoulli3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement.get_geometric_properties">(feastruct.fea.frame.FrameElement method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.get_geometric_properties">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D.get_geometric_properties">(feastruct.fea.frame.FrameElement3D method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_mass_matrix">get_mass_matrix() (feastruct.fea.frame2d.EulerBernoulliFrame2D method)</a>
+      <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_geometric_stiff_matrix">get_geometric_stiff_matrix() (feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_internal_actions">get_internal_actions() (feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_mass_matrix">get_mass_matrix() (feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
 </li>
       <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_nodal_displacements">get_nodal_displacements() (feastruct.fea.fea.FiniteElement method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_nodal_displacements">(feastruct.fea.frame.Bar2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_nodal_displacements">(feastruct.fea.frame.Bar3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_nodal_displacements">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N.get_nodal_displacements">(feastruct.fea.frame.EulerBernoulli3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement.get_nodal_displacements">(feastruct.fea.frame.FrameElement method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.get_nodal_displacements">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D.get_nodal_displacements">(feastruct.fea.frame.FrameElement3D method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/cases.html#feastruct.fea.cases.FreedomCase.get_nodal_fixities">get_nodal_fixities() (feastruct.fea.cases.FreedomCase method)</a>
 </li>
       <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_node_coords">get_node_coords() (feastruct.fea.fea.FiniteElement method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_node_coords">(feastruct.fea.frame.Bar2D_2N method)</a>
 </li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.fea.get_node_lims">get_node_lims() (feastruct.fea.fea.fea method)</a>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_node_coords">(feastruct.fea.frame.Bar3D_2N method)</a>
 </li>
-      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.get_nodes">get_nodes() (feastruct.fea.fea.FiniteElement method)</a>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_node_coords">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
 </li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N.get_node_coords">(feastruct.fea.frame.EulerBernoulli3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement.get_node_coords">(feastruct.fea.frame.FrameElement method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.get_node_coords">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D.get_node_coords">(feastruct.fea.frame.FrameElement3D method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.get_node_lims">get_node_lims() (feastruct.fea.fea.FiniteElementAnalysis method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis.get_node_lims">(feastruct.fea.frame.FrameAnalysis method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis2D.get_node_lims">(feastruct.fea.frame.FrameAnalysis2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameAnalysis3D.get_node_lims">(feastruct.fea.frame.FrameAnalysis3D method)</a>
+</li>
+      </ul></li>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalSupport.get_reaction">get_reaction() (feastruct.fea.bcs.NodalSupport method)</a>
 </li>
-      <li><a href="rst/results.html#feastruct.post.results.ResultList.get_result">get_result() (feastruct.post.results.ResultList method)</a>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_stiffness_matrix">get_stiffness_matrix() (feastruct.fea.frame.Bar2D_2N method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_stiffness_matrix">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
 </li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.get_stiff_matrix">get_stiff_matrix() (feastruct.fea.frame2d.EulerBernoulliFrame2D method)</a>
-</li>
+      </ul></li>
       <li><a href="rst/post.html#feastruct.post.post.PostProcessor.get_support_angle">get_support_angle() (feastruct.post.post.PostProcessor method)</a>
 </li>
   </ul></td>
@@ -379,7 +602,21 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling">LinearBuckling (class in feastruct.solvers.linbuckling)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic">LinearStatic (class in feastruct.solvers.linstatic)</a>
+</li>
       <li><a href="rst/cases.html#feastruct.fea.cases.LoadCase">LoadCase (class in feastruct.fea.cases)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/pre.html#feastruct.pre.material.Material">Material (class in feastruct.pre.material)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -387,6 +624,8 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency">NaturalFrequency (class in feastruct.solvers.naturalfrequency)</a>
+</li>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalLoad">NodalLoad (class in feastruct.fea.bcs)</a>
 </li>
   </ul></td>
@@ -401,28 +640,44 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_axial_force">plot_axial_force() (feastruct.fea.frame2d.FrameElement method)</a>
-</li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_bending_moment">plot_bending_moment() (feastruct.fea.frame2d.FrameElement method)</a>
-</li>
-      <li><a href="rst/post.html#feastruct.post.post.PostProcessor.plot_buckling_eigenvector">plot_buckling_eigenvector() (feastruct.post.post.PostProcessor method)</a>
-</li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.EulerBernoulliFrame2D.plot_deformed_element">plot_deformed_element() (feastruct.fea.frame2d.EulerBernoulliFrame2D method)</a>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.plot_axial_force">plot_axial_force() (feastruct.fea.frame.Bar2D_2N method)</a>
 
       <ul>
-        <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_deformed_element">(feastruct.fea.frame2d.FrameElement method)</a>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.plot_axial_force">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.plot_axial_force">(feastruct.fea.frame.FrameElement2D method)</a>
 </li>
       </ul></li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_element">plot_element() (feastruct.fea.frame2d.FrameElement method)</a>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.plot_bending_moment">plot_bending_moment() (feastruct.fea.frame.Bar2D_2N method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.plot_bending_moment">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
 </li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.plot_bending_moment">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.plot_deformed_element">plot_deformed_element() (feastruct.fea.frame.Bar2D_2N method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.plot_deformed_element">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.plot_deformed_element">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.plot_element">plot_element() (feastruct.fea.frame.Bar2D_2N method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.plot_element">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.plot_element">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="rst/post.html#feastruct.post.post.PostProcessor.plot_frame_forces">plot_frame_forces() (feastruct.post.post.PostProcessor method)</a>
-</li>
-      <li><a href="rst/post.html#feastruct.post.post.PostProcessor.plot_frequency_eigenvector">plot_frequency_eigenvector() (feastruct.post.post.PostProcessor method)</a>
 </li>
       <li><a href="rst/post.html#feastruct.post.post.PostProcessor.plot_geom">plot_geom() (feastruct.post.post.PostProcessor method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalSupport.plot_imposed_disp">plot_imposed_disp() (feastruct.fea.bcs.NodalSupport method)</a>
 </li>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalSupport.plot_imposed_rot">plot_imposed_rot() (feastruct.fea.bcs.NodalSupport method)</a>
@@ -433,8 +688,14 @@
 </li>
       <li><a href="rst/post.html#feastruct.post.post.PostProcessor.plot_reactions">plot_reactions() (feastruct.post.post.PostProcessor method)</a>
 </li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement.plot_shear_force">plot_shear_force() (feastruct.fea.frame2d.FrameElement method)</a>
+      <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.plot_shear_force">plot_shear_force() (feastruct.fea.frame.Bar2D_2N method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.plot_shear_force">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
 </li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.plot_shear_force">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+      </ul></li>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalSupport.plot_support">plot_support() (feastruct.fea.bcs.NodalSupport method)</a>
 </li>
       <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalSupport.plot_xysupport">plot_xysupport() (feastruct.fea.bcs.NodalSupport method)</a>
@@ -447,31 +708,69 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/results.html#feastruct.post.results.ResultItem">ResultItem (class in feastruct.post.results)</a>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.remove_constrained_dofs">remove_constrained_dofs() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.remove_constrained_dofs">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/results.html#feastruct.post.results.ResultList">ResultList (class in feastruct.post.results)</a>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.remove_constrained_dofs">(feastruct.solvers.linstatic.LinearStatic method)</a>
 </li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.remove_constrained_dofs">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/node.html#feastruct.fea.node.Node.set_buckling_results">set_buckling_results() (feastruct.fea.node.Node method)</a>
+      <li><a href="rst/node.html#feastruct.fea.node.DoF.save_displacement">save_displacement() (feastruct.fea.node.DoF method)</a>
 </li>
-      <li><a href="rst/node.html#feastruct.fea.node.Node.set_displacements">set_displacements() (feastruct.fea.node.Node method)</a>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver.save_displacements">save_displacements() (feastruct.solvers.feasolve.Solver method)</a>
+
+      <ul>
+        <li><a href="rst/solvers.html#feastruct.solvers.linbuckling.LinearBuckling.save_displacements">(feastruct.solvers.linbuckling.LinearBuckling method)</a>
 </li>
-      <li><a href="rst/frame2D.html#feastruct.fea.frame2d.FrameElement.set_fint">set_fint() (feastruct.fea.frame2d.FrameElement method)</a>
+        <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.save_displacements">(feastruct.solvers.linstatic.LinearStatic method)</a>
 </li>
+        <li><a href="rst/solvers.html#feastruct.solvers.naturalfrequency.NaturalFrequency.save_displacements">(feastruct.solvers.naturalfrequency.NaturalFrequency method)</a>
+</li>
+      </ul></li>
+      <li><a href="rst/fea.html#feastruct.fea.fea.FiniteElement.save_fint">save_fint() (feastruct.fea.fea.FiniteElement method)</a>
+
+      <ul>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar2D_2N.save_fint">(feastruct.fea.frame.Bar2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.Bar3D_2N.save_fint">(feastruct.fea.frame.Bar3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.save_fint">(feastruct.fea.frame.EulerBernoulli2D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N.save_fint">(feastruct.fea.frame.EulerBernoulli3D_2N method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement.save_fint">(feastruct.fea.frame.FrameElement method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement2D.save_fint">(feastruct.fea.frame.FrameElement2D method)</a>
+</li>
+        <li><a href="rst/frame.html#feastruct.fea.frame.FrameElement3D.save_fint">(feastruct.fea.frame.FrameElement3D method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="rst/node.html#feastruct.fea.node.Node.set_frequency_results">set_frequency_results() (feastruct.fea.node.Node method)</a>
+      <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalSupport.save_reaction">save_reaction() (feastruct.fea.bcs.NodalSupport method)</a>
 </li>
-      <li><a href="rst/bcs.html#feastruct.fea.bcs.NodalSupport.set_reaction">set_reaction() (feastruct.fea.bcs.NodalSupport method)</a>
+      <li><a href="rst/post.html#feastruct.post.post.ScalarResult">ScalarResult (class in feastruct.post.post)</a>
 </li>
-      <li><a href="rst/results.html#feastruct.post.results.ResultList.set_result">set_result() (feastruct.post.results.ResultList method)</a>
+      <li><a href="rst/pre.html#feastruct.pre.section.Section">Section (class in feastruct.pre.section)</a>
+</li>
+      <li><a href="rst/utils.html#feastruct.fea.utils.shape_function">shape_function() (in module feastruct.fea.utils)</a>
+</li>
+      <li><a href="rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.solve">solve() (feastruct.solvers.linstatic.LinearStatic method)</a>
+</li>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.Solver">Solver (class in feastruct.solvers.feasolve)</a>
+</li>
+      <li><a href="rst/solvers.html#feastruct.solvers.feasolve.SolverSettings">SolverSettings (class in feastruct.solvers.feasolve)</a>
+</li>
+      <li><a href="rst/pre.html#feastruct.pre.material.Steel">Steel (class in feastruct.pre.material)</a>
 </li>
   </ul></td>
 </tr></table>

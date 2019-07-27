@@ -1,7 +1,16 @@
 Post-Processing
 ===============
 
-  ..  automodule:: feastruct.post.post
+Post-Processor
+--------------
+
+  ..  autoclass:: feastruct.post.post.PostProcessor
       :members:
       :special-members: __init__
-      :show-inheritance:
+
+Scalar Result
+-------------
+
+  ..  autoclass:: feastruct.post.post.ScalarResult
+      :members:
+      :special-members: __init__

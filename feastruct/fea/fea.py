@@ -1,52 +1,36 @@
 import numpy as np
 from feastruct.fea.node import Node
-import feastruct.fea.cases as Cases
-from feastruct.post.results import ResultList
-from feastruct.fea.exceptions import FEAInputError
+from feastruct.post.post import PostProcessor
 
 
-class fea:
+class FiniteElementAnalysis:
     """Parent class for a finite element analysis.
 
-    Establishes a template for each different type of finite element analysis,
-    e.g. frame, membrane etc. and provides a number of generic methods which
-    are useful for all types of analyses.
+    Establishes a template for each different type of finite element analysis, e.g. frame,
+    membrane, plate etc. and provides a number of generic methods which are useful for all types of
+    analyses.
 
     :cvar nodes: Nodes used in the finite element analysis
-    :vartype nodes: list[:class:`feastruct.fea.node.Node`]
+    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]
     :cvar elements: Elements used in the finite element analysis
-    :vartype elements: list[:class:`feastruct.fea.fea.FiniteElement`]
-    :cvar freedom_cases: Freedom cases used in the finite element analysis
-    :vartype freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]
-    :cvar load_cases: Load cases used in the finite element analysis
-    :vartype load_cases: list[:class:`feastruct.fea.cases.LoadCase`]
-    :cvar analysis_cases: Analysis cases used in the finite element analysis
-    :vartype analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]
-    :cvar bool non_linear: Boolean defining the type of analysis
-    :cvar int dofs: Number of degrees of freedom per node for the current
-        analysis type
+    :vartype elements: list[:class:`~feastruct.fea.fea.FiniteElement`]
+    :cvar int dims: Number of dimensions used for the current analysis type
+    :cvar dofs: List of the degrees of freedom used in the current analysis type
+    :vartype dofs: list[int]
+    :cvar post: Post-processor object
+    :vartype post: :class:`feastruct.post.post.PostProcessor`
     """
 
-    def __init__(self, nodes, elements, freedom_cases, load_cases,
-                 analysis_cases, non_linear, dofs):
-        """Inits the fea class.
+    def __init__(self, nodes, elements, dims, dofs):
+        """Inits the FiniteElementAnalysis class.
 
         :param nodes: List of nodes with which to initialise the class
-        :type nodes: list[:class:`feastruct.fea.node.Node`]
+        :type nodes: list[:class:`~feastruct.fea.node.Node`]
         :param elements: List of elements with which to initialise the class
-        :type elements: list[:class:`feastruct.fea.fea.FiniteElement`]
-        :param freedom_cases: List of freedom cases with which to initialise
-            the class
-        :type freedom_cases: list[:class:`feastruct.fea.cases.FreedomCase`]
-        :param load_cases: List of load cases with which to initialise the
-            class
-        :type load_cases: list[:class:`feastruct.fea.cases.LoadCase`]
-        :param analysis_cases: List of analysis cases with which to initialise
-            the class
-        :type analysis_cases: list[:class:`feastruct.fea.cases.AnalysisCase`]
-        :param bool non_linear: Boolean defining the type of analysis
-        :param int dofs: Number of degrees of freedom per node for the current
-            analysis type
+        :type elements: list[:class:`~feastruct.fea.fea.FiniteElement`]
+        :param int dims: Number of dimensions used for the current analysis type
+        :param dofs: List of the degrees of freedom used in the current analysis type
+        :type dofs: list[int]
         """
 
         if nodes is None:
@@ -59,365 +43,238 @@ class fea:
         else:
             self.elements = elements
 
-        if freedom_cases is None:
-            self.freedom_cases = []
-        else:
-            self.freedom_cases = freedom_cases
-
-        if load_cases is None:
-            self.load_cases = []
-        else:
-            self.load_cases = load_cases
-
-        if analysis_cases is None:
-            self.analysis_cases = []
-        else:
-            self.analysis_cases = analysis_cases
-
-        self.non_linear = non_linear
+        self.dims = dims
         self.dofs = dofs
+        self.post = PostProcessor(self)
 
-    def add_node(self, id, coord):
-        """Adds a node to the fea class.
+    def create_node(self, coords):
+        """Creates a node and adds it to the Fea object.
 
-        Adds a :class:`feastruct.fea.node.Node` object to the fea object.
-        Checks for an exisiting id and ensures that a node is not already in
-        the desired location.
+        Creates and returns a :class:`~feastruct.fea.node.Node` object and adds it to the
+        :class:`~feastruct.fea.fea.Fea` object.
 
-        :param int id: Unique id identifying the node
-        :param coord: Cartesian coordinates of the node
-        :type coord: List[float, float]
-        :raises FEAInputError: If the id already exists or if a node
-            already exists at the desired location.
-
-        The following example creates an analysis object and creates a node at
-        x = 1 and y = 2::
-
-            analysis = fea()
-            analysis.add_node(id=1, coord=[1, 2])
+        :param coords: Cartesian coordinates of the node *([x], [x, y] or [x, y, z])*
+        :type coords: list[float]
+        :return: Node object
+        :rtype: :class:`~feastruct.fea.node.Node`
         """
 
-        # TODO: check that node id and location does not already exist
-        self.nodes.append(Node(id, coord))
+        # TODO:catch any errors thrown by node creation
 
-        # raise exception if duplicate added
+        new_node = Node(coords)
+        self.nodes.append(new_node)
 
-    def add_element(self, element):
-        """Adds an element to the fea class.
+        return new_node
 
-        Adds a :class:`feastruct.fea.fea.FiniteElement` object to the fea
-        object. Checks for an exisiting id.
+    def create_element(self, element):
+        """Creates a finite element and adds it to the Fea object.
 
-        :param element: Element to be added to the analysis object.
-        :type element: :class:`feastruct.fea.fea.FiniteElement`
-        :raises FEAInputError: If the specified element id already exists.
+        Creates and returns a :class:`~feastruct.fea.fea.FiniteElement` object ands adds it to the
+        :class:`~feastruct.fea.fea.Fea` object.
+
+        :param element: Element to be added to the analysis object
+        :type element: :class:`~feastruct.fea.fea.FiniteElement`
+        :return: Element object
+        :rtype: :class:`~feastruct.fea.fea.FiniteElement`
         """
 
-        # TODO: check that element id does not already exist
+        # TODO:catch any errors thrown by element creation
+
         self.elements.append(element)
 
-        # raise exception if duplicate added
-
-    def add_freedom_case(self, id, items=None):
-        """Adds a freedom case to the fea class.
-
-        Adds a :class:`feastruct.fea.cases.FreedomCase` object to the fea
-        object. Checks for an exisiting id.
-
-        :param int id: Freedom case unique id
-        :param items: List of items to initialise the freedom case with
-        :type item: list[:class:`feastruct.fea.bcs.BoundaryCondition`]
-        :return: A freedom case object
-        :rtype: :class:`feastruct.fea.cases.FreedomCase`
-        :raises FEAInputError: If the freedom case id already exists.
-
-        The following example creates an analysis object and creates a freedom
-        case with and id of 1::
-
-            analysis = fea()
-            fc1 = analysis.add_freedom_case(id=1)
-        """
-
-        # TODO: check to see if id already exists and raise exception
-
-        fc = Cases.FreedomCase(self, id, items)
-        self.freedom_cases.append(fc)
-        return fc
-
-    def add_load_case(self, id, items=None):
-        """Adds a load case to the fea class.
-
-        Adds a :class:`feastruct.fea.cases.LoadCase` object to the fea object.
-        Checks for an exisiting id.
-
-        :param int id: Load case unique id
-        :param items: List of items to initialise the load case with
-        :type item: list[:class:`feastruct.fea.bcs.BoundaryCondition`]
-        :return: A load case object
-        :rtype: :class:`feastruct.fea.cases.LoadCase`
-        :raises FEAInputError: If the load case id already exists.
-
-        The following example creates an analysis object and creates a load
-        case with and id of 1::
-
-            analysis = fea()
-            lc1 = analysis.add_load_case(id=1)
-        """
-
-        # TODO: check to see if id already exists and raise exception
-
-        lc = Cases.LoadCase(self, id, items)
-        self.load_cases.append(lc)
-        return lc
-
-    def add_analysis_case(self, id, fc_id, lc_id):
-        """Adds an analysis case to the fea class.
-
-        Adds a :class:`feastruct.fea.cases.AnalysisCase` object to the fea
-        object. Checks for an exisiting id.
-
-        :param int id: Load case unique id
-        :param int fc_id: Freedom case id to add to the analysis case
-        :param int lc_id: Load case id to add to the analysis case
-        :raises FEAInputError: If the load case id already exists.
-
-        The following example creates an analysis object, a load and freedom
-        case, and an analysis case using these newly created load and freedom
-        cases::
-
-            analysis = fea()
-            fc1 = analysis.add_freedom_case(id=1)
-            lc1 = analysis.add_load_case(id=1)
-            analysis.add_analysis_case(id=1, fc_id=1, lc_id=1)
-        """
-
-        # TODO: check to see if id already exists and raise exception
-
-        self.analysis_cases.append(Cases.AnalysisCase(self, id, fc_id, lc_id))
-
-    def find_node(self, node_id):
-        """Finds and returns the Node object given its node_id.
-
-        :param int node_id: Unique node id
-        :return: The Node object corresponding to the node_id
-        :rtype: :class:`feastruct.fea.node.Node`
-        :raises FEAInputError: If the Node corresponding to node_id cannot be
-            found
-        """
-
-        # return the Node object whose id matches the given node_id
-        for node in self.nodes:
-            if node.id == node_id:
-                return node
-        else:
-            raise FEAInputError("Cannot find node_id: {}".format(node_id))
+        return element
 
     def get_node_lims(self):
-        """Finds and returns the minimum and maximum x and y values within the
-        current analysis.
+        """Finds and returns the minimum and maximum x, y and z values within the current analysis.
 
-        :return: (xmin, xmax, ymin, ymax)
-        :rtype: tuple(float, float, float, float)
+        :return: (xmin, xmax, ymin, ymax, zmin, zmax)
+        :rtype: tuple(float)
         """
 
-        xmin = self.nodes[0].x
-        xmax = self.nodes[0].x
-        ymin = self.nodes[0].y
-        ymax = self.nodes[0].y
+        for (i, node) in enumerate(self.nodes):
+            if i == 0:
+                xmin = node.x
+                xmax = node.x
+                ymin = node.y
+                ymax = node.y
+                zmin = node.z
+                zmax = node.z
 
-        for node in self.nodes:
             xmin = min(xmin, node.x)
             xmax = max(xmax, node.x)
             ymin = min(ymin, node.y)
             ymax = max(ymax, node.y)
+            zmin = min(zmin, node.z)
+            zmax = max(zmax, node.z)
 
-        return (xmin, xmax, ymin, ymax)
-
-    def find_analysis_case(self, case_id):
-        """Finds and returns the analysis case given its case_id
-
-        :param int case_id: Unique case id
-        :return: Analysis case corresponding to the case_id
-        :rtype: :class:`feastruct.fea.cases.AnalysisCase`
-        :raises FEAInputError: If the analysis case corresponding to case_id
-            cannot be found
-        """
-
-        # return the AnalysisCase object whose id matches the given case_id
-        for analysis_case in self.analysis_cases:
-            if analysis_case.id == case_id:
-                return analysis_case
-        else:
-            raise FEAInputError("Cannot find AnalysisCase id: {}".format(
-                case_id))
+        return (xmin, xmax, ymin, ymax, zmin, zmax)
 
 
 class FiniteElement:
     """Parent class for a finite element.
 
-    Establishes a template for each different type of finite element,
-    e.g. frame element, membrane element, plate element etc. and provides a
-    number of generic methods which are useful for all types of elements.
+    Establishes a template for each different type of finite element, e.g. frame element, membrane
+    element, plate element etc. and provides a number of generic methods which are useful for all
+    types of elements.
 
-    :cvar analysis: Analysis object
-    :vartype analysis: :class:`feastruct.fea.fea.fea`
-    :cvar int id: Unique finite element id
-    :cvar nodes: List of node objects that define the geometry of the finite
-        element
-    :vartype nodes: list[:class:`feastruct.fea.node.Node`]
-    :cvar f_int: Internal force vector results for an arbitray number of
-        analysis cases
-    :vartype f_int: :class:`feastruct.post.results.ResultList`
+    :cvar nodes: List of node objects that define the geometry of the finite element
+    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]
+    :cvar material: Material object for the element
+    :vartype material: :class:`~feastruct.pre.material.Material`
+    :cvar f_int: List of internal force vector results stored for each analysis case
+    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]
     """
 
-    def __init__(self, analysis, id, node_ids):
-        """inits the FiniteElement class.
+    def __init__(self, nodes, material):
+        """Inits the FiniteElement class.
 
-        :param analysis: Analysis object
-        :type analysis: :class:`feastruct.fea.fea.fea`
-        :param int id: Unique finite element id
-        :param node_ids: A list of node ids defining the geometry of the
-            element
-        :type node_ids: list[int]
+        :param nodes: List of node objects that define the geometry of the finite element
+        :type nodes: list[:class:`~feastruct.fea.node.Node`]
+        :param material: Material object for the element
+        :type material: :class:`~feastruct.pre.material.Material`
         """
 
-        self.analysis = analysis
-        self.id = id
-        self.nodes = []
-        self.f_int = ResultList()
-
-        # add references to the node objects
-        try:
-            self.get_nodes(node_ids)
-        except FEAInputError as error:
-            print(error)
-
-    def get_nodes(self, node_ids):
-        """Finds and returns a list of node objects corresponding to nodes with
-        ids in node_ids.
-
-        :param node_ids: A list of unique node ids
-        :type node_ids: list[int]
-        :return: A list of node objects corresponding to the list of node_ids
-        :rtype: list[:class:`feastruct.fea.node.Node`]
-        :raises FEAInputError: If a node with node_id cannot be find in the
-            analysis object
-        """
-
-        for node_id in node_ids:
-            try:
-                self.nodes.append(self.analysis.find_node(node_id))
-            except FEAInputError as error:
-                print("Error in FiniteElement id: {}. {}".format(
-                    self.id, error))
+        self.nodes = nodes
+        self.material = material
+        self.f_int = []
 
     def get_node_coords(self):
-        """Returns an array of the cartesian coordinates defining the geometry
-        of the finite element.
+        """Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
+        element.
 
-        :return: An (n x 2) array of node coordinates, where n is the number of
-            nodes for the given finite element
+        :return: An *(n x 3)* array of node coordinates, where *n* is the number of nodes for the
+            given finite element
         :rtype: :class:`numpy.ndarray`
         """
 
         coord_list = []
 
+        # loop through all nodes of the element
         for node in self.nodes:
+            # append the node coordinates to the list
             coord_list.append(node.coords)
 
         return np.array(coord_list)
 
-    def get_nodal_displacements(self, case_id):
-        """Returns an array of the nodal displacements of each degree of
-        freedom in the finite element for an analysis case defined by case_id.
+    def get_dofs(self, dof_nums):
+        """Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
+        finite element.
 
-        :param int case_id: Unique case id
-        :return: An (n x ndof) array of degree of freedom displacements, where
-            n is the number of nodes for the given finite element and ndof is
-            the number of degrees of freedom per node for the current analysis
-            type
+        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
+            [0, 1] for *x* and *y* translation
+        :return: A list of DoF objects, with a length of *(n_nodes x n_dof)*
+        :rtype: list[list[:class:`~feastruct.fea.node.DoF`]]
+        """
+
+        dof_list = []
+
+        # loop through all nodes of the element
+        for node in self.nodes:
+            # append the node dofs to the list
+            dof_list.append(node.get_dofs(dof_nums))
+
+        return dof_list
+
+    def get_gdof_nums(self, dof_nums):
+        """Returns an array of global degree of freedom numbers corresponding to the degrees of
+        freedom of the finite element.
+
+        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
+            [0, 1] for *x* and *y* translation
+        :return: A integer array of global degrees of freedom, with a length of *(1 x n)*, where n
+            is *n_nodes x n_dof*
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        # get a list of dof objects for all nodes
+        dof_list = self.get_dofs(dof_nums)
+
+        # allocate a list of ints for the global
+        gdof_num_list = []
+
+        # loop through nodes in the dof list
+        for node in dof_list:
+            # loop through dofs in the current node
+            for dof in node:
+                gdof_num_list.append(dof.global_dof_num)
+
+        return np.array(gdof_num_list, dtype=np.int32)
+
+    def get_nodal_displacements(self, dof_nums, analysis_case):
+        """Returns an array of the nodal displacements for each degree of freedom in the finite
+        element for the analysis_case.
+
+        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
+            [0, 1] for *x* and *y* translation
+        :param analysis_case: Analysis case relating to the displacement
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :return: An *(n_nodes x n_dof)* array of degree of freedom displacements
         :rtype: :class:`numpy.ndarray`
         """
 
         disp_list = []  # allocate list of displacements
+        dof_list = self.get_dofs(dof_nums)
 
-        for node in self.nodes:
-            disp_list.append(node.get_displacement(case_id))
+        for node_dofs in dof_list:
+            node_list = []
+
+            for dof in node_dofs:
+                node_list.append(dof.get_displacement(analysis_case))
+
+            disp_list.append(node_list)
 
         return np.array(disp_list)
 
-    def get_buckling_results(self, case_id, buckling_mode):
-        """Returns the eigenvalue corresponding to the buckling analysis
-        defined by the analysis case id and the buckling mode. Also returns an
-        array of eigenvector values corresponding to each degree of freedom in
-        the finite element for the given analysis case and buckling mode.
+    def get_fint(self, analysis_case):
+        """Returns the internal force vector relating to an
+        :class:`~feastruct.fea.cases.AnalysisCase`.
 
-        :param int case_id: Unique case id
-        :param int buckling_mode: Buckling mode number
-        :return: (w, v) A tuple containing the eigenvalue 'w' and an (n x ndof)
-            array of degree of freedom eigenvector values 'v', where n is the
-            number of nodes for the given finite element and ndof is the number
-            of degrees of freedom per node for the current analysis type
-        :rtype: tuple(float, :class:`numpy.ndarray`)
-        """
-
-        v_list = []  # allocate list of eigenvectors
-
-        for node in self.nodes:
-            (w, v) = node.get_buckling_results(case_id, buckling_mode)
-            v_list.append(v)
-
-        return (w, np.array(v_list))
-
-    def get_frequency_results(self, case_id, frequency_mode):
-        """Returns the frequency corresponding to the natural frequency
-        analysis defined by the analysis case id and the frequency mode. Also
-        returns an array of eigenvector values corresponding to each degree of
-        freedom in the finite element for the given analysis case and frequency
-        mode.
-
-        :param int case_id: Unique case id
-        :param int frequency_mode: Frequency mode number
-        :return: (w, v) A tuple containing the frequency 'w' and an (n x ndof)
-            array of degree of freedom eigenvector values 'v', where n is the
-            number of nodes for the given finite element and ndof is the number
-            of degrees of freedom per node for the current analysis type
-        :rtype: tuple(float, :class:`numpy.ndarray`)
-        """
-
-        v_list = []  # allocate list of eigenvectors
-
-        for node in self.nodes:
-            (w, v) = node.get_frequency_results(case_id, frequency_mode)
-            v_list.append(v)
-
-        return (w, np.array(v_list))
-
-    def get_dofs(self):
-        """Finds and returns an array of global degree of freedom numbers
-        corresponding to the degrees of freedom of the finite element.
-
-        :return: A integer array of degrees of freedom, with a length of
-            n*ndof, where n is the number of nodes for the given finite element
-            and ndof is the number of degrees of freedom per node for the
-            current analysis type
+        :param analysis_case: Analysis case relating to the internal force vector
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :return: Internal force vector
         :rtype: :class:`numpy.ndarray`
+
+        :raises Exception: If the force vector cannot be found for the analysis_case
         """
 
-        dof_list = np.array([], dtype=np.int32)
+        for f_int in self.f_int:
+            if analysis_case == f_int.analysis_case:
+                return f_int.f
 
-        for node in self.nodes:
-            dof_list = np.append(dof_list, node.dofs)
+        # if nothing is found
+        str = 'Force vector corresponding to element {0}'.format(self)
+        str += ' could not be found for analysis case {0}'.format(analysis_case)
+        raise Exception(str)
 
-        return dof_list
+    def save_fint(self, f, analysis_case):
+        """Adds an internal force vector result to the :class:`~feastruct.fea.fea.FiniteElement`.
 
-    def get_fint(self, case_id):
-        """Returns the internal force vector corresponding to the analysis case
-        id.
-
-        :param int case_id: Unique case id
-        :return: A result item containing the internal force vector
-        :rtype: :class:`feastruct.post.results.ResultItem`
+        :param f: Internal force vector
+        :type f: :class:`numpy.ndarray`
+        :param analysis_case: Analysis case relating to the internal force vector
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         """
 
-        return self.f_int.get_result(case_id)
+        self.f_int.append(ForceVector(f, analysis_case))
+
+
+class ForceVector:
+    """Class for storing a force vector for a finite element.
+
+    :cvar f: Force vector *(n x 1)*, where *n* is the number of dofs within the element
+    :vartype: :class:`numpy.ndarray`
+    :cvar analysis_case: Analysis case relating to the displacement
+    :vartype analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+    """
+
+    def __init__(self, f, analysis_case):
+        """Inits the ForceVector class.
+
+        :cvar f: Force vector *(n x 1)*, where *n* is the number of dofs within the element
+        :vartype: :class:`numpy.ndarray`
+        :param analysis_case: Analysis case relating to the displacement
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        """
+
+        self.f = f
+        self.analysis_case = analysis_case

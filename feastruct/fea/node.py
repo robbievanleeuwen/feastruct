@@ -1,137 +1,150 @@
-import feastruct.post.results as results
+from operator import itemgetter
 
 
 class Node:
     """Class for a node to be used in finite element analyses.
 
-    A node object is defined by its position in cartesian space and can store
-    nodal displacement results from a static analysis, as well as eigenvector
-    results from an eigenvalue analysis.
+    A node object is defined by its position in 3D cartesian space and has six associated degrees
+    of freedom.
 
-    :cvar int id: Unique node id
-    :cvar coord: Cartesian coordinates of the node
-    :vartype coord: list[float, float]
-    :cvar dofs: Global degree of freedom numbers to be used in an analysis
-    :vartype dofs: list[float, float, float]
-    :cvar fixity: A list containing fixities for the nodal degrees of freedom
-        for post-processing visualisation of nodal supports
-    :vartype fixity: list[float, float, float]
-    :cvar u: Nodal displacement results for static analyses
-    :vartype u: :class:`feastruct.post.results.ResultList`
-    :cvar buckling_v: Eigenvector results for buckling analyses
-    :vartype buckling_v: :class:`feastruct.post.results.ResultList`
-    :cvar frequency_v: Eigenvector results for frequency analyses
-    :vartype frequency_v: :class:`feastruct.post.results.ResultList`
+    :cvar coords: Cartesian coordinates of the node
+    :vartype coords: list[float, float, float]
+    :cvar dofs: List of degrees of freedom for the node *(x, y, z, rx, ry, rz)*
+    :vartype dofs: list[:class:`~feastruct.fea.node.DoF`]
     """
 
-    def __init__(self, id, coord):
+    def __init__(self, coords):
         """Inits the Node class.
 
-        :param int id: Unique node id
-        :param coord: Cartesian coordinates of the node
-        :type coord: list[float, float]
+        :param coords: Cartesian coordinates of the node *([x], [x, y] or [x, y, z])*
+        :type coords: list[float]
         """
 
-        self.id = id
-        self.coord = coord
+        if len(coords) == 1:
+            self.coords = [coords[0], 0, 0]
+        elif len(coords) == 2:
+            self.coords = [coords[0], coords[1], 0]
+        elif len(coords) == 3:
+            self.coords = coords
+        else:
+            # TODO: throw an error
+            return
+
+        # create six dofs
         self.dofs = []
-        self.fixity = [0, 0, 0]  # for post processing only
-        self.u = results.ResultList()
-        self.buckling_v = results.ResultList()
-        self.frequency_v = results.ResultList()
-        # TODO: check value types and int > 0
 
-# TODO: document properties...
+        for i in range(6):
+            self.dofs.append(DoF(node=self, node_dof_num=i))
 
+    # get x-coordinate
     @property
     def x(self):
-        return self.coord[0]
+        return self.coords[0]
 
+    # get y-coordinate
     @property
     def y(self):
-        return self.coord[1]
+        return self.coords[1]
 
+    # get z-coordinate
     @property
-    def coords(self):
-        return [self.x, self.y]
+    def z(self):
+        return self.coords[2]
 
-    def get_displacement(self, case_id):
-        """Returns the displacement vector of the current node from the
-        analysis defined by case_id.
+    def get_dofs(self, node_dof_nums):
+        """Returns the degree of freedom objects relating to the node_dof_nums list.
 
-        :param int case_id: Unique case id
-        :return: Nodal displacement vector
-        :rtype: :class:`numpy.ndarray`
+        :param node_dof_nums: Degree of freedom indices to return
+        :type node_dof_nums: list[int]
+        :returns: List containing degree of freedom objects
+        :rtype: list[:class:`~feastruct.fea.node.DoF`]
         """
 
-        return self.u.get_result(case_id).u
+        # get all dofs corresponding with indices in 'node_dof_nums'
+        dof_list = itemgetter(*node_dof_nums)(self.dofs)
 
-    def set_displacements(self, case_id, u):
-        """Saves a displacement vector for the analysis defined by case_id.
+        # ensure a list is returned
+        return [dof_list] if type(dof_list) is not tuple else list(dof_list)
 
-        :param int case_id: Unique case id
-        :param u: Nodal displacement vector
-        :type u: :class:`numpy.ndarray`
+
+class DoF:
+    """Class for a degree of freedom to be used in finite element analyses.
+
+    A degree of freedom relates to a specific node and has a specific degree of freedom number used
+    in the finite element analysis. Displacement results are stored within the degree of freedom.
+
+    :cvar node: Parent node
+    :vartype node: :class:`~feastruct.fea.node.Node`
+    :cvar int node_dof_num: Node degree of freedom number
+    :cvar int global_dof_num: Global degree of freedom number
+    :cvar displacements: A list of displacement objects for the dof
+    :vartype displacements: list[:class:`~feastruct.fea.node.Displacement`]
+    """
+
+    def __init__(self, node, node_dof_num):
+        """Inits the DoF class.
+
+        :param node: Parent node
+        :type node: :class:`~feastruct.fea.node.Node`
         """
 
-        self.u.set_result(results.Displacement(case_id, u))
+        self.node = node
+        self.node_dof_num = node_dof_num
+        self.global_dof_num = None
+        self.displacements = []
 
-    def get_buckling_results(self, case_id, buckling_mode):
-        """Returns the eigenvalue (w) and nodal eigenvector (v) for the
-        buckling analysis defined by case_id and the buckling mode defined by
-        buckling_mode.
+    def save_displacement(self, disp, analysis_case):
+        """Saves a displacement result to the DoF.
 
-        :param int case_id: Unique case id
-        :param int buckling_mode: Buckling mode number
-        :return: (w, v)
-        :rtype: tuple(float, :class:`numpy.ndarray`)
+        :param float disp: Value of the displacement
+        :param analysis_case: Analysis case relating to the displacement
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         """
 
-        result = self.buckling_v.get_result(case_id, mode=buckling_mode)
+        # check to see if there is already a displacement for the current analysis_case
+        for displacement in self.displacements:
+            if displacement.analysis_case == analysis_case:
+                displacement.disp = disp
+                return
 
-        return (result.w, result.v)
+        self.displacements.append(Displacement(disp=disp, analysis_case=analysis_case))
 
-    def set_buckling_results(self, case_id, buckling_mode, w, v):
-        """Saves the buckling eigenvalue and nodal eigenvector for the buckling
-        analysis defined by case_id and the buckling mode defined by
-        buckling_mode.
+    def get_displacement(self, analysis_case):
+        """Returns the displacement value relating to an :class:`~feastruct.fea.cases.AnalysisCase`.
 
-        :param int case_id: Unique case id
-        :param int buckling_mode: Buckling mode number
-        :param float w: Buckling eigenvalue
-        :param v: Buckling nodal eigenvector
-        :type v: :class:`numpy.ndarray`
+        :param analysis_case: Analysis case relating to the displacement
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :return: Displacement value
+        :rtype: float
+
+        :raises Exception: If a displacement corresponding to analysis_case cannot be found
         """
 
-        self.buckling_v.set_result(
-            results.EigenResult(case_id, buckling_mode, w, v))
+        for displacement in self.displacements:
+            if analysis_case == displacement.analysis_case:
+                return displacement.disp
 
-    def get_frequency_results(self, case_id, frequency_mode):
-        """Returns the eigenvalue (w) and nodal eigenvector (v) for the
-        frequency analysis defined by case_id and the frequency mode defined by
-        frequency_mode.
+        # if nothing is found
+        str = 'Displacement corresponding to dof {0}'.format(self)
+        str += ' could not be found for analysis case {0}'.format(analysis_case)
+        raise Exception(str)
 
-        :param int case_id: Unique case id
-        :param int frequency_mode: Frequency mode number
-        :return: (w, v)
-        :rtype: tuple(float, :class:`numpy.ndarray`)
+
+class Displacement:
+    """Class for storing a displacement at a degree of freedom for a specific analysis case.
+
+    :cvar float disp: Displacement at a degree of freedom
+    :cvar analysis_case: Analysis case relating to the displacement
+    :vartype analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+    """
+
+    def __init__(self, disp, analysis_case):
+        """Inits the Displacement class.
+
+        :param float disp: Displacement at a degree of freedom
+        :param analysis_case: Analysis case relating to the displacement
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         """
 
-        result = self.frequency_v.get_result(case_id, mode=frequency_mode)
-
-        return (result.w, result.v)
-
-    def set_frequency_results(self, case_id, frequency_mode, w, v):
-        """Saves the frequency eigenvalue and nodal eigenvector for the
-        frequency analysis defined by case_id and the frequency mode defined by
-        frequency_mode.
-
-        :param int case_id: Unique case id
-        :param int buckling_mode: Frequency mode number
-        :param float w: Frequency eigenvalue
-        :param v: Frequency nodal eigenvector
-        :type v: :class:`numpy.ndarray`
-        """
-
-        self.frequency_v.set_result(
-            results.EigenResult(case_id, frequency_mode, w, v))
+        self.disp = disp
+        self.analysis_case = analysis_case

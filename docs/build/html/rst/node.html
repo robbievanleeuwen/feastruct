@@ -29,8 +29,8 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Post-Processing" href="post.html" />
-    <link rel="prev" title="Cases" href="cases.html" /> 
+    <link rel="next" title="Finite Element Analysis" href="fea.html" />
+    <link rel="prev" title="Pre" href="pre.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -82,13 +82,20 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="frame2D.html">Frame Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dof">DoF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#displacement">Displacement</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">Results</a></li>
 </ul>
 
             
@@ -155,28 +162,22 @@
             
   <div class="section" id="node">
 <h1>Node<a class="headerlink" href="#node" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>Node<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><span class="target" id="module-feastruct.fea.node"></span><dl class="class">
+<div><dl class="class">
 <dt id="feastruct.fea.node.Node">
-<em class="property">class </em><code class="descclassname">feastruct.fea.node.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>id</em>, <em>coord</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class for a node to be used in finite element analyses.</p>
-<p>A node object is defined by its position in cartesian space and can store
-nodal displacement results from a static analysis, as well as eigenvector
-results from an eigenvalue analysis.</p>
+<em class="property">class </em><code class="descclassname">feastruct.fea.node.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for a node to be used in finite element analyses.</p>
+<p>A node object is defined by its position in 3D cartesian space and has six associated degrees
+of freedom.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>id</strong> (<em>int</em>) – Unique node id</li>
-<li><strong>coord</strong> (<em>list</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em>) – Cartesian coordinates of the node</li>
-<li><strong>dofs</strong> (<em>list</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Global degree of freedom numbers to be used in an analysis</li>
-<li><strong>fixity</strong> (<em>list</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – A list containing fixities for the nodal degrees of freedom
-for post-processing visualisation of nodal supports</li>
-<li><strong>u</strong> (<a class="reference internal" href="results.html#feastruct.post.results.ResultList" title="feastruct.post.results.ResultList"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultList</span></code></a>) – Nodal displacement results for static analyses</li>
-<li><strong>buckling_v</strong> (<a class="reference internal" href="results.html#feastruct.post.results.ResultList" title="feastruct.post.results.ResultList"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultList</span></code></a>) – Eigenvector results for buckling analyses</li>
-<li><strong>frequency_v</strong> (<a class="reference internal" href="results.html#feastruct.post.results.ResultList" title="feastruct.post.results.ResultList"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.results.ResultList</span></code></a>) – Eigenvector results for frequency analyses</li>
+<li><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Cartesian coordinates of the node</li>
+<li><strong>dofs</strong> (list[<a class="reference internal" href="#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]) – List of degrees of freedom for the node <em>(x, y, z, rx, ry, rz)</em></li>
 </ul>
 </td>
 </tr>
@@ -184,148 +185,108 @@ for post-processing visualisation of nodal supports</li>
 </table>
 <dl class="method">
 <dt id="feastruct.fea.node.Node.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>id</em>, <em>coord</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inits the Node class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>id</strong> (<em>int</em>) – Unique node id</li>
-<li><strong>coord</strong> (<em>list</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em>) – Cartesian coordinates of the node</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Cartesian coordinates of the node <em>([x], [x, y] or [x, y, z])</em></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.node.Node.get_dofs">
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>node_dof_nums</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.get_dofs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the degree of freedom objects relating to the node_dof_nums list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node_dof_nums</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Degree of freedom indices to return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List containing degree of freedom objects</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[<a class="reference internal" href="#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="dof">
+<h2>DoF<a class="headerlink" href="#dof" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.node.DoF">
+<em class="property">class </em><code class="descclassname">feastruct.fea.node.</code><code class="descname">DoF</code><span class="sig-paren">(</span><em>node</em>, <em>node_dof_num</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for a degree of freedom to be used in finite element analyses.</p>
+<p>A degree of freedom relates to a specific node and has a specific degree of freedom number used
+in the finite element analysis. Displacement results are stored within the degree of freedom.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<a class="reference internal" href="#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – Parent node</li>
+<li><strong>node_dof_num</strong> (<em>int</em>) – Node degree of freedom number</li>
+<li><strong>global_dof_num</strong> (<em>int</em>) – Global degree of freedom number</li>
+<li><strong>displacements</strong> (list[<a class="reference internal" href="#feastruct.fea.node.Displacement" title="feastruct.fea.node.Displacement"><code class="xref py py-class docutils literal notranslate"><span class="pre">Displacement</span></code></a>]) – A list of displacement objects for the dof</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 <dl class="method">
-<dt id="feastruct.fea.node.Node.get_buckling_results">
-<code class="descname">get_buckling_results</code><span class="sig-paren">(</span><em>case_id</em>, <em>buckling_mode</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.get_buckling_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.get_buckling_results" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the eigenvalue (w) and nodal eigenvector (v) for the
-buckling analysis defined by case_id and the buckling mode defined by
-buckling_mode.</p>
+<dt id="feastruct.fea.node.DoF.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>node</em>, <em>node_dof_num</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the DoF class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(w, v)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node</strong> (<a class="reference internal" href="#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – Parent node</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.fea.node.Node.get_displacement">
-<code class="descname">get_displacement</code><span class="sig-paren">(</span><em>case_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.get_displacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.get_displacement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the displacement vector of the current node from the
-analysis defined by case_id.</p>
+<dt id="feastruct.fea.node.DoF.get_displacement">
+<code class="descname">get_displacement</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF.get_displacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF.get_displacement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the displacement value relating to an <a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>case_id</strong> (<em>int</em>) – Unique case id</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Nodal displacement vector</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Displacement value</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If a displacement corresponding to analysis_case cannot be found</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.fea.node.Node.get_frequency_results">
-<code class="descname">get_frequency_results</code><span class="sig-paren">(</span><em>case_id</em>, <em>frequency_mode</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.get_frequency_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.get_frequency_results" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the eigenvalue (w) and nodal eigenvector (v) for the
-frequency analysis defined by case_id and the frequency mode defined by
-frequency_mode.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">(w, v)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="feastruct.fea.node.Node.set_buckling_results">
-<code class="descname">set_buckling_results</code><span class="sig-paren">(</span><em>case_id</em>, <em>buckling_mode</em>, <em>w</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.set_buckling_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.set_buckling_results" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the buckling eigenvalue and nodal eigenvector for the buckling
-analysis defined by case_id and the buckling mode defined by
-buckling_mode.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
-<li><strong>w</strong> (<em>float</em>) – Buckling eigenvalue</li>
-<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Buckling nodal eigenvector</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="feastruct.fea.node.Node.set_displacements">
-<code class="descname">set_displacements</code><span class="sig-paren">(</span><em>case_id</em>, <em>u</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.set_displacements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.set_displacements" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves a displacement vector for the analysis defined by case_id.</p>
+<dt id="feastruct.fea.node.DoF.save_displacement">
+<code class="descname">save_displacement</code><span class="sig-paren">(</span><em>disp</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF.save_displacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF.save_displacement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a displacement result to the DoF.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Nodal displacement vector</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="feastruct.fea.node.Node.set_frequency_results">
-<code class="descname">set_frequency_results</code><span class="sig-paren">(</span><em>case_id</em>, <em>frequency_mode</em>, <em>w</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.set_frequency_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.set_frequency_results" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the frequency eigenvalue and nodal eigenvector for the
-frequency analysis defined by case_id and the frequency mode defined by
-frequency_mode.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>case_id</strong> (<em>int</em>) – Unique case id</li>
-<li><strong>buckling_mode</strong> (<em>int</em>) – Frequency mode number</li>
-<li><strong>w</strong> (<em>float</em>) – Frequency eigenvalue</li>
-<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Frequency nodal eigenvector</li>
+<li><strong>disp</strong> (<em>float</em>) – Value of the displacement</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
 </ul>
 </td>
 </tr>
@@ -337,6 +298,48 @@ frequency_mode.</p>
 
 </div></blockquote>
 </div>
+<div class="section" id="displacement">
+<h2>Displacement<a class="headerlink" href="#displacement" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.node.Displacement">
+<em class="property">class </em><code class="descclassname">feastruct.fea.node.</code><code class="descname">Displacement</code><span class="sig-paren">(</span><em>disp</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Displacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Displacement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for storing a displacement at a degree of freedom for a specific analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>disp</strong> (<em>float</em>) – Displacement at a degree of freedom</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.node.Displacement.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>disp</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Displacement.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Displacement.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Displacement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>disp</strong> (<em>float</em>) – Displacement at a degree of freedom</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
 
 
            </div>
@@ -346,10 +349,10 @@ frequency_mode.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="post.html" class="btn btn-neutral float-right" title="Post-Processing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="fea.html" class="btn btn-neutral float-right" title="Finite Element Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cases.html" class="btn btn-neutral" title="Cases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pre.html" class="btn btn-neutral" title="Pre" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
