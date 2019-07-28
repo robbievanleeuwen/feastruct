@@ -221,77 +221,91 @@ class PostProcessor:
         # plot the undeformed structure
         self.plot_geom(analysis_case=analysis_case, ax=ax)
 
-    # def plot_buckling_eigenvector(self, case_id, buckling_mode=1):
-    #     """Method used to plot a buckling eigenvector. The undeformed structure
-    #     is plotted with a dahsed line.
-    #
-    #     :param int case_id: Unique case id
-    #     :param int buckling_mode: Buckling mode to plot
-    #     """
-    #
-    #     (fig, ax) = plt.subplots()
-    #
-    #     # set initial plot limits
-    #     (xmin, xmax, ymin, ymax, _, _) = self.analysis.get_node_lims()
-    #
-    #     # determine max eigenvector displacement value (ignore rotation)
-    #     max_v = 0
-    #
-    #     for el in self.analysis.elements:
-    #         (w, v_el) = el.get_buckling_results(case_id, buckling_mode)
-    #         max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]),
-    #                     abs(v_el[1, 0]), abs(v_el[1, 1]))
-    #
-    #     # determine plot scale
-    #     scale = 0.1 * max(xmax - xmin, ymax - ymin) / max_v
-    #
-    #     # plot eigenvectors
-    #     for el in self.analysis.elements:
-    #         (_, v_el) = el.get_buckling_results(case_id, buckling_mode)
-    #         el.plot_deformed_element(ax, case_id, self.n_subdiv, scale, v_el)
-    #
-    #     # plot the load factor (eigenvalue)
-    #     ax.set_title("Load Factor for Mode {:d}: {:.4e}".format(
-    #         buckling_mode, w), size=10)
-    #
-    #     # plot the undeformed structure
-    #     self.plot_geom(case_id, ax=ax, dashed=True)
-    #
-    # def plot_frequency_eigenvector(self, case_id, frequency_mode=1):
-    #     """Method used to plot a natural frequency eigenvector. The undeformed
-    #     structure is plotted with a dahsed line.
-    #
-    #     :param int case_id: Unique case id
-    #     :param int frequency_mode: Frequency mode to plot
-    #     """
-    #
-    #     (fig, ax) = plt.subplots()
-    #
-    #     # set initial plot limits
-    #     (xmin, xmax, ymin, ymax, _, _) = self.analysis.get_node_lims()
-    #
-    #     # determine max eigenvector displacement value (ignore rotation)
-    #     max_v = 0
-    #
-    #     for el in self.analysis.elements:
-    #         (w, v_el) = el.get_frequency_results(case_id, frequency_mode)
-    #         max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]),
-    #                     abs(v_el[1, 0]), abs(v_el[1, 1]))
-    #
-    #     # determine plot scale
-    #     scale = 0.1 * max(xmax - xmin, ymax - ymin) / max_v
-    #
-    #     # plot eigenvectors
-    #     for el in self.analysis.elements:
-    #         (_, v_el) = el.get_frequency_results(case_id, frequency_mode)
-    #         el.plot_deformed_element(ax, case_id, self.n_subdiv, scale, v_el)
-    #
-    #     # plot the natural frequency
-    #     ax.set_title("Natural Frequency for Mode {:d}: {:.4e} Hz".format(
-    #         frequency_mode, w), size=10)
-    #
-    #     # plot the undeformed structure
-    #     self.plot_geom(case_id, ax=ax, dashed=True)
+    def plot_buckling_results(self, analysis_case, buckling_mode=0):
+        """Method used to plot a buckling eigenvector. The undeformed structure is plotted with a
+        dashed line.
+
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param int buckling_mode: Buckling mode to plot
+        """
+
+        (fig, ax) = plt.subplots()
+
+        # set initial plot limits
+        (xmin, xmax, ymin, ymax, _, _) = self.analysis.get_node_lims()
+
+        # determine max eigenvector displacement value (ignore rotation)
+        max_v = 0
+
+        # loop through all the elements
+        for el in self.analysis.elements:
+            (w, v_el) = el.get_buckling_results(
+                dof_nums=self.analysis.dofs, analysis_case=analysis_case,
+                buckling_mode=buckling_mode)
+
+            max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]), abs(v_el[1, 0]), abs(v_el[1, 1]))
+
+        # determine plot scale
+        scale = 0.1 * max(xmax - xmin, ymax - ymin) / max_v
+
+        # plot eigenvectors
+        for el in self.analysis.elements:
+            (_, v_el) = el.get_buckling_results(
+                dof_nums=self.analysis.dofs, analysis_case=analysis_case,
+                buckling_mode=buckling_mode)
+
+            el.plot_deformed_element(
+                ax=ax, analysis_case=analysis_case, n=self.n_subdiv, def_scale=scale, u_el=v_el)
+
+        # plot the load factor (eigenvalue)
+        ax.set_title("Load Factor for Mode {:d}: {:.4e}".format(buckling_mode, w), size=10)
+
+        # plot the undeformed structure
+        self.plot_geom(analysis_case=analysis_case, ax=ax, dashed=True)
+
+    def plot_frequency_results(self, analysis_case, frequency_mode=0):
+        """Method used to plot a frequency eigenvector. The undeformed structure is plotted with a
+        dashed line.
+
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param int frequency_mode: Frequency mode to plot
+        """
+
+        (fig, ax) = plt.subplots()
+
+        # set initial plot limits
+        (xmin, xmax, ymin, ymax, _, _) = self.analysis.get_node_lims()
+
+        # determine max eigenvector displacement value (ignore rotation)
+        max_v = 0
+
+        # loop through all the elements
+        for el in self.analysis.elements:
+            (w, v_el) = el.get_frequency_results(
+                dof_nums=self.analysis.dofs, analysis_case=analysis_case,
+                frequency_mode=frequency_mode)
+
+            max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]), abs(v_el[1, 0]), abs(v_el[1, 1]))
+
+        # determine plot scale
+        scale = 0.1 * max(xmax - xmin, ymax - ymin) / max_v
+
+        # plot eigenvectors
+        for el in self.analysis.elements:
+            (_, v_el) = el.get_frequency_results(
+                dof_nums=self.analysis.dofs, analysis_case=analysis_case,
+                frequency_mode=frequency_mode)
+
+            el.plot_deformed_element(
+                ax=ax, analysis_case=analysis_case, n=self.n_subdiv, def_scale=scale, u_el=v_el)
+
+        # plot the frequency (eigenvalue)
+        ax.set_title("Frequency for Mode {:d}: {:.4e} Hz".format(frequency_mode, w), size=10)
+
+        # plot the undeformed structure
+        self.plot_geom(analysis_case=analysis_case, ax=ax, dashed=True)
 
     def get_support_angle(self, node, prefer_dir=None):
         """Given a node object, returns the optimal angle to plot a support. Essentially finds the

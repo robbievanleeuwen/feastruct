@@ -58,6 +58,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -90,11 +94,18 @@
 <li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Solvers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#parent-solver-class">Parent Solver Class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#solver-settings">Solver Settings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#linear-static-solver">Linear Static Solver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#linear-buckling-solver">Linear Buckling Solver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#natural-frequency-solver">Natural Frequency Solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fea-solve">FEA Solve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linear-static-solver">Linear Static Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linear-buckling-solver">Linear Buckling Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#natural-frequency-solver">Natural Frequency Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#solver-settings">Solver Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linear-static-settings">Linear Static Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linear-buckling-settings">Linear Buckling Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#natural-frequency-settings">Natural Frequency Settings</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
@@ -164,8 +175,8 @@
             
   <div class="section" id="solvers">
 <h1>Solvers<a class="headerlink" href="#solvers" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="parent-solver-class">
-<h2>Parent Solver Class<a class="headerlink" href="#parent-solver-class" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fea-solve">
+<h2>FEA Solve<a class="headerlink" href="#fea-solve" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="class">
 <dt id="feastruct.solvers.feasolve.Solver">
@@ -333,6 +344,33 @@ and saves the reactions for the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.cgs_solver">
+<code class="descname">cgs_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.cgs_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.cgs_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Ku=f_ext for <em>u</em> using the cgs method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Displacement vector <em>u</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If the cgs solver does not converge or if the preconditioner fails</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.feasolve.Solver.direct_solver">
 <code class="descname">direct_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.direct_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.direct_solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves Ku=f_ext for <em>u</em> using the direct method.</p>
@@ -350,6 +388,29 @@ and saves the reactions for the analysis case.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.function_timer">
+<code class="descname">function_timer</code><span class="sig-paren">(</span><em>text</em>, <em>function</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.function_timer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.function_timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the message <em>text</em> and returns the time taken for a function, with arguments
+<em>args</em>, to execute. The value returned by the timed function is also returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> (<em>string</em>) – Message to display</li>
+<li><strong>function</strong> (<em>function</em>) – Function to time and execute</li>
+<li><strong>args</strong> – Function arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Value returned from the function</p>
 </td>
 </tr>
 </tbody>
@@ -383,6 +444,26 @@ freedom case used in the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.save_buckling_results">
+<code class="descname">save_buckling_results</code><span class="sig-paren">(</span><em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.save_buckling_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.save_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the buckling results <em>w</em> and <em>v</em> to the degree of freedom objects for the analysis
+case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvalues</li>
+<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvectors</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.feasolve.Solver.save_displacements">
 <code class="descname">save_displacements</code><span class="sig-paren">(</span><em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.save_displacements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.save_displacements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the displacements <em>u</em> to the degree of freedom objects for the analysis case.</p>
@@ -400,33 +481,64 @@ freedom case used in the analysis case.</p>
 </table>
 </dd></dl>
 
-</dd></dl>
-
-</div></blockquote>
-</div>
-<div class="section" id="solver-settings">
-<h2>Solver Settings<a class="headerlink" href="#solver-settings" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><dl class="class">
-<dt id="feastruct.solvers.feasolve.SolverSettings">
-<em class="property">class </em><code class="descclassname">feastruct.solvers.feasolve.</code><code class="descname">SolverSettings</code><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#SolverSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.SolverSettings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for settings to be used in a finite element analysis.</p>
 <dl class="method">
-<dt id="feastruct.solvers.feasolve.SolverSettings.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#SolverSettings.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.SolverSettings.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inits the SolverSettings class.</p>
+<dt id="feastruct.solvers.feasolve.Solver.save_frequency_results">
+<code class="descname">save_frequency_results</code><span class="sig-paren">(</span><em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.save_frequency_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.save_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the frequency results <em>w</em> and <em>v</em> to the degree of freedom objects for the
+analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvalues</li>
+<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvectors</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.Solver.solve_eigenvalue">
+<code class="descname">solve_eigenvalue</code><span class="sig-paren">(</span><em>A</em>, <em>M</em>, <em>eigen_settings</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#Solver.solve_eigenvalue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.Solver.solve_eigenvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds eigenvalues and eigenvectors for A * x[i] = w[i] * M * x[i].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – A matrix</li>
+<li><strong>M</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – M matrix</li>
+<li><strong>eigen_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.LinearBucklingSettings" title="feastruct.solvers.feasolve.LinearBucklingSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.LinearBucklingSettings</span></code></a> or
+<a class="reference internal" href="#feastruct.solvers.feasolve.NaturalFrequencySettings" title="feastruct.solvers.feasolve.NaturalFrequencySettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.NaturalFrequencySettings</span></code></a>) – A settings object for use with the eigenvalue solver</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalues and corresponding eigenvectors <em>(w, v)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If the eigenvalue solver does not converge</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
 
 </div></blockquote>
-</div>
 <div class="section" id="linear-static-solver">
-<h2>Linear Static Solver<a class="headerlink" href="#linear-static-solver" title="Permalink to this headline">¶</a></h2>
+<h3>Linear Static Solver<a class="headerlink" href="#linear-static-solver" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="class">
 <dt id="feastruct.solvers.linstatic.LinearStatic">
-<em class="property">class </em><code class="descclassname">feastruct.solvers.linstatic.</code><code class="descname">LinearStatic</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linstatic.html#LinearStatic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">feastruct.solvers.linstatic.</code><code class="descname">LinearStatic</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linstatic.html#LinearStatic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#feastruct.solvers.feasolve.Solver" title="feastruct.solvers.feasolve.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.Solver</span></code></a></p>
 <p>Class for a linear static solver.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -445,7 +557,7 @@ freedom case used in the analysis case.</p>
 </table>
 <dl class="method">
 <dt id="feastruct.solvers.linstatic.LinearStatic.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linstatic.html#LinearStatic.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linstatic.html#LinearStatic.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inits the LinearStatic class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -454,7 +566,8 @@ freedom case used in the analysis case.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
 <li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
-<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver - if not supplied, the default
+settings are adopted</li>
 </ul>
 </td>
 </tr>
@@ -590,6 +703,33 @@ and saves the reactions for the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.cgs_solver">
+<code class="descname">cgs_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.cgs_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Ku=f_ext for <em>u</em> using the cgs method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Displacement vector <em>u</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If the cgs solver does not converge or if the preconditioner fails</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.linstatic.LinearStatic.direct_solver">
 <code class="descname">direct_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.direct_solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves Ku=f_ext for <em>u</em> using the direct method.</p>
@@ -607,6 +747,29 @@ and saves the reactions for the analysis case.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.function_timer">
+<code class="descname">function_timer</code><span class="sig-paren">(</span><em>text</em>, <em>function</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.function_timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the message <em>text</em> and returns the time taken for a function, with arguments
+<em>args</em>, to execute. The value returned by the timed function is also returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> (<em>string</em>) – Message to display</li>
+<li><strong>function</strong> (<em>function</em>) – Function to time and execute</li>
+<li><strong>args</strong> – Function arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Value returned from the function</p>
 </td>
 </tr>
 </tbody>
@@ -640,6 +803,26 @@ freedom case used in the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.save_buckling_results">
+<code class="descname">save_buckling_results</code><span class="sig-paren">(</span><em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.save_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the buckling results <em>w</em> and <em>v</em> to the degree of freedom objects for the analysis
+case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvalues</li>
+<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvectors</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.linstatic.LinearStatic.save_displacements">
 <code class="descname">save_displacements</code><span class="sig-paren">(</span><em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.save_displacements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the displacements <em>u</em> to the degree of freedom objects for the analysis case.</p>
@@ -658,9 +841,58 @@ freedom case used in the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.save_frequency_results">
+<code class="descname">save_frequency_results</code><span class="sig-paren">(</span><em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.save_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the frequency results <em>w</em> and <em>v</em> to the degree of freedom objects for the
+analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvalues</li>
+<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvectors</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.linstatic.LinearStatic.solve">
 <code class="descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linstatic.html#LinearStatic.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.solve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Executes the finite element solver and saves the relevant results.</p>
+<dd><p>Executes the linear static finite element solver and saves the relevant results.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linstatic.LinearStatic.solve_eigenvalue">
+<code class="descname">solve_eigenvalue</code><span class="sig-paren">(</span><em>A</em>, <em>M</em>, <em>eigen_settings</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linstatic.LinearStatic.solve_eigenvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds eigenvalues and eigenvectors for A * x[i] = w[i] * M * x[i].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – A matrix</li>
+<li><strong>M</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – M matrix</li>
+<li><strong>eigen_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.LinearBucklingSettings" title="feastruct.solvers.feasolve.LinearBucklingSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.LinearBucklingSettings</span></code></a> or
+<a class="reference internal" href="#feastruct.solvers.feasolve.NaturalFrequencySettings" title="feastruct.solvers.feasolve.NaturalFrequencySettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.NaturalFrequencySettings</span></code></a>) – A settings object for use with the eigenvalue solver</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalues and corresponding eigenvectors <em>(w, v)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If the eigenvalue solver does not converge</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -668,17 +900,31 @@ freedom case used in the analysis case.</p>
 </div></blockquote>
 </div>
 <div class="section" id="linear-buckling-solver">
-<h2>Linear Buckling Solver<a class="headerlink" href="#linear-buckling-solver" title="Permalink to this headline">¶</a></h2>
+<h3>Linear Buckling Solver<a class="headerlink" href="#linear-buckling-solver" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="class">
 <dt id="feastruct.solvers.linbuckling.LinearBuckling">
-<em class="property">class </em><code class="descclassname">feastruct.solvers.linbuckling.</code><code class="descname">LinearBuckling</code><span class="sig-paren">(</span><em>analysis</em>, <em>case_id</em>, <em>solver=None</em>, <em>settings={'maxiter': None</em>, <em>'n': 4</em>, <em>'shift': 0</em>, <em>'tol': 1e-06}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linbuckling.html#LinearBuckling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">feastruct.solvers.linbuckling.</code><code class="descname">LinearBuckling</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linbuckling.html#LinearBuckling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#feastruct.solvers.feasolve.Solver" title="feastruct.solvers.feasolve.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.Solver</span></code></a></p>
-<p>asdkjasd</p>
+<p>Class for a linear buckling solver.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+<li><strong>ndof</strong> (<em>int</em>) – Number of degrees of freedom in the analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="feastruct.solvers.linbuckling.LinearBuckling.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>case_id</em>, <em>solver=None</em>, <em>settings={'maxiter': None</em>, <em>'n': 4</em>, <em>'shift': 0</em>, <em>'tol': 1e-06}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linbuckling.html#LinearBuckling.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inits the Solver class.</p>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linbuckling.html#LinearBuckling.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the LinearBuckling class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -686,7 +932,8 @@ freedom case used in the analysis case.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
 <li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
-<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver - if not supplied, the default
+settings are adopted</li>
 </ul>
 </td>
 </tr>
@@ -822,6 +1069,33 @@ and saves the reactions for the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.cgs_solver">
+<code class="descname">cgs_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.cgs_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Ku=f_ext for <em>u</em> using the cgs method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Displacement vector <em>u</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If the cgs solver does not converge or if the preconditioner fails</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.linbuckling.LinearBuckling.direct_solver">
 <code class="descname">direct_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.direct_solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves Ku=f_ext for <em>u</em> using the direct method.</p>
@@ -839,6 +1113,29 @@ and saves the reactions for the analysis case.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.function_timer">
+<code class="descname">function_timer</code><span class="sig-paren">(</span><em>text</em>, <em>function</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.function_timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the message <em>text</em> and returns the time taken for a function, with arguments
+<em>args</em>, to execute. The value returned by the timed function is also returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> (<em>string</em>) – Message to display</li>
+<li><strong>function</strong> (<em>function</em>) – Function to time and execute</li>
+<li><strong>args</strong> – Function arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Value returned from the function</p>
 </td>
 </tr>
 </tbody>
@@ -872,6 +1169,26 @@ freedom case used in the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.save_buckling_results">
+<code class="descname">save_buckling_results</code><span class="sig-paren">(</span><em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.save_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the buckling results <em>w</em> and <em>v</em> to the degree of freedom objects for the analysis
+case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvalues</li>
+<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvectors</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.linbuckling.LinearBuckling.save_displacements">
 <code class="descname">save_displacements</code><span class="sig-paren">(</span><em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.save_displacements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the displacements <em>u</em> to the degree of freedom objects for the analysis case.</p>
@@ -889,22 +1206,91 @@ freedom case used in the analysis case.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.save_frequency_results">
+<code class="descname">save_frequency_results</code><span class="sig-paren">(</span><em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.save_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the frequency results <em>w</em> and <em>v</em> to the degree of freedom objects for the
+analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvalues</li>
+<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvectors</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/linbuckling.html#LinearBuckling.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the linear buckling finite element solver and saves the relevant results.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.linbuckling.LinearBuckling.solve_eigenvalue">
+<code class="descname">solve_eigenvalue</code><span class="sig-paren">(</span><em>A</em>, <em>M</em>, <em>eigen_settings</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.linbuckling.LinearBuckling.solve_eigenvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds eigenvalues and eigenvectors for A * x[i] = w[i] * M * x[i].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – A matrix</li>
+<li><strong>M</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – M matrix</li>
+<li><strong>eigen_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.LinearBucklingSettings" title="feastruct.solvers.feasolve.LinearBucklingSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.LinearBucklingSettings</span></code></a> or
+<a class="reference internal" href="#feastruct.solvers.feasolve.NaturalFrequencySettings" title="feastruct.solvers.feasolve.NaturalFrequencySettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.NaturalFrequencySettings</span></code></a>) – A settings object for use with the eigenvalue solver</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalues and corresponding eigenvectors <em>(w, v)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If the eigenvalue solver does not converge</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div></blockquote>
 </div>
 <div class="section" id="natural-frequency-solver">
-<h2>Natural Frequency Solver<a class="headerlink" href="#natural-frequency-solver" title="Permalink to this headline">¶</a></h2>
+<h3>Natural Frequency Solver<a class="headerlink" href="#natural-frequency-solver" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="class">
 <dt id="feastruct.solvers.naturalfrequency.NaturalFrequency">
-<em class="property">class </em><code class="descclassname">feastruct.solvers.naturalfrequency.</code><code class="descname">NaturalFrequency</code><span class="sig-paren">(</span><em>analysis</em>, <em>case_id</em>, <em>solver=None</em>, <em>settings={'maxiter': None</em>, <em>'n': 4</em>, <em>'shift': 0</em>, <em>'tol': 1e-06}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/naturalfrequency.html#NaturalFrequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">feastruct.solvers.naturalfrequency.</code><code class="descname">NaturalFrequency</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/naturalfrequency.html#NaturalFrequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#feastruct.solvers.feasolve.Solver" title="feastruct.solvers.feasolve.Solver"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.Solver</span></code></a></p>
-<p>asdkjasd</p>
+<p>Class for a natural frequency solver.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
+<li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+<li><strong>ndof</strong> (<em>int</em>) – Number of degrees of freedom in the analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>case_id</em>, <em>solver=None</em>, <em>settings={'maxiter': None</em>, <em>'n': 4</em>, <em>'shift': 0</em>, <em>'tol': 1e-06}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/naturalfrequency.html#NaturalFrequency.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inits the Solver class.</p>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>analysis_cases</em>, <em>solver_settings=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/naturalfrequency.html#NaturalFrequency.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the NaturalFrequency class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -912,7 +1298,8 @@ freedom case used in the analysis case.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>analysis</strong> (<a class="reference internal" href="fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteElementAnalysis</span></code></a>) – Analysis object to solve</li>
 <li><strong>analysis_cases</strong> (list[<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>]) – List of analysis cases to solve</li>
-<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver</li>
+<li><strong>solver_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.SolverSettings" title="feastruct.solvers.feasolve.SolverSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverSettings</span></code></a>) – Settings to use in the solver - if not supplied, the default
+settings are adopted</li>
 </ul>
 </td>
 </tr>
@@ -1048,6 +1435,33 @@ and saves the reactions for the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.cgs_solver">
+<code class="descname">cgs_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.cgs_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Ku=f_ext for <em>u</em> using the cgs method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>K</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.lil_matrix</span></code>) – Global stiffness matrix</li>
+<li><strong>f_ext</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – External force vector</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Displacement vector <em>u</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If the cgs solver does not converge or if the preconditioner fails</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.direct_solver">
 <code class="descname">direct_solver</code><span class="sig-paren">(</span><em>K</em>, <em>f_ext</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.direct_solver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves Ku=f_ext for <em>u</em> using the direct method.</p>
@@ -1065,6 +1479,29 @@ and saves the reactions for the analysis case.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.function_timer">
+<code class="descname">function_timer</code><span class="sig-paren">(</span><em>text</em>, <em>function</em>, <em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.function_timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the message <em>text</em> and returns the time taken for a function, with arguments
+<em>args</em>, to execute. The value returned by the timed function is also returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> (<em>string</em>) – Message to display</li>
+<li><strong>function</strong> (<em>function</em>) – Function to time and execute</li>
+<li><strong>args</strong> – Function arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Value returned from the function</p>
 </td>
 </tr>
 </tbody>
@@ -1098,6 +1535,26 @@ freedom case used in the analysis case.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.save_buckling_results">
+<code class="descname">save_buckling_results</code><span class="sig-paren">(</span><em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.save_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the buckling results <em>w</em> and <em>v</em> to the degree of freedom objects for the analysis
+case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvalues</li>
+<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvectors</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.save_displacements">
 <code class="descname">save_displacements</code><span class="sig-paren">(</span><em>u</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.save_displacements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the displacements <em>u</em> to the degree of freedom objects for the analysis case.</p>
@@ -1115,9 +1572,209 @@ freedom case used in the analysis case.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.save_frequency_results">
+<code class="descname">save_frequency_results</code><span class="sig-paren">(</span><em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.save_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the frequency results <em>w</em> and <em>v</em> to the degree of freedom objects for the
+analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvalues</li>
+<li><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Eigenvectors</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/naturalfrequency.html#NaturalFrequency.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the natural frequency finite element solver and saves the relevant results.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.solvers.naturalfrequency.NaturalFrequency.solve_eigenvalue">
+<code class="descname">solve_eigenvalue</code><span class="sig-paren">(</span><em>A</em>, <em>M</em>, <em>eigen_settings</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.solvers.naturalfrequency.NaturalFrequency.solve_eigenvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds eigenvalues and eigenvectors for A * x[i] = w[i] * M * x[i].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – A matrix</li>
+<li><strong>M</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.sparse.coo_matrix</span></code>) – M matrix</li>
+<li><strong>eigen_settings</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.LinearBucklingSettings" title="feastruct.solvers.feasolve.LinearBucklingSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.LinearBucklingSettings</span></code></a> or
+<a class="reference internal" href="#feastruct.solvers.feasolve.NaturalFrequencySettings" title="feastruct.solvers.feasolve.NaturalFrequencySettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.NaturalFrequencySettings</span></code></a>) – A settings object for use with the eigenvalue solver</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalues and corresponding eigenvectors <em>(w, v)</em></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple(<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If the eigenvalue solver does not converge</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div></blockquote>
+</div>
+</div>
+<div class="section" id="solver-settings">
+<h2>Solver Settings<a class="headerlink" href="#solver-settings" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.solvers.feasolve.SolverSettings">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.feasolve.</code><code class="descname">SolverSettings</code><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#SolverSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.SolverSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for settings to be used in a finite element analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>linear_static</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.LinearStaticSettings" title="feastruct.solvers.feasolve.LinearStaticSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.LinearStaticSettings</span></code></a>) – Linear static settings</li>
+<li><strong>linear_buckling</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.LinearBucklingSettings" title="feastruct.solvers.feasolve.LinearBucklingSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.LinearBucklingSettings</span></code></a>) – Linear buckling settings</li>
+<li><strong>natural_frequency</strong> (<a class="reference internal" href="#feastruct.solvers.feasolve.NaturalFrequencySettings" title="feastruct.solvers.feasolve.NaturalFrequencySettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.solvers.feasolve.NaturalFrequencySettings</span></code></a>) – Natural frequency settings</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.SolverSettings.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#SolverSettings.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.SolverSettings.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the SolverSettings class.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+<div class="section" id="linear-static-settings">
+<h3>Linear Static Settings<a class="headerlink" href="#linear-static-settings" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="feastruct.solvers.feasolve.LinearStaticSettings">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.feasolve.</code><code class="descname">LinearStaticSettings</code><span class="sig-paren">(</span><em>time_info=False</em>, <em>solver_type='direct'</em>, <em>cgs_tol=1e-05</em>, <em>cgs_maxiter=None</em>, <em>cgs_precond=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#LinearStaticSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.LinearStaticSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for settings to be used in a linear static analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time_info</strong> (<em>bool</em>) – If set to True, a detailed description of the computation and the time
+cost is printed to the terminal</li>
+<li><strong>solver_type</strong> (<em>string</em>) – Solver type used to solve Ku = f - ‘direct’ or ‘cgs’</li>
+<li><strong>cgs_tol</strong> (<em>float</em>) – Tolerance to achieve for the cgs solver</li>
+<li><strong>cgs_maxiter</strong> (<em>int</em>) – Maximum number of iterations for the cgs solver</li>
+<li><strong>cgs_precond</strong> (<em>bool</em>) – If set to True, calculates a preconditioner for K using an ILU
+decomposition</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.LinearStaticSettings.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>time_info=False</em>, <em>solver_type='direct'</em>, <em>cgs_tol=1e-05</em>, <em>cgs_maxiter=None</em>, <em>cgs_precond=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#LinearStaticSettings.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.LinearStaticSettings.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the LinearStaticSettings class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time_info</strong> (<em>bool</em>) – If set to True, a detailed description of the computation and the
+time cost is printed to the terminal</li>
+<li><strong>solver_type</strong> (<em>string</em>) – Solver type used to solve Ku = f - ‘direct’ or ‘cgs’</li>
+<li><strong>cgs_tol</strong> (<em>float</em>) – Tolerance to achieve for the cgs solver</li>
+<li><strong>cgs_maxiter</strong> (<em>int</em>) – Maximum number of iterations for the cgs solver</li>
+<li><strong>cgs_precond</strong> (<em>bool</em>) – If set to True, calculates a preconditioner for K using an ILU
+decomposition</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="linear-buckling-settings">
+<h3>Linear Buckling Settings<a class="headerlink" href="#linear-buckling-settings" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="feastruct.solvers.feasolve.LinearBucklingSettings">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.feasolve.</code><code class="descname">LinearBucklingSettings</code><span class="sig-paren">(</span><em>time_info=False</em>, <em>num_modes=4</em>, <em>shift=0</em>, <em>maxiter=None</em>, <em>tol=1e-09</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#LinearBucklingSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.LinearBucklingSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for settings to be used in a linear buckling analysis.</p>
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.LinearBucklingSettings.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>time_info=False</em>, <em>num_modes=4</em>, <em>shift=0</em>, <em>maxiter=None</em>, <em>tol=1e-09</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#LinearBucklingSettings.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.LinearBucklingSettings.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the LinearBucklingSettings class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time_info</strong> (<em>bool</em>) – If set to True, a detailed description of the computation and the
+time cost is printed to the terminal</li>
+<li><strong>num_modes</strong> (<em>int</em>) – Number of modes to compute</li>
+<li><strong>shift</strong> (<em>float</em>) – Finds eigenvalues near <em>shift</em> using the shift-invert mode</li>
+<li><strong>maxiter</strong> (<em>int</em>) – Maximum number of iterations allowed</li>
+<li><strong>tol</strong> (<em>float</em>) – Relative accuracy for eigenvalues (stopping criterion)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="natural-frequency-settings">
+<h3>Natural Frequency Settings<a class="headerlink" href="#natural-frequency-settings" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="feastruct.solvers.feasolve.NaturalFrequencySettings">
+<em class="property">class </em><code class="descclassname">feastruct.solvers.feasolve.</code><code class="descname">NaturalFrequencySettings</code><span class="sig-paren">(</span><em>time_info=False</em>, <em>num_modes=4</em>, <em>shift=0</em>, <em>maxiter=None</em>, <em>tol=1e-09</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#NaturalFrequencySettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.NaturalFrequencySettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for settings to be used in a natural frequency analysis.</p>
+<dl class="method">
+<dt id="feastruct.solvers.feasolve.NaturalFrequencySettings.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>time_info=False</em>, <em>num_modes=4</em>, <em>shift=0</em>, <em>maxiter=None</em>, <em>tol=1e-09</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/solvers/feasolve.html#NaturalFrequencySettings.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.solvers.feasolve.NaturalFrequencySettings.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the NaturalFrequencySettings class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>time_info</strong> (<em>bool</em>) – If set to True, a detailed description of the computation and the
+time cost is printed to the terminal</li>
+<li><strong>num_modes</strong> (<em>int</em>) – Number of modes to compute</li>
+<li><strong>shift</strong> (<em>float</em>) – Finds eigenvalues near <em>shift</em> using the shift-invert mode</li>
+<li><strong>maxiter</strong> (<em>int</em>) – Maximum number of iterations allowed</li>
+<li><strong>tol</strong> (<em>float</em>) – Relative accuracy for eigenvalues (stopping criterion)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 </div>
 
@@ -1141,7 +1798,7 @@ freedom case used in the analysis case.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

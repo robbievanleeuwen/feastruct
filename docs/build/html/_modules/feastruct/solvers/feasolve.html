@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -152,7 +156,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for feastruct.solvers.feasolve</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.sparse</span> <span class="k">as</span> <span class="nn">sp</span>
 <span class="kn">import</span> <span class="nn">scipy.sparse.linalg</span> <span class="k">as</span> <span class="nn">linalg</span>
 
@@ -184,7 +189,11 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span> <span class="o">=</span> <span class="n">analysis</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">analysis_cases</span> <span class="o">=</span> <span class="n">analysis_cases</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span> <span class="o">=</span> <span class="n">solver_settings</span>
+
+        <span class="k">if</span> <span class="n">solver_settings</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span> <span class="o">=</span> <span class="n">SolverSettings</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span> <span class="o">=</span> <span class="n">solver_settings</span>
 
         <span class="c1"># calculate total number of global dofs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ndof</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span></div>
@@ -288,7 +297,7 @@
             <span class="n">m_el</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_mass_matrix</span><span class="p">()</span>
 
             <span class="c1"># get element degrees of freedom</span>
-            <span class="n">el_dofs</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_gdof_nums</span><span class="p">(</span><span class="n">dofs_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
+            <span class="n">el_dofs</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_gdof_nums</span><span class="p">(</span><span class="n">dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
 
             <span class="c1"># create row index vector</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">el_dofs</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
@@ -379,7 +388,7 @@
 
         <span class="c1"># loop through all the supports in the analysis case</span>
         <span class="k">for</span> <span class="n">support</span> <span class="ow">in</span> <span class="n">analysis_case</span><span class="o">.</span><span class="n">freedom_case</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
-            <span class="n">constrained_dofs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">support</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">[</span><span class="n">support</span><span class="o">.</span><span class="n">dof</span><span class="p">]</span><span class="o">.</span><span class="n">global_dof_num</span><span class="p">)</span>
+            <span class="n">constrained_dofs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">support</span><span class="o">.</span><span class="n">get_gdof</span><span class="p">())</span>
 
         <span class="c1"># create list of free dofs</span>
         <span class="n">free_dofs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndof</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constrained_dofs</span><span class="p">]</span>
@@ -404,55 +413,74 @@
 
         <span class="k">return</span> <span class="n">linalg</span><span class="o">.</span><span class="n">spsolve</span><span class="p">(</span><span class="n">K_csc</span><span class="p">,</span> <span class="n">f_ext</span><span class="p">)</span></div>
 
-    <span class="c1"># def cgs_solver(self, K, f_ext):</span>
-    <span class="c1">#     &quot;&quot;&quot;Solves Ku=f_ext for *u* using the cgs method.</span>
-    <span class="c1">#</span>
-    <span class="c1">#     :param K: Global stiffness matrix</span>
-    <span class="c1">#     :type K: :class:`scipy.sparse.lil_matrix`</span>
-    <span class="c1">#     :param f_ext: External force vector</span>
-    <span class="c1">#     :type f_ext: :class:`numpy.ndarray`</span>
-    <span class="c1">#</span>
-    <span class="c1">#     :returns: Displacement vector *u*</span>
-    <span class="c1">#     :rtype: :class:`numpy.ndarray`</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # convert stiffness matrix to csc format</span>
-    <span class="c1">#     K_csc = sp.csc_matrix(K)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # TODO: implement</span>
-    <span class="c1">#     # if self.settings[&quot;precond&quot;]:</span>
-    <span class="c1">#     #     # perform ILU decomposition stiffness matrix</span>
-    <span class="c1">#     #     pre_cond = linalg.LinearOperator(K.get_shape(),</span>
-    <span class="c1">#     #                                      linalg.spilu(K_csc).solve)</span>
-    <span class="c1">#     # else:</span>
-    <span class="c1">#     #     pre_cond = None</span>
-    <span class="c1">#     #</span>
-    <span class="c1">#     # (u, exit) = linalg.cgs(K_csc, f_ext, tol=self.settings[&quot;tol&quot;],</span>
-    <span class="c1">#     #                        maxiter=self.settings[&quot;maxiter&quot;], M=pre_cond)</span>
-    <span class="c1">#     #</span>
-    <span class="c1">#     # if (exit != 0):</span>
-    <span class="c1">#     #     raise FEASolverError(&quot;CGS solver did not converge.&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # return u</span>
+<div class="viewcode-block" id="Solver.cgs_solver"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.cgs_solver">[docs]</a>    <span class="k">def</span> <span class="nf">cgs_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">f_ext</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Solves Ku=f_ext for *u* using the cgs method.</span>
 
-    <span class="c1"># def solve_eigenvalue(self, A, M):</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#</span>
-    <span class="c1">#     A_csc = sp.csc_matrix(A)</span>
-    <span class="c1">#     M_csc = sp.csc_matrix(M)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     try:</span>
-    <span class="c1">#         (w, v) = linalg.eigs(A=A_csc, k=self.settings[&quot;n&quot;], M=M_csc,</span>
-    <span class="c1">#                              sigma=self.settings[&quot;shift&quot;],</span>
-    <span class="c1">#                              maxiter=self.settings[&quot;maxiter&quot;],</span>
-    <span class="c1">#                              tol=self.settings[&quot;tol&quot;])</span>
-    <span class="c1">#</span>
-    <span class="c1">#     except linalg.ArpackNoConvergence:</span>
-    <span class="c1">#         raise FEASolverError(&quot;&quot;&quot;Convergence not obtained for the</span>
-    <span class="c1">#         eigenvalue solver&quot;&quot;&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     return (np.real(w), np.real(v))</span>
+<span class="sd">        :param K: Global stiffness matrix</span>
+<span class="sd">        :type K: :class:`scipy.sparse.lil_matrix`</span>
+<span class="sd">        :param f_ext: External force vector</span>
+<span class="sd">        :type f_ext: :class:`numpy.ndarray`</span>
+
+<span class="sd">        :returns: Displacement vector *u*</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+
+<span class="sd">        :raises Exception: If the cgs solver does not converge or if the preconditioner fails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># convert stiffness matrix to csc format</span>
+        <span class="n">K_csc</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">cgs_precond</span><span class="p">:</span>
+            <span class="c1"># perform ILU decomposition stiffness matrix</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">precond</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">LinearOperator</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">get_shape</span><span class="p">(),</span> <span class="n">linalg</span><span class="o">.</span><span class="n">spilu</span><span class="p">(</span><span class="n">K_csc</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Preconditioner could not be constructed.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">precond</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">tol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">cgs_tol</span>
+        <span class="n">maxiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">cgs_maxiter</span>
+
+        <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">exit</span><span class="p">)</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">cgs</span><span class="p">(</span><span class="n">K_csc</span><span class="p">,</span> <span class="n">f_ext</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">precond</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">exit</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;CGS solver did not converge.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">u</span></div>
+
+<div class="viewcode-block" id="Solver.solve_eigenvalue"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.solve_eigenvalue">[docs]</a>    <span class="k">def</span> <span class="nf">solve_eigenvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">eigen_settings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finds eigenvalues and eigenvectors for A * x[i] = w[i] * M * x[i].</span>
+
+<span class="sd">        :param A: A matrix</span>
+<span class="sd">        :type A: :class:`scipy.sparse.coo_matrix`</span>
+<span class="sd">        :param M: M matrix</span>
+<span class="sd">        :type M: :class:`scipy.sparse.coo_matrix`</span>
+<span class="sd">        :param eigen_settings: A settings object for use with the eigenvalue solver</span>
+<span class="sd">        :type eigen_settings: :class:`feastruct.solvers.feasolve.LinearBucklingSettings` or</span>
+<span class="sd">            :class:`feastruct.solvers.feasolve.NaturalFrequencySettings`</span>
+
+<span class="sd">        :returns: Eigenvalues and corresponding eigenvectors *(w, v)*</span>
+<span class="sd">        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)</span>
+
+<span class="sd">        :raises Exception: If the eigenvalue solver does not converge</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">A_csc</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        <span class="n">M_csc</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="n">eigen_settings</span><span class="o">.</span><span class="n">num_modes</span>
+        <span class="n">shift</span> <span class="o">=</span> <span class="n">eigen_settings</span><span class="o">.</span><span class="n">shift</span>
+        <span class="n">maxiter</span> <span class="o">=</span> <span class="n">eigen_settings</span><span class="o">.</span><span class="n">maxiter</span>
+        <span class="n">tol</span> <span class="o">=</span> <span class="n">eigen_settings</span><span class="o">.</span><span class="n">tol</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eigs</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">A_csc</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M_csc</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">shift</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">linalg</span><span class="o">.</span><span class="n">ArpackNoConvergence</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Convergence not obtained for the eigenvalue solver&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Solver.save_displacements"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.save_displacements">[docs]</a>    <span class="k">def</span> <span class="nf">save_displacements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the displacements *u* to the degree of freedom objects for the analysis case.</span>
@@ -472,29 +500,85 @@
             <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node_dofs</span><span class="p">:</span>
                 <span class="n">dof</span><span class="o">.</span><span class="n">save_displacement</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="n">u</span><span class="p">[</span><span class="n">dof</span><span class="o">.</span><span class="n">global_dof_num</span><span class="p">],</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span></div>
 
-    <span class="c1"># def save_eigenvectors(self, w, v, analysis_case, buckling=False,</span>
-    <span class="c1">#                       frequency=False):</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # add constrained dofs to eigenvector</span>
-    <span class="c1">#     constrained_dofs = []</span>
-    <span class="c1">#</span>
-    <span class="c1">#     for support in analysis_case.freedom_case.items:</span>
-    <span class="c1">#         constrained_dofs.append(support.node.dofs[support.dir-1])</span>
-    <span class="c1">#</span>
-    <span class="c1">#     for dof in sorted(constrained_dofs):</span>
-    <span class="c1">#         v = np.insert(v, dof, 0, axis=0)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     for node in self.analysis.nodes:</span>
-    <span class="c1">#         for i in range(len(w)):</span>
-    <span class="c1">#             w_i = w[i]</span>
-    <span class="c1">#             v_i = v[node.dofs, i]</span>
-    <span class="c1">#</span>
-    <span class="c1">#             if buckling:</span>
-    <span class="c1">#                 node.set_buckling_results(analysis_case.id, i+1, w_i, v_i)</span>
-    <span class="c1">#             elif frequency:</span>
-    <span class="c1">#                 node.set_frequency_results(analysis_case.id, i+1, w_i, v_i)</span>
+<div class="viewcode-block" id="Solver.save_buckling_results"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.save_buckling_results">[docs]</a>    <span class="k">def</span> <span class="nf">save_buckling_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves the buckling results *w* and *v* to the degree of freedom objects for the analysis</span>
+<span class="sd">        case.</span>
+
+<span class="sd">        :param w: Eigenvalues</span>
+<span class="sd">        :type w: :class:`numpy.ndarray`</span>
+<span class="sd">        :param v: Eigenvectors</span>
+<span class="sd">        :type v: :class:`numpy.ndarray`</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># add constrained dofs to the eigenvectors</span>
+        <span class="n">constrained_dofs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">support</span> <span class="ow">in</span> <span class="n">analysis_case</span><span class="o">.</span><span class="n">freedom_case</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="n">constrained_dofs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">support</span><span class="o">.</span><span class="n">get_gdof</span><span class="p">())</span>
+
+        <span class="c1"># set eigenvector value to zero for constrained dof</span>
+        <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">constrained_dofs</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># save buckling results for each dof</span>
+        <span class="c1"># loop through all the nodes</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="c1"># loop through all the relevant dofs</span>
+            <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">node_dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">):</span>
+                <span class="c1"># get global degree of freedom number</span>
+                <span class="n">gdof</span> <span class="o">=</span> <span class="n">dof</span><span class="o">.</span><span class="n">global_dof_num</span>
+
+                <span class="c1"># list of buckling modes</span>
+                <span class="n">buckling_modes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)))</span>
+
+                <span class="c1"># get eigenvectors for the current degree of freedom</span>
+                <span class="n">v_dof</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">gdof</span><span class="p">,</span> <span class="p">:]</span>
+
+                <span class="c1"># save buckling results</span>
+                <span class="n">dof</span><span class="o">.</span><span class="n">save_buckling_modes</span><span class="p">(</span>
+                    <span class="n">buckling_modes</span><span class="o">=</span><span class="n">buckling_modes</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v_dof</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Solver.save_frequency_results"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.save_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">save_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves the frequency results *w* and *v* to the degree of freedom objects for the</span>
+<span class="sd">        analysis case.</span>
+
+<span class="sd">        :param w: Eigenvalues</span>
+<span class="sd">        :type w: :class:`numpy.ndarray`</span>
+<span class="sd">        :param v: Eigenvectors</span>
+<span class="sd">        :type v: :class:`numpy.ndarray`</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># add constrained dofs to the eigenvectors</span>
+        <span class="n">constrained_dofs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">support</span> <span class="ow">in</span> <span class="n">analysis_case</span><span class="o">.</span><span class="n">freedom_case</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="n">constrained_dofs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">support</span><span class="o">.</span><span class="n">get_gdof</span><span class="p">())</span>
+
+        <span class="c1"># set eigenvector value to zero for constrained dof</span>
+        <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">constrained_dofs</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># save frequency results for each dof</span>
+        <span class="c1"># loop through all the nodes</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="c1"># loop through all the relevant dofs</span>
+            <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">node_dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">):</span>
+                <span class="c1"># get global degree of freedom number</span>
+                <span class="n">gdof</span> <span class="o">=</span> <span class="n">dof</span><span class="o">.</span><span class="n">global_dof_num</span>
+
+                <span class="c1"># list of buckling modes</span>
+                <span class="n">frequency_modes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)))</span>
+
+                <span class="c1"># get eigenvectors for the current degree of freedom</span>
+                <span class="n">v_dof</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">gdof</span><span class="p">,</span> <span class="p">:]</span>
+
+                <span class="c1"># save buckling results</span>
+                <span class="n">dof</span><span class="o">.</span><span class="n">save_frequency_modes</span><span class="p">(</span>
+                    <span class="n">frequency_modes</span><span class="o">=</span><span class="n">frequency_modes</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v_dof</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Solver.calculate_reactions"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.calculate_reactions">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_reactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculates the reactions using the stiffness matrix *K* and the displacement vector *u*</span>
@@ -513,7 +597,7 @@
 
         <span class="c1"># loop through constrained nodes and save reactions</span>
         <span class="k">for</span> <span class="n">support</span> <span class="ow">in</span> <span class="n">analysis_case</span><span class="o">.</span><span class="n">freedom_case</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">[</span><span class="n">support</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">[</span><span class="n">support</span><span class="o">.</span><span class="n">dof</span><span class="p">]</span><span class="o">.</span><span class="n">global_dof_num</span><span class="p">]</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">F</span><span class="p">[</span><span class="n">support</span><span class="o">.</span><span class="n">get_gdof</span><span class="p">()]</span>
 
             <span class="n">support</span><span class="o">.</span><span class="n">save_reaction</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span></div>
 
@@ -535,16 +619,123 @@
             <span class="c1"># calculate internal force vector</span>
             <span class="n">f_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">k_el</span><span class="p">,</span> <span class="n">u_el</span><span class="p">)</span>
 
-            <span class="n">el</span><span class="o">.</span><span class="n">save_fint</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">f_int</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span></div></div>
+            <span class="n">el</span><span class="o">.</span><span class="n">save_fint</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">f_int</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Solver.function_timer"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.function_timer">[docs]</a>    <span class="k">def</span> <span class="nf">function_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Displays the message *text* and returns the time taken for a function, with arguments</span>
+<span class="sd">        *args*, to execute. The value returned by the timed function is also returned.</span>
+
+<span class="sd">        :param string text: Message to display</span>
+<span class="sd">        :param function: Function to time and execute</span>
+<span class="sd">        :type function: function</span>
+<span class="sd">        :param args: Function arguments</span>
+<span class="sd">        :return: Value returned from the function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">text</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;----completed in </span><span class="si">{0:.6f}</span><span class="s1"> seconds---&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">result</span></div></div>
 
 
 <div class="viewcode-block" id="SolverSettings"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.SolverSettings">[docs]</a><span class="k">class</span> <span class="nc">SolverSettings</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for settings to be used in a finite element analysis.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for settings to be used in a finite element analysis.</span>
+
+<span class="sd">    :cvar linear_static: Linear static settings</span>
+<span class="sd">    :vartype linear_static: :class:`feastruct.solvers.feasolve.LinearStaticSettings`</span>
+<span class="sd">    :cvar linear_buckling: Linear buckling settings</span>
+<span class="sd">    :vartype linear_buckling: :class:`feastruct.solvers.feasolve.LinearBucklingSettings`</span>
+<span class="sd">    :cvar natural_frequency: Natural frequency settings</span>
+<span class="sd">    :vartype natural_frequency: :class:`feastruct.solvers.feasolve.NaturalFrequencySettings`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SolverSettings.__init__"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.SolverSettings.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the SolverSettings class.&quot;&quot;&quot;</span>
 
-        <span class="k">pass</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_static</span> <span class="o">=</span> <span class="n">LinearStaticSettings</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_buckling</span> <span class="o">=</span> <span class="n">LinearBucklingSettings</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">natural_frequency</span> <span class="o">=</span> <span class="n">NaturalFrequencySettings</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="LinearStaticSettings"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.LinearStaticSettings">[docs]</a><span class="k">class</span> <span class="nc">LinearStaticSettings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for settings to be used in a linear static analysis.</span>
+
+<span class="sd">    :cvar bool time_info: If set to True, a detailed description of the computation and the time</span>
+<span class="sd">        cost is printed to the terminal</span>
+<span class="sd">    :cvar string solver_type: Solver type used to solve Ku = f - &#39;direct&#39; or &#39;cgs&#39;</span>
+<span class="sd">    :cvar float cgs_tol: Tolerance to achieve for the cgs solver</span>
+<span class="sd">    :cvar int cgs_maxiter: Maximum number of iterations for the cgs solver</span>
+<span class="sd">    :cvar bool cgs_precond: If set to True, calculates a preconditioner for K using an ILU</span>
+<span class="sd">        decomposition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LinearStaticSettings.__init__"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.LinearStaticSettings.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_info</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">solver_type</span><span class="o">=</span><span class="s1">&#39;direct&#39;</span><span class="p">,</span> <span class="n">cgs_tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">cgs_maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">cgs_precond</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the LinearStaticSettings class.</span>
+
+<span class="sd">        :param bool time_info: If set to True, a detailed description of the computation and the</span>
+<span class="sd">            time cost is printed to the terminal</span>
+<span class="sd">        :param string solver_type: Solver type used to solve Ku = f - &#39;direct&#39; or &#39;cgs&#39;</span>
+<span class="sd">        :param float cgs_tol: Tolerance to achieve for the cgs solver</span>
+<span class="sd">        :param int cgs_maxiter: Maximum number of iterations for the cgs solver</span>
+<span class="sd">        :param bool cgs_precond: If set to True, calculates a preconditioner for K using an ILU</span>
+<span class="sd">            decomposition</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_info</span> <span class="o">=</span> <span class="n">time_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solver_type</span> <span class="o">=</span> <span class="n">solver_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgs_tol</span> <span class="o">=</span> <span class="n">cgs_tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgs_maxiter</span> <span class="o">=</span> <span class="n">cgs_maxiter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cgs_precond</span> <span class="o">=</span> <span class="n">cgs_precond</span></div></div>
+
+
+<div class="viewcode-block" id="LinearBucklingSettings"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.LinearBucklingSettings">[docs]</a><span class="k">class</span> <span class="nc">LinearBucklingSettings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for settings to be used in a linear buckling analysis.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LinearBucklingSettings.__init__"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.LinearBucklingSettings.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_info</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the LinearBucklingSettings class.</span>
+
+<span class="sd">        :param bool time_info: If set to True, a detailed description of the computation and the</span>
+<span class="sd">            time cost is printed to the terminal</span>
+<span class="sd">        :param int num_modes: Number of modes to compute</span>
+<span class="sd">        :param float shift: Finds eigenvalues near *shift* using the shift-invert mode</span>
+<span class="sd">        :param int maxiter: Maximum number of iterations allowed</span>
+<span class="sd">        :param float tol: Relative accuracy for eigenvalues (stopping criterion)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_info</span> <span class="o">=</span> <span class="n">time_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_modes</span> <span class="o">=</span> <span class="n">num_modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shift</span> <span class="o">=</span> <span class="n">shift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span> <span class="o">=</span> <span class="n">maxiter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span></div></div>
+
+
+<div class="viewcode-block" id="NaturalFrequencySettings"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.NaturalFrequencySettings">[docs]</a><span class="k">class</span> <span class="nc">NaturalFrequencySettings</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for settings to be used in a natural frequency analysis.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NaturalFrequencySettings.__init__"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.NaturalFrequencySettings.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_info</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the NaturalFrequencySettings class.</span>
+
+<span class="sd">        :param bool time_info: If set to True, a detailed description of the computation and the</span>
+<span class="sd">            time cost is printed to the terminal</span>
+<span class="sd">        :param int num_modes: Number of modes to compute</span>
+<span class="sd">        :param float shift: Finds eigenvalues near *shift* using the shift-invert mode</span>
+<span class="sd">        :param int maxiter: Maximum number of iterations allowed</span>
+<span class="sd">        :param float tol: Relative accuracy for eigenvalues (stopping criterion)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_info</span> <span class="o">=</span> <span class="n">time_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_modes</span> <span class="o">=</span> <span class="n">num_modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shift</span> <span class="o">=</span> <span class="n">shift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span> <span class="o">=</span> <span class="n">maxiter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span></div></div>
 </pre></div>
 
            </div>
@@ -557,7 +748,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

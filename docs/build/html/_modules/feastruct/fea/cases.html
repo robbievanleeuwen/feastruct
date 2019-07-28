@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -259,7 +263,12 @@
         <span class="k">for</span> <span class="n">support</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
             <span class="c1"># if the support is the node in question and the support is fixed</span>
             <span class="k">if</span> <span class="n">support</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">support</span><span class="o">.</span><span class="n">node</span> <span class="o">==</span> <span class="n">node</span><span class="p">:</span>
-                <span class="n">fixity</span><span class="p">[</span><span class="n">support</span><span class="o">.</span><span class="n">dof</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">support</span><span class="o">.</span><span class="n">dof</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="n">dof</span> <span class="o">=</span> <span class="mi">2</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dof</span> <span class="o">=</span> <span class="n">support</span><span class="o">.</span><span class="n">dof</span>
+
+                <span class="n">fixity</span><span class="p">[</span><span class="n">dof</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">fixity</span></div></div>
 
@@ -306,7 +315,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

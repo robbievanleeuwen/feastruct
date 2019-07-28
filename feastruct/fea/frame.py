@@ -227,9 +227,10 @@ class FrameElement2D(FrameElement):
         ax.plot(coords[:, 0], coords[:, 1], 'k.', linestyle=linestyle,
                 linewidth=linewidth, marker=marker, markersize=8)
 
-    def plot_deformed_element(self, ax, analysis_case, n, def_scale):
+    def plot_deformed_element(self, ax, analysis_case, n, def_scale, u_el=None):
         """Plots a 2D frame element in its deformed configuration for the displacement vector
-        defined by the analysis_case. The deformation is based on the element shape functions.
+        defined by the analysis_case. The deformation is based on the element shape functions. If
+        a displacement vector, *u_el*, is supplied, uses this to plot the deformed element.
 
         :param ax: Axis object on which to draw the element
         :type ax: :class:`matplotlib.axes.Axes`
@@ -237,11 +238,13 @@ class FrameElement2D(FrameElement):
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param int n: Number of linear subdivisions used to plot the element
         :param float def_scale: Deformation scale
+        :param u_el: Element displacement vector of size *(n_node x n_dof)*
+        :type u_el: :class:`numpy.ndarray`
         """
 
-        # TODO: IMPLEMENT!
         # get nodal displacements
-        u_el = self.get_nodal_displacements(analysis_case)
+        if u_el is None:
+            u_el = self.get_nodal_displacements(analysis_case)
 
         # compute frame geometric parameters
         (node_coords, _, l0, c) = self.get_geometric_properties()

@@ -213,17 +213,99 @@ class FiniteElement:
         """
 
         disp_list = []  # allocate list of displacements
+
+        # get all the dof objects for the element
         dof_list = self.get_dofs(dof_nums)
 
+        # loop through each node's dofs
         for node_dofs in dof_list:
+            # list of displacements for the current node
             node_list = []
 
+            # loop through each dof in the node
             for dof in node_dofs:
+                # add the dof displacement to the node list
                 node_list.append(dof.get_displacement(analysis_case))
 
             disp_list.append(node_list)
 
         return np.array(disp_list)
+
+    def get_buckling_results(self, dof_nums, analysis_case, buckling_mode=0):
+        """Returns the eigenvalue corresponding to the buckling analysis defined by the
+        analysis_case and the buckling_mode. Also returns an array of eigenvector values
+        corresponding to each degree of freedom in the finite element.
+
+        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
+            [0, 1] for *x* and *y* translation
+        :param analysis_case: Analysis case relating to the buckling analysis
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param int buckling_mode: Buckling mode number
+
+        :return: Eigenvalue and eigenvectors *(w, v)*. A tuple containing the eigenvalue *w* and
+            an *(n_nodes x n_dof)* array of eigenvector values *v*.
+        :rtype: tuple(float, :class:`numpy.ndarray`)
+        """
+
+        v_list = []  # allocate list of eigenvectors
+
+        # get all the dof objects for the element
+        dof_list = self.get_dofs(dof_nums)
+
+        # loop through each node's dofs
+        for node_dofs in dof_list:
+            # list of eigenvectors for the current node
+            node_list = []
+
+            # loop through each dof in the node
+            for dof in node_dofs:
+                (w, v) = dof.get_buckling_mode(
+                    analysis_case=analysis_case, buckling_mode=buckling_mode)
+
+                # add the dof eigenvector to the node list
+                node_list.append(v)
+
+            v_list.append(node_list)
+
+        return (w, np.array(v_list))
+
+    def get_frequency_results(self, dof_nums, analysis_case, frequency_mode=0):
+        """Returns the eigenvalue corresponding to the frequency analysis defined by the
+        analysis_case and the frequency_mode. Also returns an array of eigenvector values
+        corresponding to each degree of freedom in the finite element.
+
+        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
+            [0, 1] for *x* and *y* translation
+        :param analysis_case: Analysis case relating to the frequency analysis
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param int frequency_mode: Frequency mode number
+
+        :return: Eigenvalue and eigenvectors *(w, v)*. A tuple containing the eigenvalue *w* and
+            an *(n_nodes x n_dof)* array of eigenvector values *v*.
+        :rtype: tuple(float, :class:`numpy.ndarray`)
+        """
+
+        v_list = []  # allocate list of eigenvectors
+
+        # get all the dof objects for the element
+        dof_list = self.get_dofs(dof_nums)
+
+        # loop through each node's dofs
+        for node_dofs in dof_list:
+            # list of eigenvectors for the current node
+            node_list = []
+
+            # loop through each dof in the node
+            for dof in node_dofs:
+                (w, v) = dof.get_frequency_mode(
+                    analysis_case=analysis_case, frequency_mode=frequency_mode)
+
+                # add the dof eigenvector to the node list
+                node_list.append(v)
+
+            v_list.append(node_list)
+
+        return (w, np.array(v_list))
 
     def get_fint(self, analysis_case):
         """Returns the internal force vector relating to an

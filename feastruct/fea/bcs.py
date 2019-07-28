@@ -28,6 +28,11 @@ class BoundaryCondition:
         self.val = val
         self.dof = dof
 
+    def get_gdof(self):
+        """Returns the global degree of freedom number for the boundary condition."""
+
+        return self.node.dofs[self.dof].global_dof_num
+
 
 class NodalSupport(BoundaryCondition):
     """Class for a dirichlet boundary condition acting at a node.

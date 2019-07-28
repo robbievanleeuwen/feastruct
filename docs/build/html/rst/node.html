@@ -58,6 +58,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -87,6 +91,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#id1">Node</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dof">DoF</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#displacement">Displacement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#buckling-modes">Buckling Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#frequency-modes">Frequency Modes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
@@ -236,7 +242,9 @@ in the finite element analysis. Displacement results are stored within the degre
 <li><strong>node</strong> (<a class="reference internal" href="#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – Parent node</li>
 <li><strong>node_dof_num</strong> (<em>int</em>) – Node degree of freedom number</li>
 <li><strong>global_dof_num</strong> (<em>int</em>) – Global degree of freedom number</li>
-<li><strong>displacements</strong> (list[<a class="reference internal" href="#feastruct.fea.node.Displacement" title="feastruct.fea.node.Displacement"><code class="xref py py-class docutils literal notranslate"><span class="pre">Displacement</span></code></a>]) – A list of displacement objects for the dof</li>
+<li><strong>displacements</strong> (list[<a class="reference internal" href="#feastruct.fea.node.Displacement" title="feastruct.fea.node.Displacement"><code class="xref py py-class docutils literal notranslate"><span class="pre">Displacement</span></code></a>]) – A list of Displacement objects for the dof</li>
+<li><strong>buckling_results</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">BucklingMode</span></code>]) – A list of BucklingModes objects for the dof</li>
+<li><strong>frequency_results</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">FrequencyMode</span></code>]) – A list of FrequencyModes objects for the dof</li>
 </ul>
 </td>
 </tr>
@@ -251,6 +259,35 @@ in the finite element analysis. Displacement results are stored within the degre
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node</strong> (<a class="reference internal" href="#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>) – Parent node</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.node.DoF.get_buckling_mode">
+<code class="descname">get_buckling_mode</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>buckling_mode</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF.get_buckling_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF.get_buckling_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of the eigenvalue and eigenvector for a given buckling_mode related to
+an <a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling results</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvector corresponding to an analysis_case and buckling_mode</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple(float, float)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If buckling results corresponding to an analysis_case cannot be found,
+or if the buckling mode does not exist</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -277,6 +314,55 @@ in the finite element analysis. Displacement results are stored within the degre
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.node.DoF.get_frequency_mode">
+<code class="descname">get_frequency_mode</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>frequency_mode</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF.get_frequency_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF.get_frequency_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of the eigenvalue and eigenvector for a given frequency_mode related
+to an <a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency results</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvector corresponding to an analysis_case and frequency_mode</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple(float, float)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>Exception</strong> – If frequency results corresponding to an analysis_case cannot be found,
+or if the frequency mode does not exist</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.node.DoF.save_buckling_modes">
+<code class="descname">save_buckling_modes</code><span class="sig-paren">(</span><em>buckling_modes</em>, <em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF.save_buckling_modes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF.save_buckling_modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves buckling results to the DoF.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>buckling_modes</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Buckling mode numbers</li>
+<li><strong>w</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Eigenvalues corresponding to the given modes</li>
+<li><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Value of the eigevectors at the DoF corresponding to the given modes</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.node.DoF.save_displacement">
 <code class="descname">save_displacement</code><span class="sig-paren">(</span><em>disp</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF.save_displacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF.save_displacement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves a displacement result to the DoF.</p>
@@ -287,6 +373,26 @@ in the finite element analysis. Displacement results are stored within the degre
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>disp</strong> (<em>float</em>) – Value of the displacement</li>
 <li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.node.DoF.save_frequency_modes">
+<code class="descname">save_frequency_modes</code><span class="sig-paren">(</span><em>frequency_modes</em>, <em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#DoF.save_frequency_modes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.DoF.save_frequency_modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves frequency results to the DoF.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>frequency_modes</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Frequency mode numbers</li>
+<li><strong>w</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Eigenvalues corresponding to the given modes</li>
+<li><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Value of the eigevectors at the DoF corresponding to the given modes</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
 </ul>
 </td>
 </tr>
@@ -339,6 +445,96 @@ in the finite element analysis. Displacement results are stored within the degre
 
 </div></blockquote>
 </div>
+<div class="section" id="buckling-modes">
+<h2>Buckling Modes<a class="headerlink" href="#buckling-modes" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.node.BucklingModes">
+<em class="property">class </em><code class="descclassname">feastruct.fea.node.</code><code class="descname">BucklingModes</code><span class="sig-paren">(</span><em>buckling_modes</em>, <em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#BucklingModes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.BucklingModes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for storing buckling modes at a degree of freedom for a specific analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>buckling_modes</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Buckling mode numbers</li>
+<li><strong>w</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Eigenvalues corresponding to the given modes</li>
+<li><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Value of the eigevectors at the DoF corresponding to the given modes</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.node.BucklingModes.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>buckling_modes</em>, <em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#BucklingModes.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.BucklingModes.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Displacement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>buckling_modes</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Buckling mode numbers</li>
+<li><strong>w</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Eigenvalues corresponding to the given modes</li>
+<li><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Value of the eigevectors at the DoF corresponding to the given modes</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="frequency-modes">
+<h2>Frequency Modes<a class="headerlink" href="#frequency-modes" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.node.FrequencyModes">
+<em class="property">class </em><code class="descclassname">feastruct.fea.node.</code><code class="descname">FrequencyModes</code><span class="sig-paren">(</span><em>frequency_modes</em>, <em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#FrequencyModes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.FrequencyModes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for storing frequency modes at a degree of freedom for a specific analysis case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>frequency_modes</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Frequency mode numbers</li>
+<li><strong>w</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Eigenvalues corresponding to the given modes</li>
+<li><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Value of the eigevectors at the DoF corresponding to the given modes</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.node.FrequencyModes.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>frequency_modes</em>, <em>w</em>, <em>v</em>, <em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#FrequencyModes.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.FrequencyModes.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the Displacement class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>frequency_modes</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Frequency mode numbers</li>
+<li><strong>w</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Eigenvalues corresponding to the given modes</li>
+<li><strong>v</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Value of the eigevectors at the DoF corresponding to the given modes</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
 </div>
 
 
@@ -361,7 +557,7 @@ in the finite element analysis. Displacement results are stored within the degre
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

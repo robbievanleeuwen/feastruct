@@ -13,14 +13,15 @@ class LinearStatic(Solver):
     :cvar int ndof: Number of degrees of freedom in the analysis
     """
 
-    def __init__(self, analysis, analysis_cases, solver_settings):
+    def __init__(self, analysis, analysis_cases, solver_settings=None):
         """Inits the LinearStatic class.
 
         :param analysis: Analysis object to solve
         :type analysis: :class:`~feastruct.fea.fea.FiniteElementAnalysis`
         :param analysis_cases: List of analysis cases to solve
         :type analysis_cases: list[:class:`~feastruct.fea.cases.AnalysisCase`]
-        :param solver_settings: Settings to use in the solver
+        :param solver_settings: Settings to use in the solver - if not supplied, the default
+            settings are adopted
         :type solver_settings: :class:`~feastruct.solvers.feasolve.SolverSettings`
         """
 
@@ -28,33 +29,62 @@ class LinearStatic(Solver):
             analysis=analysis, analysis_cases=analysis_cases, solver_settings=solver_settings)
 
     def solve(self):
-        """Executes the finite element solver and saves the relevant results."""
+        """Executes the linear static finite element solver and saves the relevant results."""
+
+        if self.solver_settings.linear_static.time_info:
+            print('\n-Starting the linear static solver...\n')
 
         # assign the global degree of freedom numbers
         self.assign_dofs()
 
         # assemble the global stiffness matrix
-        (K, _) = self.assemble_stiff_matrix()
+        if self.solver_settings.linear_static.time_info:
+            str = '--Assembling the global stiffness matrix...'
+            (K, _) = self.function_timer(str, self.assemble_stiff_matrix)
+        else:
+            (K, _) = self.assemble_stiff_matrix()
 
         # loop through each analysis case
-        for analysis_case in self.analysis_cases:
+        for (i, analysis_case) in enumerate(self.analysis_cases):
+            if self.solver_settings.linear_static.time_info:
+                print('\n--Analysis case {0}:'.format(i))
+
             # assemble the external force vector
-            f_ext = self.assemble_fext(analysis_case=analysis_case)
+            if self.solver_settings.linear_static.time_info:
+                str = '---Assembling the external force vector...'
+                f_ext = self.function_timer(str, self.assemble_fext, analysis_case)
+            else:
+                f_ext = self.assemble_fext(analysis_case=analysis_case)
 
             # apply the boundary conditions
             (K_mod, f_ext) = self.apply_bcs(K=K, f_ext=f_ext, analysis_case=analysis_case)
 
             # solve for the displacement vector
-            u = self.direct_solver(K=K_mod, f_ext=f_ext)
-            # TODO: implement cgs solver
-            # elif self.solver == 'cgs':
-            #     u = self.cgs_solver(K_mod, f_ext)
+            if self.solver_settings.linear_static.solver_type == 'direct':
+                solver_func = self.direct_solver
+            elif self.solver_settings.linear_static.solver_type == 'cgs':
+                solver_func = self.cgs_solver
+
+            if self.solver_settings.linear_static.time_info:
+                str = '---Solving for the displacement vector using the {0} solver...'.format(
+                    self.solver_settings.linear_static.solver_type)
+                u = self.function_timer(str, solver_func, K_mod, f_ext)
+            else:
+                u = solver_func(K_mod, f_ext)
 
             # save the displacements to the DoF objects inside the Node objects
             self.save_displacements(u=u, analysis_case=analysis_case)
 
             # calculate the reaction forces
-            self.calculate_reactions(K=K, u=u, analysis_case=analysis_case)
+            if self.solver_settings.linear_static.time_info:
+                str = '---Calculating reactions...'
+                self.function_timer(str, self.calculate_reactions, K, u, analysis_case)
+            else:
+                self.calculate_reactions(K=K, u=u, analysis_case=analysis_case)
 
             # calculate the element stresses
-            self.calculate_stresses(analysis_case=analysis_case)
+            if self.solver_settings.linear_static.time_info:
+                str = '---Calculating element stresses...'
+                self.function_timer(str, self.calculate_stresses, analysis_case)
+            else:
+                self.calculate_stresses(analysis_case=analysis_case)

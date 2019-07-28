@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -375,77 +379,91 @@
         <span class="c1"># plot the undeformed structure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_geom</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span></div>
 
-    <span class="c1"># def plot_buckling_eigenvector(self, case_id, buckling_mode=1):</span>
-    <span class="c1">#     &quot;&quot;&quot;Method used to plot a buckling eigenvector. The undeformed structure</span>
-    <span class="c1">#     is plotted with a dahsed line.</span>
-    <span class="c1">#</span>
-    <span class="c1">#     :param int case_id: Unique case id</span>
-    <span class="c1">#     :param int buckling_mode: Buckling mode to plot</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#</span>
-    <span class="c1">#     (fig, ax) = plt.subplots()</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # set initial plot limits</span>
-    <span class="c1">#     (xmin, xmax, ymin, ymax, _, _) = self.analysis.get_node_lims()</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # determine max eigenvector displacement value (ignore rotation)</span>
-    <span class="c1">#     max_v = 0</span>
-    <span class="c1">#</span>
-    <span class="c1">#     for el in self.analysis.elements:</span>
-    <span class="c1">#         (w, v_el) = el.get_buckling_results(case_id, buckling_mode)</span>
-    <span class="c1">#         max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]),</span>
-    <span class="c1">#                     abs(v_el[1, 0]), abs(v_el[1, 1]))</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # determine plot scale</span>
-    <span class="c1">#     scale = 0.1 * max(xmax - xmin, ymax - ymin) / max_v</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # plot eigenvectors</span>
-    <span class="c1">#     for el in self.analysis.elements:</span>
-    <span class="c1">#         (_, v_el) = el.get_buckling_results(case_id, buckling_mode)</span>
-    <span class="c1">#         el.plot_deformed_element(ax, case_id, self.n_subdiv, scale, v_el)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # plot the load factor (eigenvalue)</span>
-    <span class="c1">#     ax.set_title(&quot;Load Factor for Mode {:d}: {:.4e}&quot;.format(</span>
-    <span class="c1">#         buckling_mode, w), size=10)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # plot the undeformed structure</span>
-    <span class="c1">#     self.plot_geom(case_id, ax=ax, dashed=True)</span>
-    <span class="c1">#</span>
-    <span class="c1"># def plot_frequency_eigenvector(self, case_id, frequency_mode=1):</span>
-    <span class="c1">#     &quot;&quot;&quot;Method used to plot a natural frequency eigenvector. The undeformed</span>
-    <span class="c1">#     structure is plotted with a dahsed line.</span>
-    <span class="c1">#</span>
-    <span class="c1">#     :param int case_id: Unique case id</span>
-    <span class="c1">#     :param int frequency_mode: Frequency mode to plot</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#</span>
-    <span class="c1">#     (fig, ax) = plt.subplots()</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # set initial plot limits</span>
-    <span class="c1">#     (xmin, xmax, ymin, ymax, _, _) = self.analysis.get_node_lims()</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # determine max eigenvector displacement value (ignore rotation)</span>
-    <span class="c1">#     max_v = 0</span>
-    <span class="c1">#</span>
-    <span class="c1">#     for el in self.analysis.elements:</span>
-    <span class="c1">#         (w, v_el) = el.get_frequency_results(case_id, frequency_mode)</span>
-    <span class="c1">#         max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]),</span>
-    <span class="c1">#                     abs(v_el[1, 0]), abs(v_el[1, 1]))</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # determine plot scale</span>
-    <span class="c1">#     scale = 0.1 * max(xmax - xmin, ymax - ymin) / max_v</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # plot eigenvectors</span>
-    <span class="c1">#     for el in self.analysis.elements:</span>
-    <span class="c1">#         (_, v_el) = el.get_frequency_results(case_id, frequency_mode)</span>
-    <span class="c1">#         el.plot_deformed_element(ax, case_id, self.n_subdiv, scale, v_el)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # plot the natural frequency</span>
-    <span class="c1">#     ax.set_title(&quot;Natural Frequency for Mode {:d}: {:.4e} Hz&quot;.format(</span>
-    <span class="c1">#         frequency_mode, w), size=10)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     # plot the undeformed structure</span>
-    <span class="c1">#     self.plot_geom(case_id, ax=ax, dashed=True)</span>
+<div class="viewcode-block" id="PostProcessor.plot_buckling_results"><a class="viewcode-back" href="../../../rst/post.html#feastruct.post.post.PostProcessor.plot_buckling_results">[docs]</a>    <span class="k">def</span> <span class="nf">plot_buckling_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method used to plot a buckling eigenvector. The undeformed structure is plotted with a</span>
+<span class="sd">        dashed line.</span>
+
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :param int buckling_mode: Buckling mode to plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="c1"># set initial plot limits</span>
+        <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">get_node_lims</span><span class="p">()</span>
+
+        <span class="c1"># determine max eigenvector displacement value (ignore rotation)</span>
+        <span class="n">max_v</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># loop through all the elements</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_buckling_results</span><span class="p">(</span>
+                <span class="n">dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span>
+                <span class="n">buckling_mode</span><span class="o">=</span><span class="n">buckling_mode</span><span class="p">)</span>
+
+            <span class="n">max_v</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_v</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># determine plot scale</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_v</span>
+
+        <span class="c1"># plot eigenvectors</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">v_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_buckling_results</span><span class="p">(</span>
+                <span class="n">dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span>
+                <span class="n">buckling_mode</span><span class="o">=</span><span class="n">buckling_mode</span><span class="p">)</span>
+
+            <span class="n">el</span><span class="o">.</span><span class="n">plot_deformed_element</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_subdiv</span><span class="p">,</span> <span class="n">def_scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">u_el</span><span class="o">=</span><span class="n">v_el</span><span class="p">)</span>
+
+        <span class="c1"># plot the load factor (eigenvalue)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Load Factor for Mode </span><span class="si">{:d}</span><span class="s2">: </span><span class="si">{:.4e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">buckling_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># plot the undeformed structure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_geom</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">dashed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PostProcessor.plot_frequency_results"><a class="viewcode-back" href="../../../rst/post.html#feastruct.post.post.PostProcessor.plot_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">plot_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method used to plot a frequency eigenvector. The undeformed structure is plotted with a</span>
+<span class="sd">        dashed line.</span>
+
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :param int frequency_mode: Frequency mode to plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="c1"># set initial plot limits</span>
+        <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">get_node_lims</span><span class="p">()</span>
+
+        <span class="c1"># determine max eigenvector displacement value (ignore rotation)</span>
+        <span class="n">max_v</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># loop through all the elements</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_frequency_results</span><span class="p">(</span>
+                <span class="n">dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span>
+                <span class="n">frequency_mode</span><span class="o">=</span><span class="n">frequency_mode</span><span class="p">)</span>
+
+            <span class="n">max_v</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_v</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># determine plot scale</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_v</span>
+
+        <span class="c1"># plot eigenvectors</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">v_el</span><span class="p">)</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_frequency_results</span><span class="p">(</span>
+                <span class="n">dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span>
+                <span class="n">frequency_mode</span><span class="o">=</span><span class="n">frequency_mode</span><span class="p">)</span>
+
+            <span class="n">el</span><span class="o">.</span><span class="n">plot_deformed_element</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_subdiv</span><span class="p">,</span> <span class="n">def_scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">u_el</span><span class="o">=</span><span class="n">v_el</span><span class="p">)</span>
+
+        <span class="c1"># plot the frequency (eigenvalue)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Frequency for Mode </span><span class="si">{:d}</span><span class="s2">: </span><span class="si">{:.4e}</span><span class="s2"> Hz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frequency_mode</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># plot the undeformed structure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_geom</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">dashed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PostProcessor.get_support_angle"><a class="viewcode-back" href="../../../rst/post.html#feastruct.post.post.PostProcessor.get_support_angle">[docs]</a>    <span class="k">def</span> <span class="nf">get_support_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">prefer_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Given a node object, returns the optimal angle to plot a support. Essentially finds the</span>
@@ -536,7 +554,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

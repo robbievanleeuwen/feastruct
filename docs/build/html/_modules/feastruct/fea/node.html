@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -231,8 +235,12 @@
 <span class="sd">    :vartype node: :class:`~feastruct.fea.node.Node`</span>
 <span class="sd">    :cvar int node_dof_num: Node degree of freedom number</span>
 <span class="sd">    :cvar int global_dof_num: Global degree of freedom number</span>
-<span class="sd">    :cvar displacements: A list of displacement objects for the dof</span>
+<span class="sd">    :cvar displacements: A list of Displacement objects for the dof</span>
 <span class="sd">    :vartype displacements: list[:class:`~feastruct.fea.node.Displacement`]</span>
+<span class="sd">    :cvar buckling_results: A list of BucklingModes objects for the dof</span>
+<span class="sd">    :vartype buckling_results: list[:class:`~feastruct.fea.node.BucklingMode`]</span>
+<span class="sd">    :cvar frequency_results: A list of FrequencyModes objects for the dof</span>
+<span class="sd">    :vartype frequency_results: list[:class:`~feastruct.fea.node.FrequencyMode`]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DoF.__init__"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">node_dof_num</span><span class="p">):</span>
@@ -245,7 +253,107 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node_dof_num</span> <span class="o">=</span> <span class="n">node_dof_num</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_dof_num</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span> <span class="o">=</span> <span class="p">[]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buckling_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequency_results</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="DoF.get_displacement"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.get_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">get_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the displacement value relating to an :class:`~feastruct.fea.cases.AnalysisCase`.</span>
+
+<span class="sd">        :param analysis_case: Analysis case relating to the displacement</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :return: Displacement value</span>
+<span class="sd">        :rtype: float</span>
+
+<span class="sd">        :raises Exception: If a displacement corresponding to analysis_case cannot be found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># loop through all the displacements</span>
+        <span class="k">for</span> <span class="n">displacement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span><span class="p">:</span>
+            <span class="c1"># if the analysis_case is found</span>
+            <span class="k">if</span> <span class="n">analysis_case</span> <span class="o">==</span> <span class="n">displacement</span><span class="o">.</span><span class="n">analysis_case</span><span class="p">:</span>
+                <span class="c1"># return the displacement</span>
+                <span class="k">return</span> <span class="n">displacement</span><span class="o">.</span><span class="n">disp</span>
+
+        <span class="c1"># if nothing is found raise an exception</span>
+        <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Displacement corresponding to dof </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="nb">str</span> <span class="o">+=</span> <span class="s1">&#39; could not be found for analysis case </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DoF.get_buckling_mode"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.get_buckling_mode">[docs]</a>    <span class="k">def</span> <span class="nf">get_buckling_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the value of the eigenvalue and eigenvector for a given buckling_mode related to</span>
+<span class="sd">        an :class:`~feastruct.fea.cases.AnalysisCase`.</span>
+
+<span class="sd">        :param analysis_case: Analysis case relating to the buckling results</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :param int buckling_mode: Buckling mode number</span>
+<span class="sd">        :return: Eigenvalue and eigenvector corresponding to an analysis_case and buckling_mode</span>
+<span class="sd">        :rtype: tuple(float, float)</span>
+
+<span class="sd">        :raises Exception: If buckling results corresponding to an analysis_case cannot be found,</span>
+<span class="sd">            or if the buckling mode does not exist</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># loop through all the buckling results</span>
+        <span class="k">for</span> <span class="n">buckling_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">buckling_results</span><span class="p">:</span>
+            <span class="c1"># if the analysis case is found</span>
+            <span class="k">if</span> <span class="n">analysis_case</span> <span class="o">==</span> <span class="n">buckling_result</span><span class="o">.</span><span class="n">analysis_case</span><span class="p">:</span>
+                <span class="c1"># loop through all the modes</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">buckling_result</span><span class="o">.</span><span class="n">buckling_modes</span><span class="p">):</span>
+                    <span class="c1"># if the mode is found</span>
+                    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">buckling_mode</span><span class="p">:</span>
+                        <span class="c1"># return the eigenvalue and eigevector</span>
+                        <span class="k">return</span> <span class="p">(</span><span class="n">buckling_result</span><span class="o">.</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">buckling_result</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="c1"># if the mode is not found</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Buckling result for dof </span><span class="si">{0}</span><span class="s1"> corresponding to buckling mode </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="p">)</span>
+                    <span class="nb">str</span> <span class="o">+=</span> <span class="s1">&#39; cannot be found for analysis case </span><span class="si">{0}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">)</span>
+                    <span class="nb">str</span> <span class="o">+=</span> <span class="s1">&#39; Analysis case located, but buckling mode not found.&#39;</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="c1"># if the analysis case is not found</span>
+        <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Buckling result for dof </span><span class="si">{0}</span><span class="s1"> could not be found for analysis case </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DoF.get_frequency_mode"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.get_frequency_mode">[docs]</a>    <span class="k">def</span> <span class="nf">get_frequency_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the value of the eigenvalue and eigenvector for a given frequency_mode related</span>
+<span class="sd">        to an :class:`~feastruct.fea.cases.AnalysisCase`.</span>
+
+<span class="sd">        :param analysis_case: Analysis case relating to the frequency results</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :param int frequency_mode: Frequency mode number</span>
+<span class="sd">        :return: Eigenvalue and eigenvector corresponding to an analysis_case and frequency_mode</span>
+<span class="sd">        :rtype: tuple(float, float)</span>
+
+<span class="sd">        :raises Exception: If frequency results corresponding to an analysis_case cannot be found,</span>
+<span class="sd">            or if the frequency mode does not exist</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># loop through all the frequency results</span>
+        <span class="k">for</span> <span class="n">frequency_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency_results</span><span class="p">:</span>
+            <span class="c1"># if the analysis case is found</span>
+            <span class="k">if</span> <span class="n">analysis_case</span> <span class="o">==</span> <span class="n">frequency_result</span><span class="o">.</span><span class="n">analysis_case</span><span class="p">:</span>
+                <span class="c1"># loop through all the modes</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frequency_result</span><span class="o">.</span><span class="n">frequency_modes</span><span class="p">):</span>
+                    <span class="c1"># if the mode is found</span>
+                    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">frequency_mode</span><span class="p">:</span>
+                        <span class="c1"># return the eigenvalue and eigevector</span>
+                        <span class="k">return</span> <span class="p">(</span><span class="n">frequency_result</span><span class="o">.</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">frequency_result</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="c1"># if the mode is not found</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Frequency result for dof </span><span class="si">{0}</span><span class="s1"> corresponding to frequency mode&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">)</span>
+                    <span class="nb">str</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{1}</span><span class="s1"> cannot be found for analysis case </span><span class="si">{0}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">analysis_case</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="p">)</span>
+                    <span class="nb">str</span> <span class="o">+=</span> <span class="s1">&#39; Analysis case located, but frequency mode not found.&#39;</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="c1"># if the analysis case is not found</span>
+        <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Frequency result for dof </span><span class="si">{0}</span><span class="s1"> could not be found for analysis case </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DoF.save_displacement"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.save_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">save_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disp</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves a displacement result to the DoF.</span>
@@ -263,25 +371,61 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Displacement</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="n">disp</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DoF.get_displacement"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.get_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">get_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the displacement value relating to an :class:`~feastruct.fea.cases.AnalysisCase`.</span>
+<div class="viewcode-block" id="DoF.save_buckling_modes"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.save_buckling_modes">[docs]</a>    <span class="k">def</span> <span class="nf">save_buckling_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buckling_modes</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves buckling results to the DoF.</span>
 
-<span class="sd">        :param analysis_case: Analysis case relating to the displacement</span>
+<span class="sd">        :param buckling_modes: Buckling mode numbers</span>
+<span class="sd">        :type buckling_modes: list[int]</span>
+<span class="sd">        :param w: Eigenvalues corresponding to the given modes</span>
+<span class="sd">        :type w: list[float]</span>
+<span class="sd">        :param v: Value of the eigevectors at the DoF corresponding to the given modes</span>
+<span class="sd">        :type v: list[float]</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the buckling analysis</span>
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
-<span class="sd">        :return: Displacement value</span>
-<span class="sd">        :rtype: float</span>
-
-<span class="sd">        :raises Exception: If a displacement corresponding to analysis_case cannot be found</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="n">displacement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">displacements</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">analysis_case</span> <span class="o">==</span> <span class="n">displacement</span><span class="o">.</span><span class="n">analysis_case</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">displacement</span><span class="o">.</span><span class="n">disp</span>
+        <span class="c1"># create buckling mode result</span>
+        <span class="n">new_result</span> <span class="o">=</span> <span class="n">BucklingModes</span><span class="p">(</span>
+            <span class="n">buckling_modes</span><span class="o">=</span><span class="n">buckling_modes</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span>
+        <span class="p">)</span>
 
-        <span class="c1"># if nothing is found</span>
-        <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Displacement corresponding to dof </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="nb">str</span> <span class="o">+=</span> <span class="s1">&#39; could not be found for analysis case </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span></div></div>
+        <span class="c1"># loop through all the buckling results</span>
+        <span class="k">for</span> <span class="n">buckling_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">buckling_results</span><span class="p">:</span>
+            <span class="c1"># if the analysis case already exists, overwrite the results</span>
+            <span class="k">if</span> <span class="n">buckling_result</span><span class="o">.</span><span class="n">analysis_case</span> <span class="o">==</span> <span class="n">analysis_case</span><span class="p">:</span>
+                <span class="n">buckling_result</span> <span class="o">=</span> <span class="n">new_result</span>
+                <span class="k">return</span>
+
+        <span class="c1"># otherwise add a new result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buckling_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DoF.save_frequency_modes"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.DoF.save_frequency_modes">[docs]</a>    <span class="k">def</span> <span class="nf">save_frequency_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frequency_modes</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves frequency results to the DoF.</span>
+
+<span class="sd">        :param frequency_modes: Frequency mode numbers</span>
+<span class="sd">        :type frequency_modes: list[int]</span>
+<span class="sd">        :param w: Eigenvalues corresponding to the given modes</span>
+<span class="sd">        :type w: list[float]</span>
+<span class="sd">        :param v: Value of the eigevectors at the DoF corresponding to the given modes</span>
+<span class="sd">        :type v: list[float]</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the frequency analysis</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># create frequency mode result</span>
+        <span class="n">new_result</span> <span class="o">=</span> <span class="n">FrequencyModes</span><span class="p">(</span>
+            <span class="n">frequency_modes</span><span class="o">=</span><span class="n">frequency_modes</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span>
+        <span class="p">)</span>
+
+        <span class="c1"># loop through all the frequency results</span>
+        <span class="k">for</span> <span class="n">frequency_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency_results</span><span class="p">:</span>
+            <span class="c1"># if the analysis case already exists, overwrite the results</span>
+            <span class="k">if</span> <span class="n">frequency_result</span><span class="o">.</span><span class="n">analysis_case</span> <span class="o">==</span> <span class="n">analysis_case</span><span class="p">:</span>
+                <span class="n">frequency_result</span> <span class="o">=</span> <span class="n">new_result</span>
+                <span class="k">return</span>
+
+        <span class="c1"># otherwise add a new result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequency_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_result</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Displacement"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.Displacement">[docs]</a><span class="k">class</span> <span class="nc">Displacement</span><span class="p">:</span>
@@ -302,6 +446,70 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">disp</span> <span class="o">=</span> <span class="n">disp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">analysis_case</span> <span class="o">=</span> <span class="n">analysis_case</span></div></div>
+
+
+<div class="viewcode-block" id="BucklingModes"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.BucklingModes">[docs]</a><span class="k">class</span> <span class="nc">BucklingModes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for storing buckling modes at a degree of freedom for a specific analysis case.</span>
+
+<span class="sd">    :cvar buckling_modes: Buckling mode numbers</span>
+<span class="sd">    :vartype buckling_modes: list[int]</span>
+<span class="sd">    :cvar w: Eigenvalues corresponding to the given modes</span>
+<span class="sd">    :vartype w: list[float]</span>
+<span class="sd">    :cvar float v: Value of the eigevectors at the DoF corresponding to the given modes</span>
+<span class="sd">    :vartype v: list[float]</span>
+<span class="sd">    :cvar analysis_case: Analysis case relating to the buckling analysis</span>
+<span class="sd">    :vartype analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BucklingModes.__init__"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.BucklingModes.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buckling_modes</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Displacement class.</span>
+
+<span class="sd">        :param buckling_modes: Buckling mode numbers</span>
+<span class="sd">        :type buckling_modes: list[int]</span>
+<span class="sd">        :param w: Eigenvalues corresponding to the given modes</span>
+<span class="sd">        :type w: list[float]</span>
+<span class="sd">        :param v: Value of the eigevectors at the DoF corresponding to the given modes</span>
+<span class="sd">        :type v: list[float]</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the buckling analysis</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">buckling_modes</span> <span class="o">=</span> <span class="n">buckling_modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_case</span> <span class="o">=</span> <span class="n">analysis_case</span></div></div>
+
+
+<div class="viewcode-block" id="FrequencyModes"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.FrequencyModes">[docs]</a><span class="k">class</span> <span class="nc">FrequencyModes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for storing frequency modes at a degree of freedom for a specific analysis case.</span>
+
+<span class="sd">    :cvar frequency_modes: Frequency mode numbers</span>
+<span class="sd">    :vartype frequency_modes: list[int]</span>
+<span class="sd">    :cvar w: Eigenvalues corresponding to the given modes</span>
+<span class="sd">    :vartype w: list[float]</span>
+<span class="sd">    :cvar float v: Value of the eigevectors at the DoF corresponding to the given modes</span>
+<span class="sd">    :vartype v: list[float]</span>
+<span class="sd">    :cvar analysis_case: Analysis case relating to the frequency analysis</span>
+<span class="sd">    :vartype analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FrequencyModes.__init__"><a class="viewcode-back" href="../../../rst/node.html#feastruct.fea.node.FrequencyModes.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frequency_modes</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Displacement class.</span>
+
+<span class="sd">        :param frequency_modes: Frequency mode numbers</span>
+<span class="sd">        :type frequency_modes: list[int]</span>
+<span class="sd">        :param w: Eigenvalues corresponding to the given modes</span>
+<span class="sd">        :type w: list[float]</span>
+<span class="sd">        :param v: Value of the eigevectors at the DoF corresponding to the given modes</span>
+<span class="sd">        :type v: list[float]</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the frequency analysis</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequency_modes</span> <span class="o">=</span> <span class="n">frequency_modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_case</span> <span class="o">=</span> <span class="n">analysis_case</span></div></div>
 </pre></div>
 
            </div>
@@ -314,7 +522,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

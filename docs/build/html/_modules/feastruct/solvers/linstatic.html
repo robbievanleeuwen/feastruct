@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -167,14 +171,15 @@
 <span class="sd">    :cvar int ndof: Number of degrees of freedom in the analysis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="LinearStatic.__init__"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">analysis_cases</span><span class="p">,</span> <span class="n">solver_settings</span><span class="p">):</span>
+<div class="viewcode-block" id="LinearStatic.__init__"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">analysis_cases</span><span class="p">,</span> <span class="n">solver_settings</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the LinearStatic class.</span>
 
 <span class="sd">        :param analysis: Analysis object to solve</span>
 <span class="sd">        :type analysis: :class:`~feastruct.fea.fea.FiniteElementAnalysis`</span>
 <span class="sd">        :param analysis_cases: List of analysis cases to solve</span>
 <span class="sd">        :type analysis_cases: list[:class:`~feastruct.fea.cases.AnalysisCase`]</span>
-<span class="sd">        :param solver_settings: Settings to use in the solver</span>
+<span class="sd">        :param solver_settings: Settings to use in the solver - if not supplied, the default</span>
+<span class="sd">            settings are adopted</span>
 <span class="sd">        :type solver_settings: :class:`~feastruct.solvers.feasolve.SolverSettings`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -182,36 +187,65 @@
             <span class="n">analysis</span><span class="o">=</span><span class="n">analysis</span><span class="p">,</span> <span class="n">analysis_cases</span><span class="o">=</span><span class="n">analysis_cases</span><span class="p">,</span> <span class="n">solver_settings</span><span class="o">=</span><span class="n">solver_settings</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LinearStatic.solve"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.linstatic.LinearStatic.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Executes the finite element solver and saves the relevant results.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Executes the linear static finite element solver and saves the relevant results.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">time_info</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">-Starting the linear static solver...</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="c1"># assign the global degree of freedom numbers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assign_dofs</span><span class="p">()</span>
 
         <span class="c1"># assemble the global stiffness matrix</span>
-        <span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_stiff_matrix</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">time_info</span><span class="p">:</span>
+            <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;--Assembling the global stiffness matrix...&#39;</span>
+            <span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_timer</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_stiff_matrix</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_stiff_matrix</span><span class="p">()</span>
 
         <span class="c1"># loop through each analysis case</span>
-        <span class="k">for</span> <span class="n">analysis_case</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_cases</span><span class="p">:</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis_cases</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">time_info</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">--Analysis case </span><span class="si">{0}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
             <span class="c1"># assemble the external force vector</span>
-            <span class="n">f_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_fext</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">time_info</span><span class="p">:</span>
+                <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;---Assembling the external force vector...&#39;</span>
+                <span class="n">f_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_timer</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_fext</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_fext</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
 
             <span class="c1"># apply the boundary conditions</span>
             <span class="p">(</span><span class="n">K_mod</span><span class="p">,</span> <span class="n">f_ext</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_bcs</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">f_ext</span><span class="o">=</span><span class="n">f_ext</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
 
             <span class="c1"># solve for the displacement vector</span>
-            <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">direct_solver</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="n">K_mod</span><span class="p">,</span> <span class="n">f_ext</span><span class="o">=</span><span class="n">f_ext</span><span class="p">)</span>
-            <span class="c1"># TODO: implement cgs solver</span>
-            <span class="c1"># elif self.solver == &#39;cgs&#39;:</span>
-            <span class="c1">#     u = self.cgs_solver(K_mod, f_ext)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;direct&#39;</span><span class="p">:</span>
+                <span class="n">solver_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">direct_solver</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">solver_type</span> <span class="o">==</span> <span class="s1">&#39;cgs&#39;</span><span class="p">:</span>
+                <span class="n">solver_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cgs_solver</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">time_info</span><span class="p">:</span>
+                <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;---Solving for the displacement vector using the </span><span class="si">{0}</span><span class="s1"> solver...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">solver_type</span><span class="p">)</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_timer</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">solver_func</span><span class="p">,</span> <span class="n">K_mod</span><span class="p">,</span> <span class="n">f_ext</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="n">solver_func</span><span class="p">(</span><span class="n">K_mod</span><span class="p">,</span> <span class="n">f_ext</span><span class="p">)</span>
 
             <span class="c1"># save the displacements to the DoF objects inside the Node objects</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">save_displacements</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
 
             <span class="c1"># calculate the reaction forces</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">calculate_reactions</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">time_info</span><span class="p">:</span>
+                <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;---Calculating reactions...&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">function_timer</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_reactions</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calculate_reactions</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
 
             <span class="c1"># calculate the element stresses</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">calculate_stresses</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span></div></div>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">time_info</span><span class="p">:</span>
+                <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;---Calculating element stresses...&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">function_timer</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_stresses</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calculate_stresses</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -224,7 +258,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

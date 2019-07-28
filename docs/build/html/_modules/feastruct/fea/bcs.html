@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -180,7 +184,12 @@
         <span class="c1"># assign the node object, value and dof of the boundary condition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dof</span> <span class="o">=</span> <span class="n">dof</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dof</span> <span class="o">=</span> <span class="n">dof</span></div>
+
+<div class="viewcode-block" id="BoundaryCondition.get_gdof"><a class="viewcode-back" href="../../../rst/bcs.html#feastruct.fea.bcs.BoundaryCondition.get_gdof">[docs]</a>    <span class="k">def</span> <span class="nf">get_gdof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the global degree of freedom number for the boundary condition.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">dofs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dof</span><span class="p">]</span><span class="o">.</span><span class="n">global_dof_num</span></div></div>
 
 
 <div class="viewcode-block" id="NodalSupport"><a class="viewcode-back" href="../../../rst/bcs.html#feastruct.fea.bcs.NodalSupport">[docs]</a><span class="k">class</span> <span class="nc">NodalSupport</span><span class="p">(</span><span class="n">BoundaryCondition</span><span class="p">):</span>
@@ -880,7 +889,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

@@ -58,6 +58,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -541,6 +545,35 @@ used for any frame element.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.get_buckling_results">
+<code class="descname">get_buckling_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the buckling analysis defined by the
+analysis_case and the buckling_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.frame.FrameElement.get_dofs">
 <code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
@@ -576,6 +609,35 @@ finite element.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement.get_frequency_results">
+<code class="descname">get_frequency_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement.get_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the frequency analysis defined by the
+analysis_case and the frequency_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -737,6 +799,35 @@ case</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.get_buckling_results">
+<code class="descname">get_buckling_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the buckling analysis defined by the
+analysis_case and the buckling_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.frame.FrameElement2D.get_dofs">
 <code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
@@ -772,6 +863,35 @@ finite element.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement2D.get_frequency_results">
+<code class="descname">get_frequency_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.get_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the frequency analysis defined by the
+analysis_case and the frequency_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -902,9 +1022,10 @@ method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.</p>
 
 <dl class="method">
 <dt id="feastruct.fea.frame.FrameElement2D.plot_deformed_element">
-<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D.plot_deformed_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em>, <em>u_el=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/frame.html#FrameElement2D.plot_deformed_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame.FrameElement2D.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a 2D frame element in its deformed configuration for the displacement vector
-defined by the analysis_case. The deformation is based on the element shape functions.</p>
+defined by the analysis_case. The deformation is based on the element shape functions. If
+a displacement vector, <em>u_el</em>, is supplied, uses this to plot the deformed element.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -914,6 +1035,7 @@ defined by the analysis_case. The deformation is based on the element shape func
 <li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
 <li><strong>n</strong> (<em>int</em>) – Number of linear subdivisions used to plot the element</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Deformation scale</li>
+<li><strong>u_el</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Element displacement vector of size <em>(n_node x n_dof)</em></li>
 </ul>
 </td>
 </tr>
@@ -1010,6 +1132,35 @@ method is adopted from the MATLAB code by F.P. van der Meer: plotVLine.m.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.get_buckling_results">
+<code class="descname">get_buckling_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the buckling analysis defined by the
+analysis_case and the buckling_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.frame.FrameElement3D.get_dofs">
 <code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
@@ -1045,6 +1196,35 @@ finite element.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.FrameElement3D.get_frequency_results">
+<code class="descname">get_frequency_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.FrameElement3D.get_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the frequency analysis defined by the
+analysis_case and the frequency_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1205,6 +1385,35 @@ defined by its two end nodes and uses two linear shape functions to obtain analy
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_buckling_results">
+<code class="descname">get_buckling_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the buckling analysis defined by the
+analysis_case and the buckling_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.frame.Bar2D_2N.get_dofs">
 <code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
@@ -1240,6 +1449,35 @@ finite element.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar2D_2N.get_frequency_results">
+<code class="descname">get_frequency_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.get_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the frequency analysis defined by the
+analysis_case and the frequency_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1389,9 +1627,10 @@ method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.</p>
 
 <dl class="method">
 <dt id="feastruct.fea.frame.Bar2D_2N.plot_deformed_element">
-<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em>, <em>u_el=None</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar2D_2N.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a 2D frame element in its deformed configuration for the displacement vector
-defined by the analysis_case. The deformation is based on the element shape functions.</p>
+defined by the analysis_case. The deformation is based on the element shape functions. If
+a displacement vector, <em>u_el</em>, is supplied, uses this to plot the deformed element.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1401,6 +1640,7 @@ defined by the analysis_case. The deformation is based on the element shape func
 <li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
 <li><strong>n</strong> (<em>int</em>) – Number of linear subdivisions used to plot the element</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Deformation scale</li>
+<li><strong>u_el</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Element displacement vector of size <em>(n_node x n_dof)</em></li>
 </ul>
 </td>
 </tr>
@@ -1497,6 +1737,35 @@ method is adopted from the MATLAB code by F.P. van der Meer: plotVLine.m.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.get_buckling_results">
+<code class="descname">get_buckling_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the buckling analysis defined by the
+analysis_case and the buckling_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.frame.Bar3D_2N.get_dofs">
 <code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
@@ -1532,6 +1801,35 @@ finite element.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.Bar3D_2N.get_frequency_results">
+<code class="descname">get_frequency_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.Bar3D_2N.get_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the frequency analysis defined by the
+analysis_case and the frequency_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1693,6 +1991,35 @@ polynomial shape functions to obtain analytical results.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_buckling_results">
+<code class="descname">get_buckling_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the buckling analysis defined by the
+analysis_case and the buckling_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_dofs">
 <code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
@@ -1728,6 +2055,35 @@ finite element.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli2D_2N.get_frequency_results">
+<code class="descname">get_frequency_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.get_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the frequency analysis defined by the
+analysis_case and the frequency_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1951,9 +2307,10 @@ method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.</p>
 
 <dl class="method">
 <dt id="feastruct.fea.frame.EulerBernoulli2D_2N.plot_deformed_element">
-<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_deformed_element</code><span class="sig-paren">(</span><em>ax</em>, <em>analysis_case</em>, <em>n</em>, <em>def_scale</em>, <em>u_el=None</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli2D_2N.plot_deformed_element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a 2D frame element in its deformed configuration for the displacement vector
-defined by the analysis_case. The deformation is based on the element shape functions.</p>
+defined by the analysis_case. The deformation is based on the element shape functions. If
+a displacement vector, <em>u_el</em>, is supplied, uses this to plot the deformed element.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1963,6 +2320,7 @@ defined by the analysis_case. The deformation is based on the element shape func
 <li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</li>
 <li><strong>n</strong> (<em>int</em>) – Number of linear subdivisions used to plot the element</li>
 <li><strong>def_scale</strong> (<em>float</em>) – Deformation scale</li>
+<li><strong>u_el</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Element displacement vector of size <em>(n_node x n_dof)</em></li>
 </ul>
 </td>
 </tr>
@@ -2059,6 +2417,35 @@ method is adopted from the MATLAB code by F.P. van der Meer: plotVLine.m.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_buckling_results">
+<code class="descname">get_buckling_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the buckling analysis defined by the
+analysis_case and the buckling_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the buckling analysis</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_dofs">
 <code class="descname">get_dofs</code><span class="sig-paren">(</span><em>dof_nums</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
@@ -2094,6 +2481,35 @@ finite element.</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – If the force vector cannot be found for the analysis_case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame.EulerBernoulli3D_2N.get_frequency_results">
+<code class="descname">get_frequency_results</code><span class="sig-paren">(</span><em>dof_nums</em>, <em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame.EulerBernoulli3D_2N.get_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the eigenvalue corresponding to the frequency analysis defined by the
+analysis_case and the frequency_mode. Also returns an array of eigenvector values
+corresponding to each degree of freedom in the finite element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dof_nums</strong> – List of degrees of freedom used by the current finite element type e.g.
+[0, 1] for <em>x</em> and <em>y</em> translation</li>
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the frequency analysis</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Eigenvalue and eigenvectors <em>(w, v)</em>. A tuple containing the eigenvalue <em>w</em> and
+an <em>(n_nodes x n_dof)</em> array of eigenvector values <em>v</em>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -2234,7 +2650,7 @@ given finite element</td>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

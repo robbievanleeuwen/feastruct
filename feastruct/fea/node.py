@@ -77,8 +77,12 @@ class DoF:
     :vartype node: :class:`~feastruct.fea.node.Node`
     :cvar int node_dof_num: Node degree of freedom number
     :cvar int global_dof_num: Global degree of freedom number
-    :cvar displacements: A list of displacement objects for the dof
+    :cvar displacements: A list of Displacement objects for the dof
     :vartype displacements: list[:class:`~feastruct.fea.node.Displacement`]
+    :cvar buckling_results: A list of BucklingModes objects for the dof
+    :vartype buckling_results: list[:class:`~feastruct.fea.node.BucklingMode`]
+    :cvar frequency_results: A list of FrequencyModes objects for the dof
+    :vartype frequency_results: list[:class:`~feastruct.fea.node.FrequencyMode`]
     """
 
     def __init__(self, node, node_dof_num):
@@ -92,6 +96,106 @@ class DoF:
         self.node_dof_num = node_dof_num
         self.global_dof_num = None
         self.displacements = []
+        self.buckling_results = []
+        self.frequency_results = []
+
+    def get_displacement(self, analysis_case):
+        """Returns the displacement value relating to an :class:`~feastruct.fea.cases.AnalysisCase`.
+
+        :param analysis_case: Analysis case relating to the displacement
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :return: Displacement value
+        :rtype: float
+
+        :raises Exception: If a displacement corresponding to analysis_case cannot be found
+        """
+
+        # loop through all the displacements
+        for displacement in self.displacements:
+            # if the analysis_case is found
+            if analysis_case == displacement.analysis_case:
+                # return the displacement
+                return displacement.disp
+
+        # if nothing is found raise an exception
+        str = 'Displacement corresponding to dof {0}'.format(self)
+        str += ' could not be found for analysis case {0}'.format(analysis_case)
+        raise Exception(str)
+
+    def get_buckling_mode(self, analysis_case, buckling_mode):
+        """Returns the value of the eigenvalue and eigenvector for a given buckling_mode related to
+        an :class:`~feastruct.fea.cases.AnalysisCase`.
+
+        :param analysis_case: Analysis case relating to the buckling results
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param int buckling_mode: Buckling mode number
+        :return: Eigenvalue and eigenvector corresponding to an analysis_case and buckling_mode
+        :rtype: tuple(float, float)
+
+        :raises Exception: If buckling results corresponding to an analysis_case cannot be found,
+            or if the buckling mode does not exist
+        """
+
+        # loop through all the buckling results
+        for buckling_result in self.buckling_results:
+            # if the analysis case is found
+            if analysis_case == buckling_result.analysis_case:
+                # loop through all the modes
+                for (i, mode) in enumerate(buckling_result.buckling_modes):
+                    # if the mode is found
+                    if mode == buckling_mode:
+                        # return the eigenvalue and eigevector
+                        return (buckling_result.w[i], buckling_result.v[i])
+                # if the mode is not found
+                else:
+                    str = 'Buckling result for dof {0} corresponding to buckling mode {1}'.format(
+                        self, buckling_mode)
+                    str += ' cannot be found for analysis case {0}.'.format(analysis_case)
+                    str += ' Analysis case located, but buckling mode not found.'
+                    raise Exception(str)
+
+        # if the analysis case is not found
+        str = 'Buckling result for dof {0} could not be found for analysis case {1}'.format(
+            self, analysis_case)
+        raise Exception(str)
+
+    def get_frequency_mode(self, analysis_case, frequency_mode):
+        """Returns the value of the eigenvalue and eigenvector for a given frequency_mode related
+        to an :class:`~feastruct.fea.cases.AnalysisCase`.
+
+        :param analysis_case: Analysis case relating to the frequency results
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :param int frequency_mode: Frequency mode number
+        :return: Eigenvalue and eigenvector corresponding to an analysis_case and frequency_mode
+        :rtype: tuple(float, float)
+
+        :raises Exception: If frequency results corresponding to an analysis_case cannot be found,
+            or if the frequency mode does not exist
+        """
+
+        # loop through all the frequency results
+        for frequency_result in self.frequency_results:
+            # if the analysis case is found
+            if analysis_case == frequency_result.analysis_case:
+                # loop through all the modes
+                for (i, mode) in enumerate(frequency_result.frequency_modes):
+                    # if the mode is found
+                    if mode == frequency_mode:
+                        # return the eigenvalue and eigevector
+                        return (frequency_result.w[i], frequency_result.v[i])
+                # if the mode is not found
+                else:
+                    str = 'Frequency result for dof {0} corresponding to frequency mode'.format(
+                        self)
+                    str += ' {1} cannot be found for analysis case {0}.'.format(
+                        analysis_case, frequency_mode)
+                    str += ' Analysis case located, but frequency mode not found.'
+                    raise Exception(str)
+
+        # if the analysis case is not found
+        str = 'Frequency result for dof {0} could not be found for analysis case {1}'.format(
+            self, analysis_case)
+        raise Exception(str)
 
     def save_displacement(self, disp, analysis_case):
         """Saves a displacement result to the DoF.
@@ -109,25 +213,61 @@ class DoF:
 
         self.displacements.append(Displacement(disp=disp, analysis_case=analysis_case))
 
-    def get_displacement(self, analysis_case):
-        """Returns the displacement value relating to an :class:`~feastruct.fea.cases.AnalysisCase`.
+    def save_buckling_modes(self, buckling_modes, w, v, analysis_case):
+        """Saves buckling results to the DoF.
 
-        :param analysis_case: Analysis case relating to the displacement
+        :param buckling_modes: Buckling mode numbers
+        :type buckling_modes: list[int]
+        :param w: Eigenvalues corresponding to the given modes
+        :type w: list[float]
+        :param v: Value of the eigevectors at the DoF corresponding to the given modes
+        :type v: list[float]
+        :param analysis_case: Analysis case relating to the buckling analysis
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
-        :return: Displacement value
-        :rtype: float
-
-        :raises Exception: If a displacement corresponding to analysis_case cannot be found
         """
 
-        for displacement in self.displacements:
-            if analysis_case == displacement.analysis_case:
-                return displacement.disp
+        # create buckling mode result
+        new_result = BucklingModes(
+            buckling_modes=buckling_modes, w=w, v=v, analysis_case=analysis_case
+        )
 
-        # if nothing is found
-        str = 'Displacement corresponding to dof {0}'.format(self)
-        str += ' could not be found for analysis case {0}'.format(analysis_case)
-        raise Exception(str)
+        # loop through all the buckling results
+        for buckling_result in self.buckling_results:
+            # if the analysis case already exists, overwrite the results
+            if buckling_result.analysis_case == analysis_case:
+                buckling_result = new_result
+                return
+
+        # otherwise add a new result
+        self.buckling_results.append(new_result)
+
+    def save_frequency_modes(self, frequency_modes, w, v, analysis_case):
+        """Saves frequency results to the DoF.
+
+        :param frequency_modes: Frequency mode numbers
+        :type frequency_modes: list[int]
+        :param w: Eigenvalues corresponding to the given modes
+        :type w: list[float]
+        :param v: Value of the eigevectors at the DoF corresponding to the given modes
+        :type v: list[float]
+        :param analysis_case: Analysis case relating to the frequency analysis
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        """
+
+        # create frequency mode result
+        new_result = FrequencyModes(
+            frequency_modes=frequency_modes, w=w, v=v, analysis_case=analysis_case
+        )
+
+        # loop through all the frequency results
+        for frequency_result in self.frequency_results:
+            # if the analysis case already exists, overwrite the results
+            if frequency_result.analysis_case == analysis_case:
+                frequency_result = new_result
+                return
+
+        # otherwise add a new result
+        self.frequency_results.append(new_result)
 
 
 class Displacement:
@@ -147,4 +287,68 @@ class Displacement:
         """
 
         self.disp = disp
+        self.analysis_case = analysis_case
+
+
+class BucklingModes:
+    """Class for storing buckling modes at a degree of freedom for a specific analysis case.
+
+    :cvar buckling_modes: Buckling mode numbers
+    :vartype buckling_modes: list[int]
+    :cvar w: Eigenvalues corresponding to the given modes
+    :vartype w: list[float]
+    :cvar float v: Value of the eigevectors at the DoF corresponding to the given modes
+    :vartype v: list[float]
+    :cvar analysis_case: Analysis case relating to the buckling analysis
+    :vartype analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+    """
+
+    def __init__(self, buckling_modes, w, v, analysis_case):
+        """Inits the Displacement class.
+
+        :param buckling_modes: Buckling mode numbers
+        :type buckling_modes: list[int]
+        :param w: Eigenvalues corresponding to the given modes
+        :type w: list[float]
+        :param v: Value of the eigevectors at the DoF corresponding to the given modes
+        :type v: list[float]
+        :param analysis_case: Analysis case relating to the buckling analysis
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        """
+
+        self.buckling_modes = buckling_modes
+        self.w = w
+        self.v = v
+        self.analysis_case = analysis_case
+
+
+class FrequencyModes:
+    """Class for storing frequency modes at a degree of freedom for a specific analysis case.
+
+    :cvar frequency_modes: Frequency mode numbers
+    :vartype frequency_modes: list[int]
+    :cvar w: Eigenvalues corresponding to the given modes
+    :vartype w: list[float]
+    :cvar float v: Value of the eigevectors at the DoF corresponding to the given modes
+    :vartype v: list[float]
+    :cvar analysis_case: Analysis case relating to the frequency analysis
+    :vartype analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+    """
+
+    def __init__(self, frequency_modes, w, v, analysis_case):
+        """Inits the Displacement class.
+
+        :param frequency_modes: Frequency mode numbers
+        :type frequency_modes: list[int]
+        :param w: Eigenvalues corresponding to the given modes
+        :type w: list[float]
+        :param v: Value of the eigevectors at the DoF corresponding to the given modes
+        :type v: list[float]
+        :param analysis_case: Analysis case relating to the frequency analysis
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        """
+
+        self.frequency_modes = frequency_modes
+        self.w = w
+        self.v = v
         self.analysis_case = analysis_case

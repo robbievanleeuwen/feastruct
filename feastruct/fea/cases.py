@@ -105,7 +105,12 @@ class FreedomCase(Case):
         for support in self.items:
             # if the support is the node in question and the support is fixed
             if support.val == 0 and support.node == node:
-                fixity[support.dof] = 1
+                if support.dof == 5:
+                    dof = 2
+                else:
+                    dof = support.dof
+
+                fixity[dof] = 1
 
         return fixity
 

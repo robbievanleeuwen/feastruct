@@ -3,6 +3,7 @@ from feastruct.pre.section import Section
 import feastruct.fea.cases as cases
 from feastruct.fea.frame import FrameAnalysis2D
 from feastruct.solvers.linstatic import LinearStatic
+from feastruct.solvers.feasolve import SolverSettings
 
 # ------------
 # preprocessor
@@ -75,7 +76,10 @@ analysis_cases.append(cases.AnalysisCase(freedom_case=freedom_cases[2], load_cas
 # solver
 # ------
 
-LinearStatic(analysis=analysis, analysis_cases=analysis_cases, solver_settings=None).solve()
+settings = SolverSettings()
+settings.linear_static.time_info = True
+
+LinearStatic(analysis=analysis, analysis_cases=analysis_cases, solver_settings=settings).solve()
 
 # ----
 # post

@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -367,17 +371,99 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">disp_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of displacements</span>
+
+        <span class="c1"># get all the dof objects for the element</span>
         <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">dof_nums</span><span class="p">)</span>
 
+        <span class="c1"># loop through each node&#39;s dofs</span>
         <span class="k">for</span> <span class="n">node_dofs</span> <span class="ow">in</span> <span class="n">dof_list</span><span class="p">:</span>
+            <span class="c1"># list of displacements for the current node</span>
             <span class="n">node_list</span> <span class="o">=</span> <span class="p">[]</span>
 
+            <span class="c1"># loop through each dof in the node</span>
             <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node_dofs</span><span class="p">:</span>
+                <span class="c1"># add the dof displacement to the node list</span>
                 <span class="n">node_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dof</span><span class="o">.</span><span class="n">get_displacement</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">))</span>
 
             <span class="n">disp_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_list</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">disp_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_buckling_results"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_buckling_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_buckling_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dof_nums</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the eigenvalue corresponding to the buckling analysis defined by the</span>
+<span class="sd">        analysis_case and the buckling_mode. Also returns an array of eigenvector values</span>
+<span class="sd">        corresponding to each degree of freedom in the finite element.</span>
+
+<span class="sd">        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.</span>
+<span class="sd">            [0, 1] for *x* and *y* translation</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the buckling analysis</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :param int buckling_mode: Buckling mode number</span>
+
+<span class="sd">        :return: Eigenvalue and eigenvectors *(w, v)*. A tuple containing the eigenvalue *w* and</span>
+<span class="sd">            an *(n_nodes x n_dof)* array of eigenvector values *v*.</span>
+<span class="sd">        :rtype: tuple(float, :class:`numpy.ndarray`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">v_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of eigenvectors</span>
+
+        <span class="c1"># get all the dof objects for the element</span>
+        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">dof_nums</span><span class="p">)</span>
+
+        <span class="c1"># loop through each node&#39;s dofs</span>
+        <span class="k">for</span> <span class="n">node_dofs</span> <span class="ow">in</span> <span class="n">dof_list</span><span class="p">:</span>
+            <span class="c1"># list of eigenvectors for the current node</span>
+            <span class="n">node_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># loop through each dof in the node</span>
+            <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node_dofs</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="n">dof</span><span class="o">.</span><span class="n">get_buckling_mode</span><span class="p">(</span>
+                    <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="o">=</span><span class="n">buckling_mode</span><span class="p">)</span>
+
+                <span class="c1"># add the dof eigenvector to the node list</span>
+                <span class="n">node_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+            <span class="n">v_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_list</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v_list</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_frequency_results"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dof_nums</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the eigenvalue corresponding to the frequency analysis defined by the</span>
+<span class="sd">        analysis_case and the frequency_mode. Also returns an array of eigenvector values</span>
+<span class="sd">        corresponding to each degree of freedom in the finite element.</span>
+
+<span class="sd">        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.</span>
+<span class="sd">            [0, 1] for *x* and *y* translation</span>
+<span class="sd">        :param analysis_case: Analysis case relating to the frequency analysis</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :param int frequency_mode: Frequency mode number</span>
+
+<span class="sd">        :return: Eigenvalue and eigenvectors *(w, v)*. A tuple containing the eigenvalue *w* and</span>
+<span class="sd">            an *(n_nodes x n_dof)* array of eigenvector values *v*.</span>
+<span class="sd">        :rtype: tuple(float, :class:`numpy.ndarray`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">v_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of eigenvectors</span>
+
+        <span class="c1"># get all the dof objects for the element</span>
+        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">dof_nums</span><span class="p">)</span>
+
+        <span class="c1"># loop through each node&#39;s dofs</span>
+        <span class="k">for</span> <span class="n">node_dofs</span> <span class="ow">in</span> <span class="n">dof_list</span><span class="p">:</span>
+            <span class="c1"># list of eigenvectors for the current node</span>
+            <span class="n">node_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># loop through each dof in the node</span>
+            <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node_dofs</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="n">dof</span><span class="o">.</span><span class="n">get_frequency_mode</span><span class="p">(</span>
+                    <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="o">=</span><span class="n">frequency_mode</span><span class="p">)</span>
+
+                <span class="c1"># add the dof eigenvector to the node list</span>
+                <span class="n">node_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+            <span class="n">v_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_list</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v_list</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="FiniteElement.get_fint"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_fint">[docs]</a>    <span class="k">def</span> <span class="nf">get_fint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the internal force vector relating to an</span>
@@ -444,7 +530,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

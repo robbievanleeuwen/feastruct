@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -381,9 +385,10 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
                 <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FrameElement2D.plot_deformed_element"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameElement2D.plot_deformed_element">[docs]</a>    <span class="k">def</span> <span class="nf">plot_deformed_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">):</span>
+<div class="viewcode-block" id="FrameElement2D.plot_deformed_element"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameElement2D.plot_deformed_element">[docs]</a>    <span class="k">def</span> <span class="nf">plot_deformed_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">def_scale</span><span class="p">,</span> <span class="n">u_el</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plots a 2D frame element in its deformed configuration for the displacement vector</span>
-<span class="sd">        defined by the analysis_case. The deformation is based on the element shape functions.</span>
+<span class="sd">        defined by the analysis_case. The deformation is based on the element shape functions. If</span>
+<span class="sd">        a displacement vector, *u_el*, is supplied, uses this to plot the deformed element.</span>
 
 <span class="sd">        :param ax: Axis object on which to draw the element</span>
 <span class="sd">        :type ax: :class:`matplotlib.axes.Axes`</span>
@@ -391,11 +396,13 @@
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        :param int n: Number of linear subdivisions used to plot the element</span>
 <span class="sd">        :param float def_scale: Deformation scale</span>
+<span class="sd">        :param u_el: Element displacement vector of size *(n_node x n_dof)*</span>
+<span class="sd">        :type u_el: :class:`numpy.ndarray`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># TODO: IMPLEMENT!</span>
         <span class="c1"># get nodal displacements</span>
-        <span class="n">u_el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nodal_displacements</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">u_el</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">u_el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nodal_displacements</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">)</span>
 
         <span class="c1"># compute frame geometric parameters</span>
         <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
@@ -867,7 +874,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>

@@ -57,6 +57,10 @@
           
             
             
+              <div class="version">
+                0.1
+              </div>
+            
           
 
           
@@ -224,6 +228,25 @@ x-axis and 1 corresponds to the y-axis</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.post.post.PostProcessor.plot_buckling_results">
+<code class="descname">plot_buckling_results</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_buckling_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to plot a buckling eigenvector. The undeformed structure is plotted with a
+dashed line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>buckling_mode</strong> (<em>int</em>) – Buckling mode to plot</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.post.post.PostProcessor.plot_frame_forces">
 <code class="descname">plot_frame_forces</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>axial=False</em>, <em>shear=False</em>, <em>moment=False</em>, <em>scale=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_frame_forces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_frame_forces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method used to plot internal frame actions resulting from the analysis case.</p>
@@ -238,6 +261,25 @@ x-axis and 1 corresponds to the y-axis</li>
 <li><strong>moment</strong> (<em>bool</em>) – Whether or not the bending moment diagram is displayed</li>
 <li><strong>scale</strong> (<em>float</em>) – Scale used for plotting internal force diagrams. Corresponds to the
 fraction of the window that the largest action takes up</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.post.post.PostProcessor.plot_frequency_results">
+<code class="descname">plot_frequency_results</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_frequency_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used to plot a frequency eigenvector. The undeformed structure is plotted with a
+dashed line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</li>
+<li><strong>frequency_mode</strong> (<em>int</em>) – Frequency mode to plot</li>
 </ul>
 </td>
 </tr>
@@ -367,7 +409,7 @@ undeformed structure is to be plotted</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Robbie van Leeuwen.
+        &copy; Copyright 2019, Robbie van Leeuwen.
 
     </p>
   </div>
