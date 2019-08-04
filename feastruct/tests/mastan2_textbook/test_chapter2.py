@@ -56,7 +56,7 @@ class TestChapter2(unittest.TestCase):
         # linear static solver
         LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
 
-        # check node get_nodal_displacement
+        # check node displacement
         node1 = nodes[1]
         dofs = node1.get_dofs(node1.nfs)
 
@@ -120,7 +120,7 @@ class TestChapter2(unittest.TestCase):
         # linear static solver
         LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
 
-        # check node get_nodal_displacement
+        # check node displacement
         dofs = a.get_dofs(a.nfs)
         u = dofs[0].get_displacement(analysis_case)
         v = dofs[1].get_displacement(analysis_case)
