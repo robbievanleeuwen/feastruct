@@ -14,32 +14,35 @@ a python package for structural finite element analysis.
 
 ### Finite Element Analysis
 - [x] 2D Frame
+  - [x] Bar Element
   - [x] Euler Bernoulli Frame Element
   - [ ] Timoshenko Frame Element
-  - [ ] Truss Element
+- [ ] 3D Frame
+  - [ ] Bar Element
+  - [ ] Euler Bernoulli Frame Element
+  - [ ] Timoshenko Frame Element
 - [ ] 2D Membrane (Plane Stress/Plane Strain)
   - [ ] 3-Noded Triangular Element
   - [ ] 6-Noded Triangular Element
 - [ ] Plate Elements
 - [ ] Shell Elements
-- [ ] 3D Frame Elements
 
 ### Element Formulations
 - [x] Geometrically Linear
 - [ ] Geometrically Non-Linear
-- [ ] Material Non-Linearity
+- [ ] Material Non-Linear
 
 ### Loading/Restraints
 - [x] Applied Loads
+  - [x] Load Cases
   - [x] Nodal Loads
   - [ ] Surface (Distributed) Loads
   - [ ] Body Loads
-  - [x] Load Cases
 - [x] Restraints
-  - [x] Nodal Supports
-  - [ ] Surface Supports
-  - [ ] Nodal Springs
   - [x] Freedom Cases
+  - [x] Nodal Supports
+  - [ ] Nodal Springs
+  - [ ] Surface (Distributed) Supports
 - [x] Analysis Cases
 
 ### Solvers
@@ -49,6 +52,7 @@ a python package for structural finite element analysis.
 - [x] Natural Frequency Solver
 - [ ] Linear Dynamic Solver
 - [ ] Non-Linear Dynamic Solver
+- [x] Multi-Element Solvers
 
 ### Post-Processor
 - [x] Structural Mesh and Boundary Conditions

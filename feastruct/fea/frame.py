@@ -488,7 +488,37 @@ class Bar2D_2N(FrameElement2D):
             pass
 
     def get_geometric_stiff_matrix(self, analysis_case):
-        pass
+        """Gets the geometric stiffness matrix for a two noded, 2D bar element. The stiffness
+        matrix has been analytically integrated so numerical integration is not necessary. The
+        geometric stiffness matrix requires an axial force so the analysis_case from a static
+        analysis must be provided.
+
+        :param analysis_case: Analysis case from which to extract the axial force
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :return: 4 x 4 element geometric stiffness matrix
+        :rtype: :class: `numpy.ndarray`
+        """
+
+        # compute geometric parameters
+        (_, _, l0, c) = self.get_geometric_properties()
+
+        # extract relevant properties
+        s = c[1]
+        c = c[0]
+
+        # get axial force
+        f_int = self.get_fint(analysis_case)
+
+        # get axial force in element (take average of nodal values)
+        N = np.mean([-f_int[0], f_int[1]])
+
+        # form geometric stiffness matrix
+        return N / l0 * np.array([
+            [s*s, -c*s, -s*s, c*s],
+            [-c*s, c*c, c*s, -c*c],
+            [-s*s, c*s, s*s, -c*s],
+            [c*s, -c*c, -c*s, c*c]
+        ])
 
     def get_mass_matrix(self):
         """Gets the mass matrix for a for a two noded, 2D bar element. The mass matrix has been
