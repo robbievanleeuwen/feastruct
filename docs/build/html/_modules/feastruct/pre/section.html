@@ -159,31 +159,39 @@
 <div class="viewcode-block" id="Section"><a class="viewcode-back" href="../../../rst/pre.html#feastruct.pre.section.Section">[docs]</a><span></span><span class="k">class</span> <span class="nc">Section</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Class for storing cross-section properties.</span>
 
+<span class="sd">    :cvar string name: Section name</span>
 <span class="sd">    :cvar float area: Cross-sectional area</span>
 <span class="sd">    :cvar float ixx: Second moment of area about the centroidal x-axis</span>
 <span class="sd">    :cvar float iyy: Second moment of area about the centroidal y-axis</span>
 <span class="sd">    :cvar float j: Torsion constant</span>
 <span class="sd">    :cvar float A_sx: Shear area about the x-axis</span>
 <span class="sd">    :cvar float A_sy: Shear area about the y-axis</span>
+<span class="sd">    :cvar colour: Section colour for rendering</span>
+<span class="sd">    :vartype colour: :class:`matplotlib.colors`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Section.__init__"><a class="viewcode-back" href="../../../rst/pre.html#feastruct.pre.section.Section.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ixx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">iyy</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">A_sx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">A_sy</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Section.__init__"><a class="viewcode-back" href="../../../rst/pre.html#feastruct.pre.section.Section.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ixx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">iyy</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">A_sx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">A_sy</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the Section class.</span>
 
+<span class="sd">        :param string name: Section name</span>
 <span class="sd">        :param float area: Cross-sectional area</span>
 <span class="sd">        :param float ixx: Second moment of area about the centroidal x-axis</span>
 <span class="sd">        :param float iyy: Second moment of area about the centroidal y-axis</span>
 <span class="sd">        :param float j: Torsion constant</span>
 <span class="sd">        :param float A_sx: Shear area about the x-axis</span>
 <span class="sd">        :param float A_sy: Shear area about the y-axis</span>
+<span class="sd">        :param colour: Section colour for rendering</span>
+<span class="sd">        :type colour: :class:`matplotlib.colors`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">area</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ixx</span> <span class="o">=</span> <span class="n">ixx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iyy</span> <span class="o">=</span> <span class="n">iyy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">j</span> <span class="o">=</span> <span class="n">j</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">A_sx</span> <span class="o">=</span> <span class="n">A_sx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">A_sy</span> <span class="o">=</span> <span class="n">A_sy</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A_sy</span> <span class="o">=</span> <span class="n">A_sy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colour</span> <span class="o">=</span> <span class="n">colour</span></div></div>
 </pre></div>
 
            </div>

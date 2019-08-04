@@ -7,8 +7,8 @@ from feastruct.fea.frame import FrameElement, FrameElement2D
 from feastruct.fea.cases import AnalysisCase
 
 
-class TestFiniteElement(unittest.TestCase):
-    """Tests the functionality of the FiniteElement class"""
+class TestFrameElement(unittest.TestCase):
+    """Tests the functionality of the FrameElement class"""
 
     def setUp(self):
         steel = Steel()
@@ -21,10 +21,12 @@ class TestFiniteElement(unittest.TestCase):
         self.node2 = Node([self.x, self.y])
 
         self.element_frame = FrameElement(
-            nodes=[self.node1, self.node2], material=steel, section=section
+            nodes=[self.node1, self.node2], material=steel, section=section,
+            efs=[True, True, False, False, False, True]
         )
         self.element_frame2D = FrameElement2D(
-            nodes=[self.node1, self.node2], material=steel, section=section
+            nodes=[self.node1, self.node2], material=steel, section=section,
+            efs=[True, True, False, False, False, False]
         )
 
     def test_get_geometric_properties(self):

@@ -171,27 +171,25 @@
 <span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">    :cvar elements: Elements used in the finite element analysis</span>
 <span class="sd">    :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
-<span class="sd">    :cvar int dims: Number of dimensions used for the current analysis type</span>
-<span class="sd">    :cvar dofs: List of the degrees of freedom used in the current analysis type</span>
-<span class="sd">    :vartype dofs: list[int]</span>
+<span class="sd">    :cvar nfa: Node freedom arrangement</span>
+<span class="sd">    :vartype nfa: list[bool]</span>
 <span class="sd">    :cvar post: Post-processor object</span>
 <span class="sd">    :vartype post: :class:`feastruct.post.post.PostProcessor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="FrameAnalysis.__init__"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">dims</span><span class="p">,</span> <span class="n">dofs</span><span class="p">):</span>
+<div class="viewcode-block" id="FrameAnalysis.__init__"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the FrameAnalysis class.</span>
 
 <span class="sd">        :param nodes: List of nodes with which to initialise the class</span>
 <span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">        :param elements: List of elements with which to initialise the class</span>
 <span class="sd">        :type elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
-<span class="sd">        :param int dims: Number of dimensions used for the current analysis type</span>
-<span class="sd">        :param dofs: List of the degrees of freedom used in the current analysis type</span>
-<span class="sd">        :type dofs: list[int]</span>
+<span class="sd">        :param nfa: Node freedom arrangement</span>
+<span class="sd">        :type nfa: list[bool]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># initialise parent FiniteElementAnalysis class</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span> <span class="n">dofs</span><span class="o">=</span><span class="n">dofs</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="o">=</span><span class="n">nfa</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FrameAnalysis.create_element"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis.create_element">[docs]</a>    <span class="k">def</span> <span class="nf">create_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">el_type</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates and returns a frame element and adds it to the</span>
@@ -222,13 +220,14 @@
 <span class="sd">    Includes a method for analysis initiation and a method for adding 2D frame elements to the</span>
 <span class="sd">    analysis.</span>
 
+<span class="sd">    Active degrees of freedom are *[x, y, rz]* and are referred to as *[0, 1, 5]*.</span>
+
 <span class="sd">    :cvar nodes: Nodes used in the finite element analysis</span>
 <span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">    :cvar elements: Elements used in the finite element analysis</span>
 <span class="sd">    :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
-<span class="sd">    :cvar int dims: Number of dimensions used for the current analysis type</span>
-<span class="sd">    :cvar dofs: List of the degrees of freedom used in the current analysis type</span>
-<span class="sd">    :vartype dofs: list[int]</span>
+<span class="sd">    :cvar nfa: Node freedom arrangement</span>
+<span class="sd">    :vartype nfa: list[bool]</span>
 <span class="sd">    :cvar post: Post-processor object</span>
 <span class="sd">    :vartype post: :class:`feastruct.post.post.PostProcessor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -242,8 +241,11 @@
 <span class="sd">        :type elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c1"># set the node freedom arrangement for a 2D frame analysis</span>
+        <span class="n">nfa</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>
+
         <span class="c1"># initialise parent FrameAnalysis class</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dofs</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="o">=</span><span class="n">nfa</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FrameAnalysis2D.create_element"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis2D.create_element">[docs]</a>    <span class="k">def</span> <span class="nf">create_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">el_type</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates and returns a 2D frame element and adds it to the</span>
@@ -282,25 +284,29 @@
 <span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">    :cvar material: Material object for the element</span>
 <span class="sd">    :vartype material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">    :cvar efs: Element freedom signature</span>
+<span class="sd">    :vartype efs: list[bool]</span>
 <span class="sd">    :cvar f_int: List of internal force vector results stored for each analysis case</span>
 <span class="sd">    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]</span>
 <span class="sd">    :cvar section: Section object for the element</span>
 <span class="sd">    :vartype section: :class:`~feastruct.pre.section.Section`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="FrameElement.__init__"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameElement.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="FrameElement.__init__"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameElement.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the FrameElement class.</span>
 
 <span class="sd">        :param nodes: List of node objects defining the element</span>
 <span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">        :param material: Material object for the element</span>
 <span class="sd">        :type material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">        :param efs: Element freedom signature</span>
+<span class="sd">        :type efs: list[bool]</span>
 <span class="sd">        :param section: Section object for the element</span>
 <span class="sd">        :type section: :class:`~feastruct.pre.section.Section`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># initialise parent FiniteElement class</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="o">=</span><span class="n">efs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">section</span> <span class="o">=</span> <span class="n">section</span></div>
 
@@ -336,39 +342,29 @@
 <span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">    :cvar material: Material object for the element</span>
 <span class="sd">    :vartype material: :class:`~feastruct.pre.material.Material`</span>
-<span class="sd">    :cvar f_int: List of internal force vector results stored for each analysis</span>
-<span class="sd">        case</span>
+<span class="sd">    :cvar efs: Element freedom signature</span>
+<span class="sd">    :vartype efs: list[bool]</span>
+<span class="sd">    :cvar f_int: List of internal force vector results stored for each analysis case</span>
 <span class="sd">    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]</span>
 <span class="sd">    :cvar section: Section object for the element</span>
 <span class="sd">    :vartype section: :class:`~feastruct.pre.section.Section`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the FrameElement2D class.</span>
 
 <span class="sd">        :param nodes: List of node objects defining the element</span>
 <span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">        :param material: Material object for the element</span>
 <span class="sd">        :type material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">        :cvar efs: Element freedom signature</span>
+<span class="sd">        :vartype efs: list[bool]</span>
 <span class="sd">        :param section: Section object for the element</span>
 <span class="sd">        :type section: :class:`~feastruct.pre.section.Section`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># initialise parent FrameElement class</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
-
-<div class="viewcode-block" id="FrameElement2D.get_nodal_displacements"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameElement2D.get_nodal_displacements">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodal_displacements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns an array of the nodal displacements for each degree of freedom in the 2D frame</span>
-<span class="sd">        element *([0, 1, 5])* for the analysis_case.</span>
-
-<span class="sd">        :param analysis_case: Analysis case relating to the displacement</span>
-<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
-<span class="sd">        :return: An *(n_nodes x 3)* array of degree of freedom displacements</span>
-<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># get nodal displacements for x &amp; y translations and rotation about z</span>
-        <span class="k">return</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_nodal_displacements</span><span class="p">(</span><span class="n">dof_nums</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">))</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="o">=</span><span class="n">efs</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FrameElement2D.plot_element"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameElement2D.plot_element">[docs]</a>    <span class="k">def</span> <span class="nf">plot_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plots the undeformed frame element on the axis defined by ax.</span>
@@ -408,7 +404,7 @@
         <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
 
         <span class="c1"># rotate nodal displacements to local axis</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transformation_matrix</span><span class="p">()</span>
         <span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
         <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
 
@@ -424,19 +420,8 @@
 
         <span class="c1"># loop through stations on frame</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)):</span>
-            <span class="c1"># element shape functions</span>
-            <span class="n">N_u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>
-            <span class="n">N_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-                <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">xi</span><span class="p">),</span>
-                <span class="mf">0.125</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">),</span>
-                <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">xi</span><span class="p">),</span>
-                <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span>
-            <span class="p">])</span>
-
-            <span class="c1"># compute local displacements</span>
-            <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N_u</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N_v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-                                      <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]))</span>
+            <span class="c1"># compute local displacements based on element shape functions</span>
+            <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_local_displacement</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">u_el</span><span class="p">)</span>
 
             <span class="c1"># scale displacements by deformation scale</span>
             <span class="n">u</span> <span class="o">*=</span> <span class="n">def_scale</span>
@@ -463,7 +448,7 @@
 <span class="sd">        method is adopted from the MATLAB code by F.P. van der Meer: plotNLine.m.</span>
 
 <span class="sd">        :param ax: Axis object on which to draw the element</span>
-<span class="sd">        :type ax: : class: `matplotlib.axes.Axes`</span>
+<span class="sd">        :type ax: :class: `matplotlib.axes.Axes`</span>
 <span class="sd">        :param analysis_case: Analysis case</span>
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        :param float scalef: Factor by which to scale the axial force diagram</span>
@@ -472,10 +457,10 @@
         <span class="c1"># get geometric properties</span>
         <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
 
-        <span class="c1"># get internal force vector</span>
-        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_internal_actions</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
-        <span class="n">n1</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># axial force at node 1 (tension positive)</span>
-        <span class="n">n2</span> <span class="o">=</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># axial force at node 2 (tension positive)</span>
+        <span class="c1"># get axial force diagram - TODO implement for arbitrary n!</span>
+        <span class="n">afd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_afd</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="n">n1</span> <span class="o">=</span> <span class="n">afd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n2</span> <span class="o">=</span> <span class="n">afd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># location of node 1 and node 2</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
@@ -504,7 +489,7 @@
 <span class="sd">        method is adopted from the MATLAB code by F.P. van der Meer: plotVLine.m.</span>
 
 <span class="sd">        :param ax: Axis object on which to draw the element</span>
-<span class="sd">        :type ax: : class: `matplotlib.axes.Axes`</span>
+<span class="sd">        :type ax: :class: `matplotlib.axes.Axes`</span>
 <span class="sd">        :param analysis_case: Analysis case</span>
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        :param float scalef: Factor by which to scale the shear force diagram</span>
@@ -513,10 +498,10 @@
         <span class="c1"># get geometric properties</span>
         <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
 
-        <span class="c1"># get internal force vector</span>
-        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_internal_actions</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
-        <span class="n">v1</span> <span class="o">=</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># shear force at node 1 (cw positive)</span>
-        <span class="n">v2</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_int</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># shear force at node 2 (cw positive)</span>
+        <span class="c1"># get axial force diagram - TODO implement for arbitrary n!</span>
+        <span class="n">sfd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sfd</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">sfd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">sfd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># location of node 1 and node 2</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
@@ -545,7 +530,7 @@
 <span class="sd">        method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.</span>
 
 <span class="sd">        :param ax: Axis object on which to draw the element</span>
-<span class="sd">        :type ax: : class: `matplotlib.axes.Axes`</span>
+<span class="sd">        :type ax: :class: `matplotlib.axes.Axes`</span>
 <span class="sd">        :param analysis_case: Analysis case</span>
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        :param float scalef: Factor by which to scale the bending moment diagram</span>
@@ -554,10 +539,10 @@
         <span class="c1"># get geometric properties</span>
         <span class="p">(</span><span class="n">node_coords</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
 
-        <span class="c1"># get internal force vector</span>
-        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_internal_actions</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
-        <span class="n">m1</span> <span class="o">=</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># bending moment at node 1 (tension positive)</span>
-        <span class="n">m2</span> <span class="o">=</span> <span class="o">-</span><span class="n">f_int</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># bending moment at node 2 (tension positive)</span>
+        <span class="c1"># get axial force diagram - TODO implement for arbitrary n!</span>
+        <span class="n">bmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bmd</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">bmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="n">bmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># location of node 1 and node 2</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
@@ -594,6 +579,8 @@
 <span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">    :cvar material: Material object for the element</span>
 <span class="sd">    :vartype material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">    :cvar efs: Element freedom signature</span>
+<span class="sd">    :vartype efs: list[bool]</span>
 <span class="sd">    :cvar f_int: List of internal force vector results stored for each analysis case</span>
 <span class="sd">    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]</span>
 <span class="sd">    :cvar section: Section object for the element</span>
@@ -611,8 +598,22 @@
 <span class="sd">        :type section: :class:`~feastruct.pre.section.Section`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c1"># set the element freedom signature</span>
+        <span class="n">efs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
+
         <span class="c1"># initialise parent FrameElement2D class</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="o">=</span><span class="n">efs</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar2D_2N.get_shape_function"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_shape_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_shape_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the value of the shape functions *N1* and *N2* at *xi*.</span>
+
+<span class="sd">        :param float xi: Position along the element</span>
+
+<span class="sd">        :returns: Value of the shape functions *(N1, N2)* at *xi*</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Bar2D_2N.get_stiffness_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_stiffness_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_stiffness_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets the stiffness matrix for a two noded, 2D bar element. The stiffness matrix has been</span>
@@ -647,8 +648,159 @@
     <span class="k">def</span> <span class="nf">get_geometric_stiff_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">get_mass_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+<div class="viewcode-block" id="Bar2D_2N.get_mass_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_mass_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_mass_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the mass matrix for a for a two noded, 2D bar element. The mass matrix has been</span>
+<span class="sd">        analytically integrated so numerical integration is not necessary.</span>
+
+<span class="sd">        :return: 4 x 4 element mass matrix</span>
+<span class="sd">        :rtype: :class: `numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># compute geometric parameters</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># extract relevant properties</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">rho</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">area</span>
+
+        <span class="c1"># compute element mass matrix</span>
+        <span class="n">m_el</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="p">])</span>
+
+        <span class="c1"># construct rotation matrix</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span>
+        <span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">m_el</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar2D_2N.get_internal_actions"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_internal_actions">[docs]</a>    <span class="k">def</span> <span class="nf">get_internal_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the internal actions for a two noded 2D bar element.</span>
+
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: An array containing the internal actions for the element</span>
+<span class="sd">            *(N1, N2)*</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fint</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">f_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">,</span>
+            <span class="n">f_int</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">f</span></div>
+
+<div class="viewcode-block" id="Bar2D_2N.calculate_local_displacement"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.calculate_local_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_local_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">u_el</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the local displacement of the element at position *xi* given the displacement</span>
+<span class="sd">        vector *u_el*.</span>
+
+<span class="sd">        :param float xi: Position along the element</span>
+<span class="sd">        :param u_el: Element displacement vector</span>
+<span class="sd">        :type u_el: :class:`numpy.ndarray`</span>
+
+<span class="sd">        :returns: Local displacement of the element *(u, v)*</span>
+<span class="sd">        :rtype: tuple(float, float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># element shape function</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_function</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+        <span class="c1"># compute local displacements</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar2D_2N.get_transformation_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_transformation_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_transformation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the transformation matrix for the element.</span>
+
+<span class="sd">        :returns: Element transformation matrix</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]]])</span></div>
+
+<div class="viewcode-block" id="Bar2D_2N.get_afd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_afd">[docs]</a>    <span class="k">def</span> <span class="nf">get_afd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the axial force diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the axial force diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Axial force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get internal forces</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_internal_actions</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="n">N1</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">N2</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># allocate the axial force diagram</span>
+        <span class="n">afd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># generate list of stations</span>
+        <span class="n">stations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># loop over each station</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stations</span><span class="p">):</span>
+            <span class="c1"># get shape functions at xi</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_function</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+            <span class="c1"># compute local displacements</span>
+            <span class="n">afd</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">N1</span><span class="p">,</span> <span class="n">N2</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">afd</span></div>
+
+<div class="viewcode-block" id="Bar2D_2N.get_sfd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_sfd">[docs]</a>    <span class="k">def</span> <span class="nf">get_sfd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the shear force diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the shear force diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Shear force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># no shear force in this element</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar2D_2N.get_bmd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_bmd">[docs]</a>    <span class="k">def</span> <span class="nf">get_bmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the bending moment diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the bending moment diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Shear force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># no bending moment in this element</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Bar3D_2N"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N">[docs]</a><span class="k">class</span> <span class="nc">Bar3D_2N</span><span class="p">(</span><span class="n">FrameElement3D</span><span class="p">):</span>
@@ -664,6 +816,8 @@
 <span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">    :cvar material: Material object for the element</span>
 <span class="sd">    :vartype material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">    :cvar efs: Element freedom signature</span>
+<span class="sd">    :vartype efs: list[bool]</span>
 <span class="sd">    :cvar f_int: List of internal force vector results stored for each analysis case</span>
 <span class="sd">    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]</span>
 <span class="sd">    :cvar section: Section object for the element</span>
@@ -681,8 +835,34 @@
 <span class="sd">        :type section: :class:`~feastruct.pre.section.Section`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c1"># set the element freedom signature</span>
+        <span class="n">efs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>
+
         <span class="c1"># initialise parent FrameElement2D class</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="o">=</span><span class="n">efs</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EulerBernoulli2D_2N.get_shape_function"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_shape_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_shape_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the value of the shape functions *Nu1*, *Nu2*, *Nv1* and *Nv2* at *xi*.</span>
+
+<span class="sd">        :param float xi: Position along the element</span>
+
+<span class="sd">        :returns: Value of the shape functions *((Nu1, Nu2), (Nv1, Nv2))* at *xi*</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># compute frame geometric parameters</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># element shape functions</span>
+        <span class="n">N_u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>
+        <span class="n">N_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">xi</span><span class="p">),</span>
+            <span class="mf">0.125</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">),</span>
+            <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">xi</span><span class="p">),</span>
+            <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi</span><span class="p">)</span>
+        <span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">N_u</span><span class="p">,</span> <span class="n">N_v</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EulerBernoulli2D_2N.get_stiffness_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_stiffness_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_stiffness_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets the stiffness matrix for a two noded 2D Euler-Bernoulli frame element. The</span>
@@ -796,7 +976,7 @@
 <span class="sd">        matrix has been analytically integrated so numerical integration is not necessary.</span>
 
 <span class="sd">        :return: 6 x 6 element mass matrix</span>
-<span class="sd">        :rtype: : class: `numpy.ndarray`</span>
+<span class="sd">        :rtype: :class: `numpy.ndarray`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># compute geometric parameters</span>
@@ -832,7 +1012,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">m_el</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EulerBernoulli2D_2N.get_internal_actions"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_internal_actions">[docs]</a>    <span class="k">def</span> <span class="nf">get_internal_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the internal actions for a frame element.</span>
+        <span class="sd">&quot;&quot;&quot;Returns the internal actions for a two noded 2D Euler-Bernoulli frame element.</span>
 
 <span class="sd">        :param analysis_case: Analysis case</span>
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
@@ -857,7 +1037,138 @@
             <span class="n">f_int</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
         <span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">f</span></div></div>
+        <span class="k">return</span> <span class="n">f</span></div>
+
+<div class="viewcode-block" id="EulerBernoulli2D_2N.calculate_local_displacement"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.calculate_local_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_local_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">u_el</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the local displacement of the element at position *xi* given the displacement</span>
+<span class="sd">        vector *u_el*.</span>
+
+<span class="sd">        :param float xi: Position along the element</span>
+<span class="sd">        :param u_el: Element displacement vector</span>
+<span class="sd">        :type u_el: :class:`numpy.ndarray`</span>
+
+<span class="sd">        :returns: Local displacement of the element *(u, v)*</span>
+<span class="sd">        :rtype: tuple(float, float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># element shape functions</span>
+        <span class="p">(</span><span class="n">N_u</span><span class="p">,</span> <span class="n">N_v</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_function</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+        <span class="c1"># compute local displacements</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N_u</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N_v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]))</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EulerBernoulli2D_2N.get_transformation_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_transformation_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_transformation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the transformation matrix for the element.</span>
+
+<span class="sd">        :returns: Element transformation matrix</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span></div>
+
+<div class="viewcode-block" id="EulerBernoulli2D_2N.get_afd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_afd">[docs]</a>    <span class="k">def</span> <span class="nf">get_afd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the axial force diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the axial force diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Axial force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get internal forces</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_internal_actions</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="n">N1</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">N2</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+        <span class="c1"># allocate the axial force diagram</span>
+        <span class="n">afd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># generate list of stations</span>
+        <span class="n">stations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># loop over each station</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stations</span><span class="p">):</span>
+            <span class="c1"># get shape functions at xi</span>
+            <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_function</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+            <span class="c1"># compute axial force diagram</span>
+            <span class="n">afd</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">N1</span><span class="p">,</span> <span class="n">N2</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">afd</span></div>
+
+<div class="viewcode-block" id="EulerBernoulli2D_2N.get_sfd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_sfd">[docs]</a>    <span class="k">def</span> <span class="nf">get_sfd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the shear force diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the shear force diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Shear force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get internal forces</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_internal_actions</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="n">V1</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">V2</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+        <span class="c1"># allocate the shear force diagram</span>
+        <span class="n">sfd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># generate list of stations</span>
+        <span class="n">stations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># loop over each station</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stations</span><span class="p">):</span>
+            <span class="c1"># get shape functions at xi</span>
+            <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_function</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+            <span class="c1"># compute shear force diagram</span>
+            <span class="n">sfd</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">V1</span><span class="p">,</span> <span class="n">V2</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">sfd</span></div>
+
+<div class="viewcode-block" id="EulerBernoulli2D_2N.get_bmd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N.get_bmd">[docs]</a>    <span class="k">def</span> <span class="nf">get_bmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the bending moment diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the bending moment diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Shear force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get internal forces</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_internal_actions</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="n">M1</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">M2</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+
+        <span class="c1"># allocate the bending moment diagram</span>
+        <span class="n">bmd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># generate list of stations</span>
+        <span class="n">stations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># loop over each station</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stations</span><span class="p">):</span>
+            <span class="c1"># get shape functions at xi</span>
+            <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_function</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+            <span class="c1"># compute bending moment diagram</span>
+            <span class="n">bmd</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">bmd</span></div></div>
 
 
 <div class="viewcode-block" id="EulerBernoulli3D_2N"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli3D_2N">[docs]</a><span class="k">class</span> <span class="nc">EulerBernoulli3D_2N</span><span class="p">(</span><span class="n">FrameElement3D</span><span class="p">):</span>

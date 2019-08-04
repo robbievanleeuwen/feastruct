@@ -184,6 +184,8 @@ class PostProcessor:
             fraction of the window that the largest action takes up
         """
 
+        # TODO: implement for arbitrary number of stations - label ends and min, max
+
         (fig, ax) = plt.subplots()
 
         # get size of structure
@@ -196,14 +198,15 @@ class PostProcessor:
 
         # loop throuh each element to get max forces
         for el in self.analysis.elements:
-            f_int = el.get_internal_actions(analysis_case=analysis_case)
-
             if axial:
-                max_axial = max(max_axial, abs(f_int[0]), abs(f_int[3]))
+                afd = el.get_afd(n=2, analysis_case=analysis_case)
+                max_axial = max(max_axial, abs(afd[0]), abs(afd[1]))
             if shear:
-                max_shear = max(max_shear, abs(f_int[1]), abs(f_int[4]))
+                sfd = el.get_sfd(n=2, analysis_case=analysis_case)
+                max_shear = max(max_shear, abs(sfd[0]), abs(sfd[1]))
             if moment:
-                max_moment = max(max_moment, abs(f_int[2]), abs(f_int[5]))
+                bmd = el.get_bmd(n=2, analysis_case=analysis_case)
+                max_moment = max(max_moment, abs(bmd[0]), abs(bmd[1]))
 
         scale_axial = scale * max(xmax - xmin, ymax - ymin) / max(max_axial, 1e-8)
         scale_shear = scale * max(xmax - xmin, ymax - ymin) / max(max_shear, 1e-8)
@@ -241,8 +244,7 @@ class PostProcessor:
         # loop through all the elements
         for el in self.analysis.elements:
             (w, v_el) = el.get_buckling_results(
-                dof_nums=self.analysis.dofs, analysis_case=analysis_case,
-                buckling_mode=buckling_mode)
+                analysis_case=analysis_case, buckling_mode=buckling_mode)
 
             max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]), abs(v_el[1, 0]), abs(v_el[1, 1]))
 
@@ -252,8 +254,7 @@ class PostProcessor:
         # plot eigenvectors
         for el in self.analysis.elements:
             (_, v_el) = el.get_buckling_results(
-                dof_nums=self.analysis.dofs, analysis_case=analysis_case,
-                buckling_mode=buckling_mode)
+                analysis_case=analysis_case, buckling_mode=buckling_mode)
 
             el.plot_deformed_element(
                 ax=ax, analysis_case=analysis_case, n=self.n_subdiv, def_scale=scale, u_el=v_el)
@@ -284,8 +285,7 @@ class PostProcessor:
         # loop through all the elements
         for el in self.analysis.elements:
             (w, v_el) = el.get_frequency_results(
-                dof_nums=self.analysis.dofs, analysis_case=analysis_case,
-                frequency_mode=frequency_mode)
+                analysis_case=analysis_case, frequency_mode=frequency_mode)
 
             max_v = max(max_v, abs(v_el[0, 0]), abs(v_el[0, 1]), abs(v_el[1, 0]), abs(v_el[1, 1]))
 
@@ -295,8 +295,7 @@ class PostProcessor:
         # plot eigenvectors
         for el in self.analysis.elements:
             (_, v_el) = el.get_frequency_results(
-                dof_nums=self.analysis.dofs, analysis_case=analysis_case,
-                frequency_mode=frequency_mode)
+                analysis_case=analysis_case, frequency_mode=frequency_mode)
 
             el.plot_deformed_element(
                 ax=ax, analysis_case=analysis_case, n=self.n_subdiv, def_scale=scale, u_el=v_el)

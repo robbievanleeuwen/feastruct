@@ -23,7 +23,7 @@ class TestFiniteElement(unittest.TestCase):
 
         self.element = FiniteElement(
             nodes=[self.node1, self.node2, self.node3, self.node4],
-            material=steel
+            material=steel, efs=[True, True, False, False, False, False]
         )
 
     def test_get_node_coords(self):
@@ -37,29 +37,13 @@ class TestFiniteElement(unittest.TestCase):
         self.assertEqual(coord_list.tolist(), self.element.get_node_coords().tolist())
 
     def test_get_dofs(self):
-        # case 1 - get 3D dofs
-        dof_nums = [0, 1, 2, 3, 4, 5]
-        dof_list = self.element.get_dofs(dof_nums)
+        indices = [i for i, x in enumerate(self.element.efs) if x]
+
+        dof_list = self.element.get_dofs()
 
         for (i, node) in enumerate(dof_list):
             for (j, dof) in enumerate(node):
-                self.assertTrue(dof is self.element.nodes[i].dofs[dof_nums[j]])
-
-        # case 2 - get 2D dofs
-        dof_nums = [0, 1, 3]
-        dof_list = self.element.get_dofs(dof_nums)
-
-        for (i, node) in enumerate(dof_list):
-            for (j, dof) in enumerate(node):
-                self.assertTrue(dof is self.element.nodes[i].dofs[dof_nums[j]])
-
-        # case 3 - get 1 dof
-        dof_nums = [5]
-        dof_list = self.element.get_dofs(dof_nums)
-
-        for (i, node) in enumerate(dof_list):
-            for (j, dof) in enumerate(node):
-                self.assertTrue(dof is self.element.nodes[i].dofs[dof_nums[j]])
+                self.assertTrue(dof is self.element.nodes[i].dofs[indices[j]])
 
     def test_get_nodal_displacements(self):
         # add dummy analysis case
@@ -74,33 +58,16 @@ class TestFiniteElement(unittest.TestCase):
                 dof.save_displacement(dof_count, case1)
                 dof_count += 1
 
-        # case 1 - get 3D dofs
-        dof_nums = [0, 1, 2, 3, 4, 5]
-        nodal_disps = self.element.get_nodal_displacements(dof_nums, case1)
+        indices = [i for i, x in enumerate(self.element.efs) if x]
+        nodal_disps = self.element.get_nodal_displacements(case1)
 
         for (i, node) in enumerate(nodal_disps):
             for (j, disp) in enumerate(node):
-                self.assertEqual(disp, 6 * i + dof_nums[j])
-
-        # case 2 - get 2D dofs
-        dof_nums = [0, 1, 3]
-        nodal_disps = self.element.get_nodal_displacements(dof_nums, case1)
-
-        for (i, node) in enumerate(nodal_disps):
-            for (j, disp) in enumerate(node):
-                self.assertEqual(disp, 6 * i + dof_nums[j])
-
-        # case 3 - get 1 dof
-        dof_nums = [5]
-        nodal_disps = self.element.get_nodal_displacements(dof_nums, case1)
-
-        for (i, node) in enumerate(nodal_disps):
-            for (j, disp) in enumerate(node):
-                self.assertEqual(disp, 6 * i + dof_nums[j])
+                self.assertEqual(disp, 6 * i + indices[j])
 
         # check exception
         with self.assertRaises(Exception):
-            self.element.get_nodal_displacements(dof_nums, case2)
+            self.element.get_nodal_displacements(case2)
 
     def test_fint(self):
         # add dummy analysis case

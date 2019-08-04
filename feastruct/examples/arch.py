@@ -5,8 +5,8 @@ import feastruct.fea.cases as cases
 from feastruct.fea.frame import FrameAnalysis2D
 from feastruct.solvers.linstatic import LinearStatic
 from feastruct.solvers.linbuckling import LinearBuckling
-from feastruct.solvers.feasolve import SolverSettings
 from feastruct.solvers.naturalfrequency import NaturalFrequency
+from feastruct.solvers.feasolve import SolverSettings
 
 # ------------
 # preprocessor
@@ -19,7 +19,7 @@ h = 3000  # height of arch
 nodes = []  # list holding the node objects
 elements = []  # list holding the element objects
 
-# create 2d frame analyis object
+# create 2d frame analysis object
 analysis = FrameAnalysis2D()
 
 # create materials and sections

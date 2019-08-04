@@ -173,7 +173,7 @@
 <span class="sd">    :vartype analysis_cases: list[:class:`~feastruct.fea.cases.AnalysisCase`]</span>
 <span class="sd">    :cvar solver_settings: Settings to use in the solver</span>
 <span class="sd">    :vartype solver_settings: :class:`~feastruct.solvers.feasolve.SolverSettings`</span>
-<span class="sd">    :cvar int ndof: Number of degrees of freedom in the analysis</span>
+<span class="sd">    :cvar int ndof: Number of active degrees of freedom in the analysis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Solver.__init__"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">analysis_cases</span><span class="p">,</span> <span class="n">solver_settings</span><span class="p">):</span>
@@ -193,27 +193,31 @@
         <span class="k">if</span> <span class="n">solver_settings</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span> <span class="o">=</span> <span class="n">SolverSettings</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span> <span class="o">=</span> <span class="n">solver_settings</span>
-
-        <span class="c1"># calculate total number of global dofs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ndof</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span> <span class="o">=</span> <span class="n">solver_settings</span></div>
 
 <div class="viewcode-block" id="Solver.assign_dofs"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.assign_dofs">[docs]</a>    <span class="k">def</span> <span class="nf">assign_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Method to assign global degrees of freedom to the nodes in the analysis object.&quot;&quot;&quot;</span>
+
+        <span class="c1"># assign node freedom allocations by looping through all elements</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
+            <span class="n">element</span><span class="o">.</span><span class="n">apply_nfa</span><span class="p">()</span>
 
         <span class="n">dof_count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># initialise degree of freedom counter</span>
 
         <span class="c1"># loop through all the nodes in the analysis</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
-            <span class="c1"># get the relevant degrees of freedom for the node</span>
-            <span class="n">node_dofs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
+            <span class="c1"># get all degree of freedoms in the node freedom signature</span>
+            <span class="n">node_dofs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">freedom_signature</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">nfs</span><span class="p">)</span>
 
             <span class="c1"># loop through each dof</span>
             <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node_dofs</span><span class="p">:</span>
                 <span class="c1"># assign a global degree of freedom number</span>
                 <span class="n">dof</span><span class="o">.</span><span class="n">global_dof_num</span> <span class="o">=</span> <span class="n">dof_count</span>
 
-                <span class="n">dof_count</span> <span class="o">+=</span> <span class="mi">1</span></div>
+                <span class="n">dof_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># assign the total number of global dofs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ndof</span> <span class="o">=</span> <span class="n">dof_count</span></div>
 
 <div class="viewcode-block" id="Solver.assemble_stiff_matrix"><a class="viewcode-back" href="../../../rst/solvers.html#feastruct.solvers.feasolve.Solver.assemble_stiff_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">assemble_stiff_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">analysis_case</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Assembles the global stiffness using the sparse COO format.</span>
@@ -239,13 +243,13 @@
         <span class="c1"># loop through all the elements</span>
         <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
             <span class="c1"># determine number of dofs in the current element</span>
-            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_ndof</span><span class="p">()</span>
 
             <span class="c1"># get element stiffness matrix</span>
             <span class="n">k_el</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_stiffness_matrix</span><span class="p">()</span>
 
             <span class="c1"># get element degrees of freedom</span>
-            <span class="n">el_dofs</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_gdof_nums</span><span class="p">(</span><span class="n">dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
+            <span class="n">el_dofs</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_gdof_nums</span><span class="p">()</span>
 
             <span class="c1"># create row index vector</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">el_dofs</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
@@ -291,13 +295,13 @@
         <span class="c1"># loop through all the elements</span>
         <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
             <span class="c1"># determine number of dofs in the current element</span>
-            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_ndof</span><span class="p">()</span>
 
             <span class="c1"># get element mass matrix</span>
             <span class="n">m_el</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_mass_matrix</span><span class="p">()</span>
 
             <span class="c1"># get element degrees of freedom</span>
-            <span class="n">el_dofs</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_gdof_nums</span><span class="p">(</span><span class="n">dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
+            <span class="n">el_dofs</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">get_gdof_nums</span><span class="p">()</span>
 
             <span class="c1"># create row index vector</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">el_dofs</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
@@ -494,7 +498,7 @@
         <span class="c1"># loop through all the nodes in the analysis</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
             <span class="c1"># get the relevant degrees of freedom for the node</span>
-            <span class="n">node_dofs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">)</span>
+            <span class="n">node_dofs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">freedom_signature</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">nfs</span><span class="p">)</span>
 
             <span class="c1"># loop through each dof and save the relevant displacement</span>
             <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node_dofs</span><span class="p">:</span>
@@ -526,7 +530,7 @@
         <span class="c1"># loop through all the nodes</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
             <span class="c1"># loop through all the relevant dofs</span>
-            <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">node_dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">freedom_signature</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">nfs</span><span class="p">):</span>
                 <span class="c1"># get global degree of freedom number</span>
                 <span class="n">gdof</span> <span class="o">=</span> <span class="n">dof</span><span class="o">.</span><span class="n">global_dof_num</span>
 
@@ -566,7 +570,7 @@
         <span class="c1"># loop through all the nodes</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
             <span class="c1"># loop through all the relevant dofs</span>
-            <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">node_dof_nums</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">dofs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">dof</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">freedom_signature</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">nfs</span><span class="p">):</span>
                 <span class="c1"># get global degree of freedom number</span>
                 <span class="n">gdof</span> <span class="o">=</span> <span class="n">dof</span><span class="o">.</span><span class="n">global_dof_num</span>
 

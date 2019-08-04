@@ -195,7 +195,11 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">-Starting the natural frequency solver...&#39;</span><span class="p">)</span>
 
         <span class="c1"># assign the global degree of freedom numbers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assign_dofs</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver_settings</span><span class="o">.</span><span class="n">linear_static</span><span class="o">.</span><span class="n">time_info</span><span class="p">:</span>
+            <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;--Assigning the global degree of freedom numbers...&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">function_timer</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_dofs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assign_dofs</span><span class="p">()</span>
 
         <span class="c1"># loop through each analysis case</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis_cases</span><span class="p">):</span>

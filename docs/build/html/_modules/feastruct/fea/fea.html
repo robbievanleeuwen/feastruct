@@ -172,23 +172,21 @@
 <span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">    :cvar elements: Elements used in the finite element analysis</span>
 <span class="sd">    :vartype elements: list[:class:`~feastruct.fea.fea.FiniteElement`]</span>
-<span class="sd">    :cvar int dims: Number of dimensions used for the current analysis type</span>
-<span class="sd">    :cvar dofs: List of the degrees of freedom used in the current analysis type</span>
-<span class="sd">    :vartype dofs: list[int]</span>
+<span class="sd">    :cvar nfa: Node freedom arrangement</span>
+<span class="sd">    :vartype nfa: list[bool]</span>
 <span class="sd">    :cvar post: Post-processor object</span>
 <span class="sd">    :vartype post: :class:`feastruct.post.post.PostProcessor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="FiniteElementAnalysis.__init__"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">dims</span><span class="p">,</span> <span class="n">dofs</span><span class="p">):</span>
+<div class="viewcode-block" id="FiniteElementAnalysis.__init__"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the FiniteElementAnalysis class.</span>
 
 <span class="sd">        :param nodes: List of nodes with which to initialise the class</span>
 <span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">        :param elements: List of elements with which to initialise the class</span>
 <span class="sd">        :type elements: list[:class:`~feastruct.fea.fea.FiniteElement`]</span>
-<span class="sd">        :param int dims: Number of dimensions used for the current analysis type</span>
-<span class="sd">        :param dofs: List of the degrees of freedom used in the current analysis type</span>
-<span class="sd">        :type dofs: list[int]</span>
+<span class="sd">        :param nfa: Node freedom arrangement</span>
+<span class="sd">        :type nfa: list[bool]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -201,8 +199,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">dims</span> <span class="o">=</span> <span class="n">dims</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dofs</span> <span class="o">=</span> <span class="n">dofs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nfa</span> <span class="o">=</span> <span class="n">nfa</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="n">PostProcessor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FiniteElementAnalysis.create_node"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.create_node">[docs]</a>    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
@@ -279,21 +276,26 @@
 <span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">    :cvar material: Material object for the element</span>
 <span class="sd">    :vartype material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">    :cvar efs: Element freedom signature</span>
+<span class="sd">    :vartype efs: list[bool]</span>
 <span class="sd">    :cvar f_int: List of internal force vector results stored for each analysis case</span>
 <span class="sd">    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="FiniteElement.__init__"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">):</span>
+<div class="viewcode-block" id="FiniteElement.__init__"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the FiniteElement class.</span>
 
 <span class="sd">        :param nodes: List of node objects that define the geometry of the finite element</span>
 <span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
 <span class="sd">        :param material: Material object for the element</span>
 <span class="sd">        :type material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">        :param efs: Element freedom signature</span>
+<span class="sd">        :type efs: list[bool]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">material</span> <span class="o">=</span> <span class="n">material</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">efs</span> <span class="o">=</span> <span class="n">efs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f_int</span> <span class="o">=</span> <span class="p">[]</span></div>
 
 <div class="viewcode-block" id="FiniteElement.get_node_coords"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_node_coords">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -314,12 +316,19 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coord_list</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FiniteElement.get_dofs"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_dofs">[docs]</a>    <span class="k">def</span> <span class="nf">get_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dof_nums</span><span class="p">):</span>
+<div class="viewcode-block" id="FiniteElement.get_ndof"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_ndof">[docs]</a>    <span class="k">def</span> <span class="nf">get_ndof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the number of active degrees of freedom for the element.</span>
+
+<span class="sd">        :returns: Number of active degrees of freedom for the element</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">efs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_dofs"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_dofs">[docs]</a>    <span class="k">def</span> <span class="nf">get_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Finds and returns a list of DoF objects corresponding to the degrees of freedom of the</span>
 <span class="sd">        finite element.</span>
 
-<span class="sd">        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.</span>
-<span class="sd">            [0, 1] for *x* and *y* translation</span>
 <span class="sd">        :return: A list of DoF objects, with a length of *(n_nodes x n_dof)*</span>
 <span class="sd">        :rtype: list[list[:class:`~feastruct.fea.node.DoF`]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -329,23 +338,21 @@
         <span class="c1"># loop through all nodes of the element</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
             <span class="c1"># append the node dofs to the list</span>
-            <span class="n">dof_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">dof_nums</span><span class="p">))</span>
+            <span class="n">dof_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">freedom_signature</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">efs</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">dof_list</span></div>
 
-<div class="viewcode-block" id="FiniteElement.get_gdof_nums"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_gdof_nums">[docs]</a>    <span class="k">def</span> <span class="nf">get_gdof_nums</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dof_nums</span><span class="p">):</span>
+<div class="viewcode-block" id="FiniteElement.get_gdof_nums"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_gdof_nums">[docs]</a>    <span class="k">def</span> <span class="nf">get_gdof_nums</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns an array of global degree of freedom numbers corresponding to the degrees of</span>
 <span class="sd">        freedom of the finite element.</span>
 
-<span class="sd">        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.</span>
-<span class="sd">            [0, 1] for *x* and *y* translation</span>
 <span class="sd">        :return: A integer array of global degrees of freedom, with a length of *(1 x n)*, where n</span>
 <span class="sd">            is *n_nodes x n_dof*</span>
 <span class="sd">        :rtype: :class:`numpy.ndarray`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># get a list of dof objects for all nodes</span>
-        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">dof_nums</span><span class="p">)</span>
+        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">()</span>
 
         <span class="c1"># allocate a list of ints for the global</span>
         <span class="n">gdof_num_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -358,12 +365,22 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gdof_num_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FiniteElement.get_nodal_displacements"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_nodal_displacements">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodal_displacements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dof_nums</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+<div class="viewcode-block" id="FiniteElement.apply_nfa"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.apply_nfa">[docs]</a>    <span class="k">def</span> <span class="nf">apply_nfa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies the element freedom signature to all nodes in the element to generate a node</span>
+<span class="sd">        freedom allocation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># loop through all the nodes in the element</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="c1"># loop through all the freedoms in the current node signature</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">nf</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">nfs</span><span class="p">):</span>
+                <span class="c1"># apply the element freedom signature</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">nfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nf</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">efs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="FiniteElement.get_nodal_displacements"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_nodal_displacements">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodal_displacements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns an array of the nodal displacements for each degree of freedom in the finite</span>
 <span class="sd">        element for the analysis_case.</span>
 
-<span class="sd">        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.</span>
-<span class="sd">            [0, 1] for *x* and *y* translation</span>
 <span class="sd">        :param analysis_case: Analysis case relating to the displacement</span>
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        :return: An *(n_nodes x n_dof)* array of degree of freedom displacements</span>
@@ -373,7 +390,7 @@
         <span class="n">disp_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of displacements</span>
 
         <span class="c1"># get all the dof objects for the element</span>
-        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">dof_nums</span><span class="p">)</span>
+        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">()</span>
 
         <span class="c1"># loop through each node&#39;s dofs</span>
         <span class="k">for</span> <span class="n">node_dofs</span> <span class="ow">in</span> <span class="n">dof_list</span><span class="p">:</span>
@@ -389,13 +406,11 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">disp_list</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FiniteElement.get_buckling_results"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_buckling_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_buckling_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dof_nums</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="FiniteElement.get_buckling_results"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_buckling_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_buckling_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">buckling_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the eigenvalue corresponding to the buckling analysis defined by the</span>
 <span class="sd">        analysis_case and the buckling_mode. Also returns an array of eigenvector values</span>
 <span class="sd">        corresponding to each degree of freedom in the finite element.</span>
 
-<span class="sd">        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.</span>
-<span class="sd">            [0, 1] for *x* and *y* translation</span>
 <span class="sd">        :param analysis_case: Analysis case relating to the buckling analysis</span>
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        :param int buckling_mode: Buckling mode number</span>
@@ -408,7 +423,7 @@
         <span class="n">v_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of eigenvectors</span>
 
         <span class="c1"># get all the dof objects for the element</span>
-        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">dof_nums</span><span class="p">)</span>
+        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">()</span>
 
         <span class="c1"># loop through each node&#39;s dofs</span>
         <span class="k">for</span> <span class="n">node_dofs</span> <span class="ow">in</span> <span class="n">dof_list</span><span class="p">:</span>
@@ -427,13 +442,11 @@
 
         <span class="k">return</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v_list</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="FiniteElement.get_frequency_results"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dof_nums</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="FiniteElement.get_frequency_results"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElement.get_frequency_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_frequency_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">,</span> <span class="n">frequency_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the eigenvalue corresponding to the frequency analysis defined by the</span>
 <span class="sd">        analysis_case and the frequency_mode. Also returns an array of eigenvector values</span>
 <span class="sd">        corresponding to each degree of freedom in the finite element.</span>
 
-<span class="sd">        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.</span>
-<span class="sd">            [0, 1] for *x* and *y* translation</span>
 <span class="sd">        :param analysis_case: Analysis case relating to the frequency analysis</span>
 <span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
 <span class="sd">        :param int frequency_mode: Frequency mode number</span>
@@ -446,7 +459,7 @@
         <span class="n">v_list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allocate list of eigenvectors</span>
 
         <span class="c1"># get all the dof objects for the element</span>
-        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">(</span><span class="n">dof_nums</span><span class="p">)</span>
+        <span class="n">dof_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dofs</span><span class="p">()</span>
 
         <span class="c1"># loop through each node&#39;s dofs</span>
         <span class="k">for</span> <span class="n">node_dofs</span> <span class="ow">in</span> <span class="n">dof_list</span><span class="p">:</span>

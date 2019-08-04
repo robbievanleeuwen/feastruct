@@ -15,7 +15,7 @@ class Solver:
     :vartype analysis_cases: list[:class:`~feastruct.fea.cases.AnalysisCase`]
     :cvar solver_settings: Settings to use in the solver
     :vartype solver_settings: :class:`~feastruct.solvers.feasolve.SolverSettings`
-    :cvar int ndof: Number of degrees of freedom in the analysis
+    :cvar int ndof: Number of active degrees of freedom in the analysis
     """
 
     def __init__(self, analysis, analysis_cases, solver_settings):
@@ -37,18 +37,19 @@ class Solver:
         else:
             self.solver_settings = solver_settings
 
-        # calculate total number of global dofs
-        self.ndof = len(self.analysis.nodes) * len(self.analysis.dofs)
-
     def assign_dofs(self):
         """Method to assign global degrees of freedom to the nodes in the analysis object."""
+
+        # assign node freedom allocations by looping through all elements
+        for element in self.analysis.elements:
+            element.apply_nfa()
 
         dof_count = 0  # initialise degree of freedom counter
 
         # loop through all the nodes in the analysis
         for node in self.analysis.nodes:
-            # get the relevant degrees of freedom for the node
-            node_dofs = node.get_dofs(self.analysis.dofs)
+            # get all degree of freedoms in the node freedom signature
+            node_dofs = node.get_dofs(freedom_signature=node.nfs)
 
             # loop through each dof
             for dof in node_dofs:
@@ -56,6 +57,9 @@ class Solver:
                 dof.global_dof_num = dof_count
 
                 dof_count += 1
+
+        # assign the total number of global dofs
+        self.ndof = dof_count
 
     def assemble_stiff_matrix(self, geometric=False, analysis_case=None):
         """Assembles the global stiffness using the sparse COO format.
@@ -81,13 +85,13 @@ class Solver:
         # loop through all the elements
         for el in self.analysis.elements:
             # determine number of dofs in the current element
-            n = len(el.nodes) * len(self.analysis.dofs)
+            n = el.get_ndof()
 
             # get element stiffness matrix
             k_el = el.get_stiffness_matrix()
 
             # get element degrees of freedom
-            el_dofs = el.get_gdof_nums(dof_nums=self.analysis.dofs)
+            el_dofs = el.get_gdof_nums()
 
             # create row index vector
             r = np.repeat(el_dofs, n)
@@ -133,13 +137,13 @@ class Solver:
         # loop through all the elements
         for el in self.analysis.elements:
             # determine number of dofs in the current element
-            n = len(el.nodes) * len(self.analysis.dofs)
+            n = el.get_ndof()
 
             # get element mass matrix
             m_el = el.get_mass_matrix()
 
             # get element degrees of freedom
-            el_dofs = el.get_gdof_nums(dof_nums=self.analysis.dofs)
+            el_dofs = el.get_gdof_nums()
 
             # create row index vector
             r = np.repeat(el_dofs, n)
@@ -336,7 +340,7 @@ class Solver:
         # loop through all the nodes in the analysis
         for node in self.analysis.nodes:
             # get the relevant degrees of freedom for the node
-            node_dofs = node.get_dofs(self.analysis.dofs)
+            node_dofs = node.get_dofs(freedom_signature=node.nfs)
 
             # loop through each dof and save the relevant displacement
             for dof in node_dofs:
@@ -368,7 +372,7 @@ class Solver:
         # loop through all the nodes
         for node in self.analysis.nodes:
             # loop through all the relevant dofs
-            for dof in node.get_dofs(node_dof_nums=self.analysis.dofs):
+            for dof in node.get_dofs(freedom_signature=node.nfs):
                 # get global degree of freedom number
                 gdof = dof.global_dof_num
 
@@ -408,7 +412,7 @@ class Solver:
         # loop through all the nodes
         for node in self.analysis.nodes:
             # loop through all the relevant dofs
-            for dof in node.get_dofs(node_dof_nums=self.analysis.dofs):
+            for dof in node.get_dofs(freedom_signature=node.nfs):
                 # get global degree of freedom number
                 gdof = dof.global_dof_num
 

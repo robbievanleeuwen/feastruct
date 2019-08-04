@@ -1,6 +1,3 @@
-from operator import itemgetter
-
-
 class Node:
     """Class for a node to be used in finite element analyses.
 
@@ -11,6 +8,8 @@ class Node:
     :vartype coords: list[float, float, float]
     :cvar dofs: List of degrees of freedom for the node *(x, y, z, rx, ry, rz)*
     :vartype dofs: list[:class:`~feastruct.fea.node.DoF`]
+    :cvar nfs: Node freedom signature
+    :vartype nfs: list[bool]
     """
 
     def __init__(self, coords):
@@ -36,6 +35,9 @@ class Node:
         for i in range(6):
             self.dofs.append(DoF(node=self, node_dof_num=i))
 
+        # set the node freedom signature
+        self.nfs = [False, False, False, False, False, False]
+
     # get x-coordinate
     @property
     def x(self):
@@ -51,20 +53,25 @@ class Node:
     def z(self):
         return self.coords[2]
 
-    def get_dofs(self, node_dof_nums):
-        """Returns the degree of freedom objects relating to the node_dof_nums list.
+    def get_dofs(self, freedom_signature):
+        """Returns the degree of freedom objects relating to the freedom_signature list.
 
-        :param node_dof_nums: Degree of freedom indices to return
-        :type node_dof_nums: list[int]
+        :param freedom_signature: Degree of freedom indices to return
+        :type freedom_signature: list[bool]
         :returns: List containing degree of freedom objects
         :rtype: list[:class:`~feastruct.fea.node.DoF`]
         """
 
-        # get all dofs corresponding with indices in 'node_dof_nums'
-        dof_list = itemgetter(*node_dof_nums)(self.dofs)
+        # initialise dof_list
+        dof_list = []
 
-        # ensure a list is returned
-        return [dof_list] if type(dof_list) is not tuple else list(dof_list)
+        # loop through freedom_signature list
+        for (i, freedom) in enumerate(freedom_signature):
+            # if the freedom is True
+            if freedom:
+                dof_list.append(self.dofs[i])
+
+        return dof_list
 
 
 class DoF:

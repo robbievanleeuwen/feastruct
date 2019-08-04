@@ -242,13 +242,19 @@
 <span class="sd">        :param float val: The value of the nodal support - zero indicates a fixed support, whereas</span>
 <span class="sd">            a non-zero value indicates a prescribed displacement</span>
 <span class="sd">        :param int dof: The degree of freedom about which the boundary condition acts</span>
+
+<span class="sd">        :returns: Nodal support object</span>
+<span class="sd">        :rtype: :class:`feastruct.fea.bcs.NodalSupport`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># TODO: check that the support does not already exist</span>
         <span class="c1"># raise exception if duplicate added</span>
 
         <span class="c1"># add an entry to the freedom case items list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">bcs</span><span class="o">.</span><span class="n">NodalSupport</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dof</span><span class="p">))</span></div>
+        <span class="n">new_support</span> <span class="o">=</span> <span class="n">bcs</span><span class="o">.</span><span class="n">NodalSupport</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">new_support</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_support</span></div>
 
 <div class="viewcode-block" id="FreedomCase.get_nodal_fixities"><a class="viewcode-back" href="../../../rst/cases.html#feastruct.fea.cases.FreedomCase.get_nodal_fixities">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodal_fixities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a list defining the nodal fixity at the node for the current freedom case.</span>
@@ -299,10 +305,16 @@
 <span class="sd">        :type node: :class:`~feastruct.fea.node.Node`</span>
 <span class="sd">        :param float val: The value of the nodal load</span>
 <span class="sd">        :param int dof: The degree of freedom about which the nodal load acts</span>
+
+<span class="sd">        :returns: Nodal load object</span>
+<span class="sd">        :rtype: :class:`feastruct.fea.bcs.NodalLoad`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># add an entry to the load case item list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">bcs</span><span class="o">.</span><span class="n">NodalLoad</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dof</span><span class="p">))</span></div></div>
+        <span class="n">new_load</span> <span class="o">=</span> <span class="n">bcs</span><span class="o">.</span><span class="n">NodalLoad</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">new_load</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_load</span></div></div>
 </pre></div>
 
            </div>

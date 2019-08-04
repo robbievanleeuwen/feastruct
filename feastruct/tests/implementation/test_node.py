@@ -31,28 +31,31 @@ class TestNode(unittest.TestCase):
 
     def test_node_get_dofs(self):
         # case 1 - 3D dofs
-        node_dof_nums = [0, 1, 2, 3, 4, 5]
+        freedom_signature = [True, True, True, True, True, True]
+        indices = [i for i, x in enumerate(freedom_signature) if x]
 
-        dof_list = self.node.get_dofs(node_dof_nums)
+        dof_list = self.node.get_dofs(freedom_signature)
 
         for (i, dof) in enumerate(dof_list):
-            self.assertTrue(dof.node_dof_num is node_dof_nums[i])
+            self.assertTrue(dof.node_dof_num == indices[i])
 
         # case 2 - 2D dofs
-        node_dof_nums = [0, 1, 3]
+        freedom_signature = [True, True, False, False, False, True]
+        indices = [i for i, x in enumerate(freedom_signature) if x]
 
-        dof_list = self.node.get_dofs(node_dof_nums)
+        dof_list = self.node.get_dofs(freedom_signature)
 
         for (i, dof) in enumerate(dof_list):
-            self.assertTrue(dof.node_dof_num is node_dof_nums[i])
+            self.assertTrue(dof.node_dof_num == indices[i])
 
         # case 3 - single DoF
-        node_dof_nums = [4]
+        freedom_signature = [True, False, False, False, False, False]
+        indices = [i for i, x in enumerate(freedom_signature) if x]
 
-        dof_list = self.node.get_dofs(node_dof_nums)
+        dof_list = self.node.get_dofs(freedom_signature)
 
         for (i, dof) in enumerate(dof_list):
-            self.assertTrue(dof.node_dof_num is node_dof_nums[i])
+            self.assertTrue(dof.node_dof_num == indices[i])
 
     def test_dof_displacements(self):
         # add dummy analysis case

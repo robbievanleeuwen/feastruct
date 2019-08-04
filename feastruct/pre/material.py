@@ -11,7 +11,7 @@ class Material:
     :cvar float shear_modulus: Material shear modulus, derived from the elastic modulus and
         Poisson's ratio assuming an isotropic material
     :cvar float rho: Material density
-    :cvar colour: Material color for rendering
+    :cvar colour: Material colour for rendering
     :vartype colour: :class:`matplotlib.colors`
     """
 

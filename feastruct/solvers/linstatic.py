@@ -35,7 +35,11 @@ class LinearStatic(Solver):
             print('\n-Starting the linear static solver...\n')
 
         # assign the global degree of freedom numbers
-        self.assign_dofs()
+        if self.solver_settings.linear_static.time_info:
+            str = '--Assigning the global degree of freedom numbers...'
+            self.function_timer(str, self.assign_dofs)
+        else:
+            self.assign_dofs()
 
         # assemble the global stiffness matrix
         if self.solver_settings.linear_static.time_info:

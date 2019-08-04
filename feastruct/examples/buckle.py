@@ -16,7 +16,7 @@ n_el = 12  # number of subdivisions for each beam
 nodes = []  # list holding the node objects
 elements = []  # list holding the element objects
 
-# create 2d frame analyis object
+# create 2d frame analysis object
 analysis = FrameAnalysis2D()
 
 # create materials and sections

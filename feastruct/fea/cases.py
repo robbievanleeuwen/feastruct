@@ -84,13 +84,19 @@ class FreedomCase(Case):
         :param float val: The value of the nodal support - zero indicates a fixed support, whereas
             a non-zero value indicates a prescribed displacement
         :param int dof: The degree of freedom about which the boundary condition acts
+
+        :returns: Nodal support object
+        :rtype: :class:`feastruct.fea.bcs.NodalSupport`
         """
 
         # TODO: check that the support does not already exist
         # raise exception if duplicate added
 
         # add an entry to the freedom case items list
-        self.add_item(bcs.NodalSupport(node, val, dof))
+        new_support = bcs.NodalSupport(node, val, dof)
+        self.add_item(new_support)
+
+        return new_support
 
     def get_nodal_fixities(self, node):
         """Returns a list defining the nodal fixity at the node for the current freedom case.
@@ -141,7 +147,13 @@ class LoadCase(Case):
         :type node: :class:`~feastruct.fea.node.Node`
         :param float val: The value of the nodal load
         :param int dof: The degree of freedom about which the nodal load acts
+
+        :returns: Nodal load object
+        :rtype: :class:`feastruct.fea.bcs.NodalLoad`
         """
 
         # add an entry to the load case item list
-        self.add_item(bcs.NodalLoad(node, val, dof))
+        new_load = bcs.NodalLoad(node, val, dof)
+        self.add_item(new_load)
+
+        return new_load

@@ -16,7 +16,7 @@ freedom_cases = []  # list holding the freedom cases
 load_cases = []  # list holding the load cases
 analysis_cases = []  # list holding the analysis cases
 
-# create 2d frame analyis object
+# create 2d frame analysis object
 analysis = FrameAnalysis2D()
 
 # create materials and sections

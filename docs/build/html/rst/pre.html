@@ -186,7 +186,7 @@ a multitude of different formats, refer to <a class="reference external" href="h
 <li><strong>shear_modulus</strong> (<em>float</em>) – Material shear modulus, derived from the elastic modulus and
 Poisson’s ratio assuming an isotropic material</li>
 <li><strong>rho</strong> (<em>float</em>) – Material density</li>
-<li><strong>colour</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.colors</span></code>) – Material color for rendering</li>
+<li><strong>colour</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.colors</span></code>) – Material colour for rendering</li>
 </ul>
 </td>
 </tr>
@@ -243,19 +243,21 @@ Poisson’s ratio assuming an isotropic material</li>
 <blockquote>
 <div><dl class="class">
 <dt id="feastruct.pre.section.Section">
-<em class="property">class </em><code class="descclassname">feastruct.pre.section.</code><code class="descname">Section</code><span class="sig-paren">(</span><em>area=1</em>, <em>ixx=1</em>, <em>iyy=1</em>, <em>j=1</em>, <em>A_sx=1</em>, <em>A_sy=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/section.html#Section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.section.Section" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">feastruct.pre.section.</code><code class="descname">Section</code><span class="sig-paren">(</span><em>name=''</em>, <em>area=1</em>, <em>ixx=1</em>, <em>iyy=1</em>, <em>j=1</em>, <em>A_sx=1</em>, <em>A_sy=1</em>, <em>colour='k'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/section.html#Section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.section.Section" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for storing cross-section properties.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) – Section name</li>
 <li><strong>area</strong> (<em>float</em>) – Cross-sectional area</li>
 <li><strong>ixx</strong> (<em>float</em>) – Second moment of area about the centroidal x-axis</li>
 <li><strong>iyy</strong> (<em>float</em>) – Second moment of area about the centroidal y-axis</li>
 <li><strong>j</strong> (<em>float</em>) – Torsion constant</li>
 <li><strong>A_sx</strong> (<em>float</em>) – Shear area about the x-axis</li>
 <li><strong>A_sy</strong> (<em>float</em>) – Shear area about the y-axis</li>
+<li><strong>colour</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.colors</span></code>) – Section colour for rendering</li>
 </ul>
 </td>
 </tr>
@@ -263,19 +265,21 @@ Poisson’s ratio assuming an isotropic material</li>
 </table>
 <dl class="method">
 <dt id="feastruct.pre.section.Section.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>area=1</em>, <em>ixx=1</em>, <em>iyy=1</em>, <em>j=1</em>, <em>A_sx=1</em>, <em>A_sy=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/section.html#Section.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.section.Section.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name=''</em>, <em>area=1</em>, <em>ixx=1</em>, <em>iyy=1</em>, <em>j=1</em>, <em>A_sx=1</em>, <em>A_sy=1</em>, <em>colour='k'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/pre/section.html#Section.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.pre.section.Section.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inits the Section class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) – Section name</li>
 <li><strong>area</strong> (<em>float</em>) – Cross-sectional area</li>
 <li><strong>ixx</strong> (<em>float</em>) – Second moment of area about the centroidal x-axis</li>
 <li><strong>iyy</strong> (<em>float</em>) – Second moment of area about the centroidal y-axis</li>
 <li><strong>j</strong> (<em>float</em>) – Torsion constant</li>
 <li><strong>A_sx</strong> (<em>float</em>) – Shear area about the x-axis</li>
 <li><strong>A_sy</strong> (<em>float</em>) – Shear area about the y-axis</li>
+<li><strong>colour</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.colors</span></code>) – Section colour for rendering</li>
 </ul>
 </td>
 </tr>

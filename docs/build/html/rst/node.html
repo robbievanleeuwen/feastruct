@@ -184,6 +184,7 @@ of freedom.</p>
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
 <li><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – Cartesian coordinates of the node</li>
 <li><strong>dofs</strong> (list[<a class="reference internal" href="#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]) – List of degrees of freedom for the node <em>(x, y, z, rx, ry, rz)</em></li>
+<li><strong>nfs</strong> (<em>list</em><em>[</em><em>bool</em><em>]</em>) – Node freedom signature</li>
 </ul>
 </td>
 </tr>
@@ -205,13 +206,13 @@ of freedom.</p>
 
 <dl class="method">
 <dt id="feastruct.fea.node.Node.get_dofs">
-<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>node_dof_nums</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.get_dofs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.get_dofs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the degree of freedom objects relating to the node_dof_nums list.</p>
+<code class="descname">get_dofs</code><span class="sig-paren">(</span><em>freedom_signature</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.get_dofs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.get_dofs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the degree of freedom objects relating to the freedom_signature list.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node_dof_nums</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Degree of freedom indices to return</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>freedom_signature</strong> (<em>list</em><em>[</em><em>bool</em><em>]</em>) – Degree of freedom indices to return</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List containing degree of freedom objects</td>
 </tr>

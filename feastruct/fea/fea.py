@@ -14,23 +14,21 @@ class FiniteElementAnalysis:
     :vartype nodes: list[:class:`~feastruct.fea.node.Node`]
     :cvar elements: Elements used in the finite element analysis
     :vartype elements: list[:class:`~feastruct.fea.fea.FiniteElement`]
-    :cvar int dims: Number of dimensions used for the current analysis type
-    :cvar dofs: List of the degrees of freedom used in the current analysis type
-    :vartype dofs: list[int]
+    :cvar nfa: Node freedom arrangement
+    :vartype nfa: list[bool]
     :cvar post: Post-processor object
     :vartype post: :class:`feastruct.post.post.PostProcessor`
     """
 
-    def __init__(self, nodes, elements, dims, dofs):
+    def __init__(self, nodes, elements, nfa):
         """Inits the FiniteElementAnalysis class.
 
         :param nodes: List of nodes with which to initialise the class
         :type nodes: list[:class:`~feastruct.fea.node.Node`]
         :param elements: List of elements with which to initialise the class
         :type elements: list[:class:`~feastruct.fea.fea.FiniteElement`]
-        :param int dims: Number of dimensions used for the current analysis type
-        :param dofs: List of the degrees of freedom used in the current analysis type
-        :type dofs: list[int]
+        :param nfa: Node freedom arrangement
+        :type nfa: list[bool]
         """
 
         if nodes is None:
@@ -43,8 +41,7 @@ class FiniteElementAnalysis:
         else:
             self.elements = elements
 
-        self.dims = dims
-        self.dofs = dofs
+        self.nfa = nfa
         self.post = PostProcessor(self)
 
     def create_node(self, coords):
@@ -121,21 +118,26 @@ class FiniteElement:
     :vartype nodes: list[:class:`~feastruct.fea.node.Node`]
     :cvar material: Material object for the element
     :vartype material: :class:`~feastruct.pre.material.Material`
+    :cvar efs: Element freedom signature
+    :vartype efs: list[bool]
     :cvar f_int: List of internal force vector results stored for each analysis case
     :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]
     """
 
-    def __init__(self, nodes, material):
+    def __init__(self, nodes, material, efs):
         """Inits the FiniteElement class.
 
         :param nodes: List of node objects that define the geometry of the finite element
         :type nodes: list[:class:`~feastruct.fea.node.Node`]
         :param material: Material object for the element
         :type material: :class:`~feastruct.pre.material.Material`
+        :param efs: Element freedom signature
+        :type efs: list[bool]
         """
 
         self.nodes = nodes
         self.material = material
+        self.efs = efs
         self.f_int = []
 
     def get_node_coords(self):
@@ -156,12 +158,19 @@ class FiniteElement:
 
         return np.array(coord_list)
 
-    def get_dofs(self, dof_nums):
+    def get_ndof(self):
+        """Returns the number of active degrees of freedom for the element.
+
+        :returns: Number of active degrees of freedom for the element
+        :rtype: int
+        """
+
+        return len(self.nodes) * sum(self.efs)
+
+    def get_dofs(self):
         """Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
         finite element.
 
-        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
-            [0, 1] for *x* and *y* translation
         :return: A list of DoF objects, with a length of *(n_nodes x n_dof)*
         :rtype: list[list[:class:`~feastruct.fea.node.DoF`]]
         """
@@ -171,23 +180,21 @@ class FiniteElement:
         # loop through all nodes of the element
         for node in self.nodes:
             # append the node dofs to the list
-            dof_list.append(node.get_dofs(dof_nums))
+            dof_list.append(node.get_dofs(freedom_signature=self.efs))
 
         return dof_list
 
-    def get_gdof_nums(self, dof_nums):
+    def get_gdof_nums(self):
         """Returns an array of global degree of freedom numbers corresponding to the degrees of
         freedom of the finite element.
 
-        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
-            [0, 1] for *x* and *y* translation
         :return: A integer array of global degrees of freedom, with a length of *(1 x n)*, where n
             is *n_nodes x n_dof*
         :rtype: :class:`numpy.ndarray`
         """
 
         # get a list of dof objects for all nodes
-        dof_list = self.get_dofs(dof_nums)
+        dof_list = self.get_dofs()
 
         # allocate a list of ints for the global
         gdof_num_list = []
@@ -200,12 +207,22 @@ class FiniteElement:
 
         return np.array(gdof_num_list, dtype=np.int32)
 
-    def get_nodal_displacements(self, dof_nums, analysis_case):
+    def apply_nfa(self):
+        """Applies the element freedom signature to all nodes in the element to generate a node
+        freedom allocation.
+        """
+
+        # loop through all the nodes in the element
+        for node in self.nodes:
+            # loop through all the freedoms in the current node signature
+            for (i, nf) in enumerate(node.nfs):
+                # apply the element freedom signature
+                node.nfs[i] = nf or self.efs[i]
+
+    def get_nodal_displacements(self, analysis_case):
         """Returns an array of the nodal displacements for each degree of freedom in the finite
         element for the analysis_case.
 
-        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
-            [0, 1] for *x* and *y* translation
         :param analysis_case: Analysis case relating to the displacement
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :return: An *(n_nodes x n_dof)* array of degree of freedom displacements
@@ -215,7 +232,7 @@ class FiniteElement:
         disp_list = []  # allocate list of displacements
 
         # get all the dof objects for the element
-        dof_list = self.get_dofs(dof_nums)
+        dof_list = self.get_dofs()
 
         # loop through each node's dofs
         for node_dofs in dof_list:
@@ -231,13 +248,11 @@ class FiniteElement:
 
         return np.array(disp_list)
 
-    def get_buckling_results(self, dof_nums, analysis_case, buckling_mode=0):
+    def get_buckling_results(self, analysis_case, buckling_mode=0):
         """Returns the eigenvalue corresponding to the buckling analysis defined by the
         analysis_case and the buckling_mode. Also returns an array of eigenvector values
         corresponding to each degree of freedom in the finite element.
 
-        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
-            [0, 1] for *x* and *y* translation
         :param analysis_case: Analysis case relating to the buckling analysis
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param int buckling_mode: Buckling mode number
@@ -250,7 +265,7 @@ class FiniteElement:
         v_list = []  # allocate list of eigenvectors
 
         # get all the dof objects for the element
-        dof_list = self.get_dofs(dof_nums)
+        dof_list = self.get_dofs()
 
         # loop through each node's dofs
         for node_dofs in dof_list:
@@ -269,13 +284,11 @@ class FiniteElement:
 
         return (w, np.array(v_list))
 
-    def get_frequency_results(self, dof_nums, analysis_case, frequency_mode=0):
+    def get_frequency_results(self, analysis_case, frequency_mode=0):
         """Returns the eigenvalue corresponding to the frequency analysis defined by the
         analysis_case and the frequency_mode. Also returns an array of eigenvector values
         corresponding to each degree of freedom in the finite element.
 
-        :param dof_nums: List of degrees of freedom used by the current finite element type e.g.
-            [0, 1] for *x* and *y* translation
         :param analysis_case: Analysis case relating to the frequency analysis
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param int frequency_mode: Frequency mode number
@@ -288,7 +301,7 @@ class FiniteElement:
         v_list = []  # allocate list of eigenvectors
 
         # get all the dof objects for the element
-        dof_list = self.get_dofs(dof_nums)
+        dof_list = self.get_dofs()
 
         # loop through each node's dofs
         for node_dofs in dof_list:

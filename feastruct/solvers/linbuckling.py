@@ -35,6 +35,13 @@ class LinearBuckling(Solver):
         if self.solver_settings.linear_buckling.time_info:
             print('\n-Starting the linear buckling solver...')
 
+        # assign the global degree of freedom numbers
+        if self.solver_settings.linear_static.time_info:
+            str = '--Assigning the global degree of freedom numbers...'
+            self.function_timer(str, self.assign_dofs)
+        else:
+            self.assign_dofs()
+
         # loop through each analysis case
         for (i, analysis_case) in enumerate(self.analysis_cases):
             if self.solver_settings.linear_buckling.time_info:
