@@ -15,7 +15,7 @@ class PostProcessor:
         be realised
     """
 
-    def __init__(self, analysis, n_subdiv=20):
+    def __init__(self, analysis, n_subdiv=10):
         """Inits the fea class.
 
         :param analysis: Analysis object for post-processing

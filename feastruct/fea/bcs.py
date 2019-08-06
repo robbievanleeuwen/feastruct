@@ -636,7 +636,10 @@ class NodalLoad(BoundaryCondition):
             x = self.node.x
             y = self.node.y
 
-        val = self.val / max_force
+        if max_force == 0:
+            val = self.val
+        else:
+            val = self.val / max_force
 
         offset = 0.5 * small
         (angle, num_el) = get_support_angle(self.node)
