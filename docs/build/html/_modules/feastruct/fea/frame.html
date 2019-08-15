@@ -159,6 +159,7 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Polygon</span>
 <span class="kn">from</span> <span class="nn">feastruct.fea.fea</span> <span class="k">import</span> <span class="n">FiniteElementAnalysis</span><span class="p">,</span> <span class="n">FiniteElement</span>
+<span class="kn">from</span> <span class="nn">feastruct.post.post2d</span> <span class="k">import</span> <span class="n">PostProcessor2D</span>
 
 
 <div class="viewcode-block" id="FrameAnalysis"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis">[docs]</a><span class="k">class</span> <span class="nc">FrameAnalysis</span><span class="p">(</span><span class="n">FiniteElementAnalysis</span><span class="p">):</span>
@@ -173,8 +174,6 @@
 <span class="sd">    :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
 <span class="sd">    :cvar nfa: Node freedom arrangement</span>
 <span class="sd">    :vartype nfa: list[bool]</span>
-<span class="sd">    :cvar post: Post-processor object</span>
-<span class="sd">    :vartype post: :class:`feastruct.post.post.PostProcessor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FrameAnalysis.__init__"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="p">):</span>
@@ -210,6 +209,8 @@
             <span class="n">element</span> <span class="o">=</span> <span class="n">Bar2D_2N</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">el_type</span> <span class="o">==</span> <span class="s1">&#39;EB2-2D&#39;</span><span class="p">:</span>
             <span class="n">element</span> <span class="o">=</span> <span class="n">EulerBernoulli2D_2N</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">el_type</span> <span class="o">==</span> <span class="s1">&#39;Bar2-3D&#39;</span><span class="p">:</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">Bar3D_2N</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
 
         <span class="k">return</span><span class="p">(</span><span class="n">FiniteElementAnalysis</span><span class="o">.</span><span class="n">create_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">))</span></div></div>
 
@@ -229,7 +230,7 @@
 <span class="sd">    :cvar nfa: Node freedom arrangement</span>
 <span class="sd">    :vartype nfa: list[bool]</span>
 <span class="sd">    :cvar post: Post-processor object</span>
-<span class="sd">    :vartype post: :class:`feastruct.post.post.PostProcessor`</span>
+<span class="sd">    :vartype post: :class:`feastruct.post.post2d.PostProcessor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FrameAnalysis2D.__init__"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis2D.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -245,7 +246,9 @@
         <span class="n">nfa</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>
 
         <span class="c1"># initialise parent FrameAnalysis class</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="o">=</span><span class="n">nfa</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="o">=</span><span class="n">nfa</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="n">PostProcessor2D</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FrameAnalysis2D.create_element"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis2D.create_element">[docs]</a>    <span class="k">def</span> <span class="nf">create_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">el_type</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates and returns a 2D frame element and adds it to the</span>
@@ -271,7 +274,58 @@
 
 
 <div class="viewcode-block" id="FrameAnalysis3D"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis3D">[docs]</a><span class="k">class</span> <span class="nc">FrameAnalysis3D</span><span class="p">(</span><span class="n">FrameAnalysis</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="sd">&quot;&quot;&quot;Parent class for a 3D frame analysis.</span>
+
+<span class="sd">    Includes a method for analysis initiation and a method for adding 3D frame elements to the</span>
+<span class="sd">    analysis.</span>
+
+<span class="sd">    Active degrees of freedom are *[x, y, z, rx, ry, rz]* and are referred to as</span>
+<span class="sd">    *[0, 1, 2, 3, 4, 5]*.</span>
+
+<span class="sd">    :cvar nodes: Nodes used in the finite element analysis</span>
+<span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar elements: Elements used in the finite element analysis</span>
+<span class="sd">    :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
+<span class="sd">    :cvar nfa: Node freedom arrangement</span>
+<span class="sd">    :vartype nfa: list[bool]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FrameAnalysis3D.__init__"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis3D.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the FrameAnalysis3D class.</span>
+
+<span class="sd">        :param nodes: List of nodes with which to initialise the class</span>
+<span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">        :param elements: List of elements with which to initialise the class</span>
+<span class="sd">        :type elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># set the node freedom arrangement for a 3D frame analysis</span>
+        <span class="n">nfa</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>
+
+        <span class="c1"># initialise parent FrameAnalysis class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="o">=</span><span class="n">nfa</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FrameAnalysis3D.create_element"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameAnalysis3D.create_element">[docs]</a>    <span class="k">def</span> <span class="nf">create_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">el_type</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates and returns a 3D frame element and adds it to the</span>
+<span class="sd">        :class:`~feastruct.fea.frame.Frame3D` object. Refer to &#39;xxx&#39; for the possible 3D element</span>
+<span class="sd">        types.</span>
+
+<span class="sd">        :param string el_type: String characterising the type of frame element</span>
+<span class="sd">        :param nodes: List of node objects defining the element</span>
+<span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">        :param material: Material object for the element</span>
+<span class="sd">        :type material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">        :param section: Section object for the element</span>
+<span class="sd">        :type section: :class:`~feastruct.pre.section.Section`</span>
+<span class="sd">        :return: FrameElement object</span>
+<span class="sd">        :rtype: :class:`~feastruct.fea.frame.FrameElement`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: check to ensure element is 3D</span>
+
+        <span class="k">return</span><span class="p">(</span><span class="n">FrameAnalysis</span><span class="o">.</span><span class="n">create_element</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">el_type</span><span class="o">=</span><span class="n">el_type</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span>
+        <span class="p">))</span></div></div>
 
 
 <div class="viewcode-block" id="FrameElement"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameElement">[docs]</a><span class="k">class</span> <span class="nc">FrameElement</span><span class="p">(</span><span class="n">FiniteElement</span><span class="p">):</span>
@@ -568,7 +622,37 @@
 
 
 <div class="viewcode-block" id="FrameElement3D"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.FrameElement3D">[docs]</a><span class="k">class</span> <span class="nc">FrameElement3D</span><span class="p">(</span><span class="n">FrameElement</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="sd">&quot;&quot;&quot;Class for a 3D frame element.</span>
+
+<span class="sd">    Provides a number of methods that can be used for a 3D frame element.</span>
+
+<span class="sd">    :cvar nodes: List of node objects defining the element</span>
+<span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar material: Material object for the element</span>
+<span class="sd">    :vartype material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">    :cvar efs: Element freedom signature</span>
+<span class="sd">    :vartype efs: list[bool]</span>
+<span class="sd">    :cvar f_int: List of internal force vector results stored for each analysis case</span>
+<span class="sd">    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]</span>
+<span class="sd">    :cvar section: Section object for the element</span>
+<span class="sd">    :vartype section: :class:`~feastruct.pre.section.Section`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the FrameElement3D class.</span>
+
+<span class="sd">        :param nodes: List of node objects defining the element</span>
+<span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">        :param material: Material object for the element</span>
+<span class="sd">        :type material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">        :cvar efs: Element freedom signature</span>
+<span class="sd">        :vartype efs: list[bool]</span>
+<span class="sd">        :param section: Section object for the element</span>
+<span class="sd">        :type section: :class:`~feastruct.pre.section.Section`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># initialise parent FrameElement class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="o">=</span><span class="n">efs</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Bar2D_2N"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N">[docs]</a><span class="k">class</span> <span class="nc">Bar2D_2N</span><span class="p">(</span><span class="n">FrameElement2D</span><span class="p">):</span>
@@ -645,8 +729,38 @@
             <span class="c1"># TODO: implement non-linear stiffness matrix</span>
             <span class="k">pass</span></div>
 
-    <span class="k">def</span> <span class="nf">get_geometric_stiff_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
-        <span class="k">pass</span>
+<div class="viewcode-block" id="Bar2D_2N.get_geometric_stiff_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_geometric_stiff_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_geometric_stiff_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the geometric stiffness matrix for a two noded, 2D bar element. The stiffness</span>
+<span class="sd">        matrix has been analytically integrated so numerical integration is not necessary. The</span>
+<span class="sd">        geometric stiffness matrix requires an axial force so the analysis_case from a static</span>
+<span class="sd">        analysis must be provided.</span>
+
+<span class="sd">        :param analysis_case: Analysis case from which to extract the axial force</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :return: 4 x 4 element geometric stiffness matrix</span>
+<span class="sd">        :rtype: :class: `numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># compute geometric parameters</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># extract relevant properties</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># get axial force</span>
+        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fint</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">)</span>
+
+        <span class="c1"># get axial force in element (take average of nodal values)</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="o">-</span><span class="n">f_int</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+        <span class="c1"># form geometric stiffness matrix</span>
+        <span class="k">return</span> <span class="n">N</span> <span class="o">/</span> <span class="n">l0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">s</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="n">s</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">c</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">s</span><span class="p">],</span>
+            <span class="p">[</span><span class="n">c</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="o">*</span><span class="n">c</span><span class="p">]</span>
+        <span class="p">])</span></div>
 
 <div class="viewcode-block" id="Bar2D_2N.get_mass_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar2D_2N.get_mass_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_mass_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets the mass matrix for a for a two noded, 2D bar element. The mass matrix has been</span>
@@ -804,7 +918,268 @@
 
 
 <div class="viewcode-block" id="Bar3D_2N"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N">[docs]</a><span class="k">class</span> <span class="nc">Bar3D_2N</span><span class="p">(</span><span class="n">FrameElement3D</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="sd">&quot;&quot;&quot;Two noded, three dimensional bar element that can resist an axial force only. The element</span>
+<span class="sd">    is defined by its two end nodes and uses two linear shape functions to obtain analytical</span>
+<span class="sd">    results.</span>
+
+<span class="sd">    :cvar nodes: List of node objects defining the element</span>
+<span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar material: Material object for the element</span>
+<span class="sd">    :vartype material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">    :cvar efs: Element freedom signature</span>
+<span class="sd">    :vartype efs: list[bool]</span>
+<span class="sd">    :cvar f_int: List of internal force vector results stored for each analysis case</span>
+<span class="sd">    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]</span>
+<span class="sd">    :cvar section: Section object for the element</span>
+<span class="sd">    :vartype section: :class:`~feastruct.pre.section.Section`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Bar3D_2N.__init__"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the Bar3D_2N class.</span>
+
+<span class="sd">        :param nodes: List of node objects defining the element</span>
+<span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">        :param material: Material object for the element</span>
+<span class="sd">        :type material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">        :param section: Section object for the element</span>
+<span class="sd">        :type section: :class:`~feastruct.pre.section.Section`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># set the element freedom signature</span>
+        <span class="n">efs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
+
+        <span class="c1"># initialise parent FrameElement3D class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">efs</span><span class="o">=</span><span class="n">efs</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.get_shape_function"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_shape_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_shape_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the value of the shape functions *N1* and *N2* at *xi*.</span>
+
+<span class="sd">        :param float xi: Position along the element</span>
+
+<span class="sd">        :returns: Value of the shape functions *(N1, N2)* at *xi*</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">xi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.get_stiffness_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_stiffness_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_stiffness_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the stiffness matrix for a two noded, 3D bar element. The stiffness matrix has been</span>
+<span class="sd">        analytically integrated so numerical integration is not necessary.</span>
+
+<span class="sd">        :param bool linear: Whether a linear or non-linear stiffness matrix is required</span>
+<span class="sd">        :return: 6 x 6 element stiffness matrix</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">linear</span><span class="p">:</span>
+            <span class="c1"># compute geometric parameters</span>
+            <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+            <span class="c1"># extract relevant properties</span>
+            <span class="n">E</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">elastic_modulus</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">area</span>
+            <span class="n">cx</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">cy</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">cz</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="c1"># construct rotation matrix</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="p">[</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cz</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cz</span><span class="p">],</span>
+            <span class="p">])</span>
+
+            <span class="c1"># compute bar stiffness matrix</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">E</span> <span class="o">*</span> <span class="n">A</span> <span class="o">/</span> <span class="n">l0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">k</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO: implement non-linear stiffness matrix</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.get_geometric_stiff_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_geometric_stiff_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_geometric_stiff_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the geometric stiffness matrix for a two noded, 3D bar element. The stiffness</span>
+<span class="sd">        matrix has been analytically integrated so numerical integration is not necessary. The</span>
+<span class="sd">        geometric stiffness matrix requires an axial force so the analysis_case from a static</span>
+<span class="sd">        analysis must be provided.</span>
+
+<span class="sd">        :param analysis_case: Analysis case from which to extract the axial force</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+<span class="sd">        :return: 6 x 6 element geometric stiffness matrix</span>
+<span class="sd">        :rtype: :class: `numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># compute geometric parameters</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># extract relevant properties</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cz</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># get axial force</span>
+        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fint</span><span class="p">(</span><span class="n">analysis_case</span><span class="p">)</span>
+
+        <span class="c1"># get axial force in element (take average of nodal values)</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="o">-</span><span class="n">f_int</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+        <span class="c1"># construct rotation matrix</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cz</span><span class="p">],</span>
+            <span class="p">[</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cz</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="p">])</span>
+
+        <span class="c1"># compute bar geometric stiffness matrix</span>
+        <span class="n">k_g</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="n">l0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">k_g</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.get_mass_matrix"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_mass_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_mass_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the mass matrix for a for a two noded, 2D bar element. The mass matrix has been</span>
+<span class="sd">        analytically integrated so numerical integration is not necessary.</span>
+
+<span class="sd">        :return: 4 x 4 element mass matrix</span>
+<span class="sd">        :rtype: :class: `numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># compute geometric parameters</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l0</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+
+        <span class="c1"># extract relevant properties</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">rho</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">area</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cz</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># construct rotation matrix</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cz</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cz</span><span class="p">]</span>
+        <span class="p">])</span>
+
+        <span class="c1"># compute element mass matrix</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">m</span><span class="p">),</span> <span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.get_internal_actions"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_internal_actions">[docs]</a>    <span class="k">def</span> <span class="nf">get_internal_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the internal actions for a two noded 3D bar element.</span>
+
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: An array containing the internal actions for the element</span>
+<span class="sd">            *(N1, N2)*</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geometric_properties</span><span class="p">()</span>
+        <span class="n">f_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fint</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cz</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">f_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cz</span><span class="p">,</span>
+            <span class="n">f_int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">f_int</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">*</span> <span class="n">cz</span>
+        <span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">f</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.calculate_local_displacement"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.calculate_local_displacement">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_local_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">u_el</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the local displacement of the element at position *xi* given the displacement</span>
+<span class="sd">        vector *u_el*.</span>
+
+<span class="sd">        :param float xi: Position along the element</span>
+<span class="sd">        :param u_el: Element displacement vector</span>
+<span class="sd">        :type u_el: :class:`numpy.ndarray`</span>
+
+<span class="sd">        :returns: Local displacement of the element *(u, v, w)*</span>
+<span class="sd">        :rtype: tuple(float, float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># element shape function</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_function</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+        <span class="c1"># compute local displacements</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">u_el</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">u_el</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]))</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.get_afd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_afd">[docs]</a>    <span class="k">def</span> <span class="nf">get_afd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the axial force diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the axial force diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Axial force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get internal forces</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_internal_actions</span><span class="p">(</span><span class="n">analysis_case</span><span class="o">=</span><span class="n">analysis_case</span><span class="p">)</span>
+        <span class="n">N1</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">N2</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># allocate the axial force diagram</span>
+        <span class="n">afd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># generate list of stations</span>
+        <span class="n">stations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># loop over each station</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stations</span><span class="p">):</span>
+            <span class="c1"># get shape functions at xi</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_function</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+            <span class="c1"># compute local displacements</span>
+            <span class="n">afd</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">N1</span><span class="p">,</span> <span class="n">N2</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">afd</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.get_sfd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_sfd">[docs]</a>    <span class="k">def</span> <span class="nf">get_sfd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the shear force diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the shear force diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Shear force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># no shear force in this element</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bar3D_2N.get_bmd"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.Bar3D_2N.get_bmd">[docs]</a>    <span class="k">def</span> <span class="nf">get_bmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">analysis_case</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the bending moment diagram within the element for *n* stations for an</span>
+<span class="sd">        analysis_case.</span>
+
+<span class="sd">        :param int n: Number of stations to sample the bending moment diagram</span>
+<span class="sd">        :param analysis_case: Analysis case</span>
+<span class="sd">        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`</span>
+
+<span class="sd">        :returns: Shear force diagram</span>
+<span class="sd">        :rtype: :class:`numpy.ndarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># no bending moment in this element</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="EulerBernoulli2D_2N"><a class="viewcode-back" href="../../../rst/frame.html#feastruct.fea.frame.EulerBernoulli2D_2N">[docs]</a><span class="k">class</span> <span class="nc">EulerBernoulli2D_2N</span><span class="p">(</span><span class="n">FrameElement2D</span><span class="p">):</span>

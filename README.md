@@ -18,7 +18,7 @@ a python package for structural finite element analysis.
   - [x] Euler Bernoulli Frame Element
   - [ ] Timoshenko Frame Element
 - [ ] 3D Frame
-  - [ ] Bar Element
+  - [x] Bar Element
   - [ ] Euler Bernoulli Frame Element
   - [ ] Timoshenko Frame Element
 - [ ] 2D Membrane (Plane Stress/Plane Strain)

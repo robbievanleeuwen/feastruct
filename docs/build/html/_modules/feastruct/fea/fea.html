@@ -158,7 +158,6 @@
   <h1>Source code for feastruct.fea.fea</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">feastruct.fea.node</span> <span class="k">import</span> <span class="n">Node</span>
-<span class="kn">from</span> <span class="nn">feastruct.post.post</span> <span class="k">import</span> <span class="n">PostProcessor</span>
 
 
 <div class="viewcode-block" id="FiniteElementAnalysis"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis">[docs]</a><span class="k">class</span> <span class="nc">FiniteElementAnalysis</span><span class="p">:</span>
@@ -174,8 +173,6 @@
 <span class="sd">    :vartype elements: list[:class:`~feastruct.fea.fea.FiniteElement`]</span>
 <span class="sd">    :cvar nfa: Node freedom arrangement</span>
 <span class="sd">    :vartype nfa: list[bool]</span>
-<span class="sd">    :cvar post: Post-processor object</span>
-<span class="sd">    :vartype post: :class:`feastruct.post.post.PostProcessor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FiniteElementAnalysis.__init__"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="p">):</span>
@@ -199,8 +196,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">nfa</span> <span class="o">=</span> <span class="n">nfa</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="n">PostProcessor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nfa</span> <span class="o">=</span> <span class="n">nfa</span></div>
 
 <div class="viewcode-block" id="FiniteElementAnalysis.create_node"><a class="viewcode-back" href="../../../rst/fea.html#feastruct.fea.fea.FiniteElementAnalysis.create_node">[docs]</a>    <span class="k">def</span> <span class="nf">create_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates a node and adds it to the Fea object.</span>

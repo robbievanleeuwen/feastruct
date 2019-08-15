@@ -94,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Post-Processing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#post-processor">Post-Processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#post-processor-2d">Post-Processor 2D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scalar-result">Scalar Result</a></li>
 </ul>
 </li>
@@ -164,32 +164,31 @@
             
   <div class="section" id="post-processing">
 <h1>Post-Processing<a class="headerlink" href="#post-processing" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="post-processor">
-<h2>Post-Processor<a class="headerlink" href="#post-processor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="post-processor-2d">
+<h2>Post-Processor 2D<a class="headerlink" href="#post-processor-2d" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="class">
-<dt id="feastruct.post.post.PostProcessor">
-<em class="property">class </em><code class="descclassname">feastruct.post.post.</code><code class="descname">PostProcessor</code><span class="sig-paren">(</span><em>analysis</em>, <em>n_subdiv=20</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for post processing methods.</p>
-<p>This class provides some post-processing methods for a particular analysis that can be used to
-visualise tthe structural geometry and the finite element analysis results.</p>
+<dt id="feastruct.post.post2d.PostProcessor2D">
+<em class="property">class </em><code class="descclassname">feastruct.post.post2d.</code><code class="descname">PostProcessor2D</code><span class="sig-paren">(</span><em>analysis</em>, <em>n_subdiv=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for post processing methods for 2D analyses.</p>
+<p>This class provides some post-processing methods for a particular 2D analysis that can be used
+to visualise tthe structural geometry and the finite element analysis results.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
 <li><strong>analysis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">fea</span></code>) – Analysis object for post-processing</li>
-<li><strong>n_subdiv</strong> (<em>int</em>) – Number of subdivisions used to discretise frame
-elements in post-processing, such that higher order shape functions can
-be realised</li>
+<li><strong>n_subdiv</strong> (<em>int</em>) – Number of subdivisions used to discretise frame elements in
+post-processing, such that higher order shape functions can be realised</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="feastruct.post.post.PostProcessor.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>n_subdiv=20</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="feastruct.post.post2d.PostProcessor2D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>analysis</em>, <em>n_subdiv=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inits the fea class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -207,8 +206,8 @@ post-processing</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.post.post.PostProcessor.get_support_angle">
-<code class="descname">get_support_angle</code><span class="sig-paren">(</span><em>node</em>, <em>prefer_dir=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.get_support_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.get_support_angle" title="Permalink to this definition">¶</a></dt>
+<dt id="feastruct.post.post2d.PostProcessor2D.get_support_angle">
+<code class="descname">get_support_angle</code><span class="sig-paren">(</span><em>node</em>, <em>prefer_dir=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D.get_support_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D.get_support_angle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a node object, returns the optimal angle to plot a support. Essentially finds the
 average angle of the connected elements and considers a preferred plotting direction. N.B.
 this method is adopted from the MATLAB code by F.P. van der Meer: plotGeom.m.</p>
@@ -228,8 +227,8 @@ x-axis and 1 corresponds to the y-axis</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.post.post.PostProcessor.plot_buckling_results">
-<code class="descname">plot_buckling_results</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_buckling_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_buckling_results" title="Permalink to this definition">¶</a></dt>
+<dt id="feastruct.post.post2d.PostProcessor2D.plot_buckling_results">
+<code class="descname">plot_buckling_results</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>buckling_mode=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D.plot_buckling_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D.plot_buckling_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method used to plot a buckling eigenvector. The undeformed structure is plotted with a
 dashed line.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -247,8 +246,8 @@ dashed line.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.post.post.PostProcessor.plot_frame_forces">
-<code class="descname">plot_frame_forces</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>axial=False</em>, <em>shear=False</em>, <em>moment=False</em>, <em>scale=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_frame_forces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_frame_forces" title="Permalink to this definition">¶</a></dt>
+<dt id="feastruct.post.post2d.PostProcessor2D.plot_frame_forces">
+<code class="descname">plot_frame_forces</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>axial=False</em>, <em>shear=False</em>, <em>moment=False</em>, <em>scale=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D.plot_frame_forces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D.plot_frame_forces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method used to plot internal frame actions resulting from the analysis case.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -269,8 +268,8 @@ fraction of the window that the largest action takes up</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.post.post.PostProcessor.plot_frequency_results">
-<code class="descname">plot_frequency_results</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_frequency_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_frequency_results" title="Permalink to this definition">¶</a></dt>
+<dt id="feastruct.post.post2d.PostProcessor2D.plot_frequency_results">
+<code class="descname">plot_frequency_results</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>frequency_mode=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D.plot_frequency_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D.plot_frequency_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method used to plot a frequency eigenvector. The undeformed structure is plotted with a
 dashed line.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -288,8 +287,8 @@ dashed line.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.post.post.PostProcessor.plot_geom">
-<code class="descname">plot_geom</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>ax=None</em>, <em>supports=True</em>, <em>loads=True</em>, <em>undeformed=True</em>, <em>deformed=False</em>, <em>def_scale=1</em>, <em>dashed=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_geom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_geom" title="Permalink to this definition">¶</a></dt>
+<dt id="feastruct.post.post2d.PostProcessor2D.plot_geom">
+<code class="descname">plot_geom</code><span class="sig-paren">(</span><em>analysis_case</em>, <em>ax=None</em>, <em>supports=True</em>, <em>loads=True</em>, <em>undeformed=True</em>, <em>deformed=False</em>, <em>def_scale=1</em>, <em>dashed=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D.plot_geom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D.plot_geom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method used to plot the structural mesh in the undeformed and/or deformed state. If no
 axes object is provided, a new axes object is created. N.B. this method is adopted from the
 MATLAB code by F.P. van der Meer: plotGeom.m.</p>
@@ -315,8 +314,8 @@ undeformed structure is to be plotted</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.post.post.PostProcessor.plot_reactions">
-<code class="descname">plot_reactions</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.plot_reactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.plot_reactions" title="Permalink to this definition">¶</a></dt>
+<dt id="feastruct.post.post2d.PostProcessor2D.plot_reactions">
+<code class="descname">plot_reactions</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D.plot_reactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D.plot_reactions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method used to generate a plot of the reaction forces.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -329,8 +328,8 @@ undeformed structure is to be plotted</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="feastruct.post.post.PostProcessor.wide_lim">
-<code class="descname">wide_lim</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post.html#PostProcessor.wide_lim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post.PostProcessor.wide_lim" title="Permalink to this definition">¶</a></dt>
+<dt id="feastruct.post.post2d.PostProcessor2D.wide_lim">
+<code class="descname">wide_lim</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/post/post2d.html#PostProcessor2D.wide_lim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.post.post2d.PostProcessor2D.wide_lim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a tuple corresponding to the axis limits (x) stretched by 2% on either side.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

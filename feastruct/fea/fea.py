@@ -1,6 +1,5 @@
 import numpy as np
 from feastruct.fea.node import Node
-from feastruct.post.post import PostProcessor
 
 
 class FiniteElementAnalysis:
@@ -16,8 +15,6 @@ class FiniteElementAnalysis:
     :vartype elements: list[:class:`~feastruct.fea.fea.FiniteElement`]
     :cvar nfa: Node freedom arrangement
     :vartype nfa: list[bool]
-    :cvar post: Post-processor object
-    :vartype post: :class:`feastruct.post.post.PostProcessor`
     """
 
     def __init__(self, nodes, elements, nfa):
@@ -42,7 +39,6 @@ class FiniteElementAnalysis:
             self.elements = elements
 
         self.nfa = nfa
-        self.post = PostProcessor(self)
 
     def create_node(self, coords):
         """Creates a node and adds it to the Fea object.

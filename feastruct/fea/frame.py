@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib.patches import Polygon
 from feastruct.fea.fea import FiniteElementAnalysis, FiniteElement
+from feastruct.post.post2d import PostProcessor2D
 
 
 class FrameAnalysis(FiniteElementAnalysis):
@@ -15,8 +16,6 @@ class FrameAnalysis(FiniteElementAnalysis):
     :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]
     :cvar nfa: Node freedom arrangement
     :vartype nfa: list[bool]
-    :cvar post: Post-processor object
-    :vartype post: :class:`feastruct.post.post.PostProcessor`
     """
 
     def __init__(self, nodes, elements, nfa):
@@ -52,6 +51,8 @@ class FrameAnalysis(FiniteElementAnalysis):
             element = Bar2D_2N(nodes=nodes, material=material, section=section)
         elif el_type == 'EB2-2D':
             element = EulerBernoulli2D_2N(nodes=nodes, material=material, section=section)
+        elif el_type == 'Bar2-3D':
+            element = Bar3D_2N(nodes=nodes, material=material, section=section)
 
         return(FiniteElementAnalysis.create_element(self, element=element))
 
@@ -71,7 +72,7 @@ class FrameAnalysis2D(FrameAnalysis):
     :cvar nfa: Node freedom arrangement
     :vartype nfa: list[bool]
     :cvar post: Post-processor object
-    :vartype post: :class:`feastruct.post.post.PostProcessor`
+    :vartype post: :class:`feastruct.post.post2d.PostProcessor`
     """
 
     def __init__(self, nodes=None, elements=None):
@@ -88,6 +89,8 @@ class FrameAnalysis2D(FrameAnalysis):
 
         # initialise parent FrameAnalysis class
         super().__init__(nodes=nodes, elements=elements, nfa=nfa)
+
+        self.post = PostProcessor2D(self)
 
     def create_element(self, el_type, nodes, material, section):
         """Creates and returns a 2D frame element and adds it to the
@@ -113,7 +116,58 @@ class FrameAnalysis2D(FrameAnalysis):
 
 
 class FrameAnalysis3D(FrameAnalysis):
-    pass
+    """Parent class for a 3D frame analysis.
+
+    Includes a method for analysis initiation and a method for adding 3D frame elements to the
+    analysis.
+
+    Active degrees of freedom are *[x, y, z, rx, ry, rz]* and are referred to as
+    *[0, 1, 2, 3, 4, 5]*.
+
+    :cvar nodes: Nodes used in the finite element analysis
+    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]
+    :cvar elements: Elements used in the finite element analysis
+    :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]
+    :cvar nfa: Node freedom arrangement
+    :vartype nfa: list[bool]
+    """
+
+    def __init__(self, nodes=None, elements=None):
+        """Inits the FrameAnalysis3D class.
+
+        :param nodes: List of nodes with which to initialise the class
+        :type nodes: list[:class:`~feastruct.fea.node.Node`]
+        :param elements: List of elements with which to initialise the class
+        :type elements: list[:class:`~feastruct.fea.frame.FrameElement`]
+        """
+
+        # set the node freedom arrangement for a 3D frame analysis
+        nfa = [True, True, True, True, True, True]
+
+        # initialise parent FrameAnalysis class
+        super().__init__(nodes=nodes, elements=elements, nfa=nfa)
+
+    def create_element(self, el_type, nodes, material, section):
+        """Creates and returns a 3D frame element and adds it to the
+        :class:`~feastruct.fea.frame.Frame3D` object. Refer to 'xxx' for the possible 3D element
+        types.
+
+        :param string el_type: String characterising the type of frame element
+        :param nodes: List of node objects defining the element
+        :type nodes: list[:class:`~feastruct.fea.node.Node`]
+        :param material: Material object for the element
+        :type material: :class:`~feastruct.pre.material.Material`
+        :param section: Section object for the element
+        :type section: :class:`~feastruct.pre.section.Section`
+        :return: FrameElement object
+        :rtype: :class:`~feastruct.fea.frame.FrameElement`
+        """
+
+        # TODO: check to ensure element is 3D
+
+        return(FrameAnalysis.create_element(
+            self, el_type=el_type, nodes=nodes, material=material, section=section
+        ))
 
 
 class FrameElement(FiniteElement):
@@ -410,7 +464,37 @@ class FrameElement2D(FrameElement):
 
 
 class FrameElement3D(FrameElement):
-    pass
+    """Class for a 3D frame element.
+
+    Provides a number of methods that can be used for a 3D frame element.
+
+    :cvar nodes: List of node objects defining the element
+    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]
+    :cvar material: Material object for the element
+    :vartype material: :class:`~feastruct.pre.material.Material`
+    :cvar efs: Element freedom signature
+    :vartype efs: list[bool]
+    :cvar f_int: List of internal force vector results stored for each analysis case
+    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]
+    :cvar section: Section object for the element
+    :vartype section: :class:`~feastruct.pre.section.Section`
+    """
+
+    def __init(self, nodes, material, efs, section):
+        """Inits the FrameElement3D class.
+
+        :param nodes: List of node objects defining the element
+        :type nodes: list[:class:`~feastruct.fea.node.Node`]
+        :param material: Material object for the element
+        :type material: :class:`~feastruct.pre.material.Material`
+        :cvar efs: Element freedom signature
+        :vartype efs: list[bool]
+        :param section: Section object for the element
+        :type section: :class:`~feastruct.pre.section.Section`
+        """
+
+        # initialise parent FrameElement class
+        super().__init__(nodes=nodes, material=material, efs=efs, section=section)
 
 
 class Bar2D_2N(FrameElement2D):
@@ -676,7 +760,268 @@ class Bar2D_2N(FrameElement2D):
 
 
 class Bar3D_2N(FrameElement3D):
-    pass
+    """Two noded, three dimensional bar element that can resist an axial force only. The element
+    is defined by its two end nodes and uses two linear shape functions to obtain analytical
+    results.
+
+    :cvar nodes: List of node objects defining the element
+    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]
+    :cvar material: Material object for the element
+    :vartype material: :class:`~feastruct.pre.material.Material`
+    :cvar efs: Element freedom signature
+    :vartype efs: list[bool]
+    :cvar f_int: List of internal force vector results stored for each analysis case
+    :vartype f_int: list[:class:`~feastruct.fea.fea.ForceVector`]
+    :cvar section: Section object for the element
+    :vartype section: :class:`~feastruct.pre.section.Section`
+    """
+
+    def __init__(self, nodes, material, section):
+        """Inits the Bar3D_2N class.
+
+        :param nodes: List of node objects defining the element
+        :type nodes: list[:class:`~feastruct.fea.node.Node`]
+        :param material: Material object for the element
+        :type material: :class:`~feastruct.pre.material.Material`
+        :param section: Section object for the element
+        :type section: :class:`~feastruct.pre.section.Section`
+        """
+
+        # set the element freedom signature
+        efs = [True, True, True, False, False, False]
+
+        # initialise parent FrameElement3D class
+        super().__init__(nodes=nodes, material=material, efs=efs, section=section)
+
+    def get_shape_function(self, xi):
+        """Returns the value of the shape functions *N1* and *N2* at *xi*.
+
+        :param float xi: Position along the element
+
+        :returns: Value of the shape functions *(N1, N2)* at *xi*
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        return np.array([0.5 - xi / 2, 0.5 + xi / 2])
+
+    def get_stiffness_matrix(self, linear=True):
+        """Gets the stiffness matrix for a two noded, 3D bar element. The stiffness matrix has been
+        analytically integrated so numerical integration is not necessary.
+
+        :param bool linear: Whether a linear or non-linear stiffness matrix is required
+        :return: 6 x 6 element stiffness matrix
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        if linear:
+            # compute geometric parameters
+            (_, _, l0, c) = self.get_geometric_properties()
+
+            # extract relevant properties
+            E = self.material.elastic_modulus
+            A = self.section.area
+            cx = c[0]
+            cy = c[1]
+            cz = c[2]
+
+            # construct rotation matrix
+            T = np.array([
+                [cx, cy, cz, 0, 0, 0],
+                [0, 0, 0, cx, cy, cz],
+            ])
+
+            # compute bar stiffness matrix
+            k = E * A / l0 * np.array([
+                [1, -1],
+                [-1, 1]
+            ])
+
+            return np.matmul(np.matmul(np.transpose(T), k), T)
+        else:
+            # TODO: implement non-linear stiffness matrix
+            pass
+
+    def get_geometric_stiff_matrix(self, analysis_case):
+        """Gets the geometric stiffness matrix for a two noded, 3D bar element. The stiffness
+        matrix has been analytically integrated so numerical integration is not necessary. The
+        geometric stiffness matrix requires an axial force so the analysis_case from a static
+        analysis must be provided.
+
+        :param analysis_case: Analysis case from which to extract the axial force
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+        :return: 6 x 6 element geometric stiffness matrix
+        :rtype: :class: `numpy.ndarray`
+        """
+
+        # compute geometric parameters
+        (_, _, l0, c) = self.get_geometric_properties()
+
+        # extract relevant properties
+        cx = c[0]
+        cy = c[1]
+        cz = c[2]
+
+        # get axial force
+        f_int = self.get_fint(analysis_case)
+
+        # get axial force in element (take average of nodal values)
+        N = np.mean([-f_int[0], f_int[1]])
+
+        # construct rotation matrix
+        T = np.array([
+            [0, 0, 0, cx, cy, cz],
+            [cx, cy, cz, 0, 0, 0]
+        ])
+
+        # compute bar geometric stiffness matrix
+        k_g = N / l0 * np.array([
+            [1, -1],
+            [-1, 1]
+        ])
+
+        return np.matmul(np.matmul(np.transpose(T), k_g), T)
+
+    def get_mass_matrix(self):
+        """Gets the mass matrix for a for a two noded, 2D bar element. The mass matrix has been
+        analytically integrated so numerical integration is not necessary.
+
+        :return: 4 x 4 element mass matrix
+        :rtype: :class: `numpy.ndarray`
+        """
+
+        # compute geometric parameters
+        (_, _, l0, c) = self.get_geometric_properties()
+
+        # extract relevant properties
+        rho = self.material.rho
+        A = self.section.area
+        cx = c[0]
+        cy = c[1]
+        cz = c[2]
+
+        # construct rotation matrix
+        T = np.array([
+            [cx, cy, cz, 0, 0, 0],
+            [0, 0, 0, cx, cy, cz]
+        ])
+
+        # compute element mass matrix
+        m = rho * A * l0 / 6 * np.array([
+            [2, 1],
+            [1, 2]
+        ])
+
+        return np.matmul(np.matmul(np.transpose(T), m), T)
+
+    def get_internal_actions(self, analysis_case):
+        """Returns the internal actions for a two noded 3D bar element.
+
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+
+        :returns: An array containing the internal actions for the element
+            *(N1, N2)*
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        (_, _, _, c) = self.get_geometric_properties()
+        f_int = self.get_fint(analysis_case=analysis_case)
+
+        cx = c[0]
+        cy = c[1]
+        cz = c[2]
+
+        f = np.array([
+            f_int[0] * cx + f_int[1] * cy + f_int[2] * cz,
+            f_int[3] * cx + f_int[4] * cy + f_int[5] * cz
+        ])
+
+        return f
+
+    def calculate_local_displacement(self, xi, u_el):
+        """Calculates the local displacement of the element at position *xi* given the displacement
+        vector *u_el*.
+
+        :param float xi: Position along the element
+        :param u_el: Element displacement vector
+        :type u_el: :class:`numpy.ndarray`
+
+        :returns: Local displacement of the element *(u, v, w)*
+        :rtype: tuple(float, float)
+        """
+
+        # element shape function
+        N = self.get_shape_function(xi)
+
+        # compute local displacements
+        u = np.dot(N, np.array([u_el[0, 0], u_el[1, 0]]))
+        v = np.dot(N, np.array([u_el[0, 1], u_el[1, 1]]))
+        w = np.dot(N, np.array([u_el[0, 2], u_el[1, 2]]))
+
+        return (u, v, w)
+
+    def get_afd(self, n, analysis_case):
+        """Returns the axial force diagram within the element for *n* stations for an
+        analysis_case.
+
+        :param int n: Number of stations to sample the axial force diagram
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+
+        :returns: Axial force diagram
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        # get internal forces
+        f = self.get_internal_actions(analysis_case=analysis_case)
+        N1 = -f[0]
+        N2 = f[1]
+
+        # allocate the axial force diagram
+        afd = np.zeros(n)
+
+        # generate list of stations
+        stations = np.linspace(-1, 1, n)
+
+        # loop over each station
+        for (i, xi) in enumerate(stations):
+            # get shape functions at xi
+            N = self.get_shape_function(xi)
+
+            # compute local displacements
+            afd[i] = np.dot(N, np.array([N1, N2]))
+
+        return afd
+
+    def get_sfd(self, n, analysis_case):
+        """Returns the shear force diagram within the element for *n* stations for an
+        analysis_case.
+
+        :param int n: Number of stations to sample the shear force diagram
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+
+        :returns: Shear force diagram
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        # no shear force in this element
+        return np.zeros(n)
+
+    def get_bmd(self, n, analysis_case):
+        """Returns the bending moment diagram within the element for *n* stations for an
+        analysis_case.
+
+        :param int n: Number of stations to sample the bending moment diagram
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+
+        :returns: Shear force diagram
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        # no bending moment in this element
+        return np.zeros(n)
 
 
 class EulerBernoulli2D_2N(FrameElement2D):
