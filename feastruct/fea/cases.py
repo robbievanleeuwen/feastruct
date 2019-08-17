@@ -127,8 +127,10 @@ class LoadCase(Case):
     A load case contains a set of neumann boundary conditions that can be used in an analysis case.
     Methods are provided to add loads to the LoadCase object.
 
-    :cvar items: A list of BoundaryCondition items defining the freedom case
+    :cvar items: A list of BoundaryCondition items defining the load case
     :vartype items: list[:class:`~feastruct.fea.bcs.BoundaryCondition`]
+    :cvar element_items: A list of ElementLoad items defining the load case
+    :vartype items: list[:class:`~feastruct.fea.bcs.ElementLoad`]
     """
 
     def __init__(self, items=None):
@@ -139,6 +141,7 @@ class LoadCase(Case):
         """
 
         super().__init__(items)
+        self.element_items = []
 
     def add_nodal_load(self, node, val, dof):
         """Adds a nodal neumann boundary condition to the current load case.
@@ -157,3 +160,13 @@ class LoadCase(Case):
         self.add_item(new_load)
 
         return new_load
+
+    def add_element_load(self, element_load):
+        """Adds an element load to the current load case.
+
+        :param element_load: Element load object
+        :type element_load: :class:`~feastruct.fea.bcs.ElementLoad`
+        """
+
+        # add an entry to the load case element_items list
+        self.element_items.append(element_load)

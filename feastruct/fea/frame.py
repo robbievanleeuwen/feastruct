@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib.patches import Polygon
 from feastruct.fea.fea import FiniteElementAnalysis, FiniteElement
+from feastruct.fea.bcs import ElementLoad
 from feastruct.post.post2d import PostProcessor2D
 
 
@@ -394,7 +395,7 @@ class FrameElement2D(FrameElement):
         # get geometric properties
         (node_coords, dx, l0, _) = self.get_geometric_properties()
 
-        # get axial force diagram - TODO implement for arbitrary n!
+        # get shear force diagram - TODO implement for arbitrary n!
         sfd = self.get_sfd(n=2, analysis_case=analysis_case)
         v1 = sfd[0]
         v2 = sfd[1]
@@ -421,7 +422,7 @@ class FrameElement2D(FrameElement):
         ax.text(mid1[0], mid1[1], "{:5.3g}".format(v1), size=8, verticalalignment='bottom')
         ax.text(mid2[0], mid2[1], "{:5.3g}".format(v2), size=8, verticalalignment='bottom')
 
-    def plot_bending_moment(self, ax, analysis_case, scalef):
+    def plot_bending_moment(self, ax, analysis_case, scalef, n):
         """Plots the axial force diagram from a static analysis defined by case_id. N.B. this
         method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.
 
@@ -430,37 +431,62 @@ class FrameElement2D(FrameElement):
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param float scalef: Factor by which to scale the bending moment diagram
+        :param int n: Number of points at which to plot the bending moment diagram
         """
 
         # get geometric properties
         (node_coords, dx, l0, _) = self.get_geometric_properties()
 
-        # get axial force diagram - TODO implement for arbitrary n!
-        bmd = self.get_bmd(n=2, analysis_case=analysis_case)
-        m1 = bmd[0]
-        m2 = bmd[1]
+        # get bending moment diagram
+        bmd = self.get_bmd(n=n, analysis_case=analysis_case)
 
-        # location of node 1 and node 2
-        p1 = node_coords[0, 0:2]
-        p2 = node_coords[1, 0:2]
+        # get indices of min and max values of bending moment
+        min_index = np.argmin(bmd)
+        max_index = np.argmax(bmd)
 
-        # location of the bending moment diagram end points
-        v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
-        p3 = p2 + v * scalef * m2
-        p4 = p1 + v * scalef * m1
+        # get end node coordinates
+        n1 = node_coords[0, 0:2]
+        n2 = node_coords[1, 0:2]
 
-        # plot bending moment line and patch
-        ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0, 0, 0.7))
-        ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0, 0, 0.7))
-        ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0, 0, 0.7))
-        ax.add_patch(Polygon(
-            np.array([p1, p2, p3, p4]), facecolor=(0.2, 0.4, 0.8), linestyle='None', alpha=0.3))
+        # plot bending moment diagram
+        for i in range(n-1):
+            m1 = bmd[i]
+            m2 = bmd[i+1]
 
-        # plot text value of bending moment
-        mid1 = (p1 + p4) / 2
-        mid2 = (p2 + p3) / 2
-        ax.text(mid1[0], mid1[1], "{:5.3g}".format(m1), size=8, verticalalignment='bottom')
-        ax.text(mid2[0], mid2[1], "{:5.3g}".format(m2), size=8, verticalalignment='bottom')
+            # location of node 1 and node 2
+            p1 = n1 + i / (n - 1) * (n2 - n1)
+            p2 = n1 + (i + 1) / (n - 1) * (n2 - n1)
+
+            # location of the bending moment diagram end points
+            v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
+            p3 = p2 + v * scalef * m2
+            p4 = p1 + v * scalef * m1
+
+            # plot bending moment line and patch
+            ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0, 0, 0.7))
+            ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0, 0, 0.7))
+            ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0, 0, 0.7))
+            ax.add_patch(Polygon(
+                np.array([p1, p2, p3, p4]), facecolor=(0.2, 0.4, 0.8), linestyle='None', alpha=0.3
+            ))
+
+            # plot end text values of bending moment
+            if i == 0:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:5.3g}".format(m1), size=8, verticalalignment='bottom')
+            elif i == n - 2:
+                mid = (p2 + p3) / 2
+                ax.text(mid[0], mid[1], "{:5.3g}".format(m2), size=8, verticalalignment='bottom')
+
+            # plot text value of min bending moment (if not end)
+            if i == min_index and i not in [0, n - 2]:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:5.3g}".format(m1), size=8, verticalalignment='bottom')
+
+            # plot text value of max bending moment (if not end)
+            if i == max_index and i not in [0, n - 2]:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:5.3g}".format(m1), size=8, verticalalignment='bottom')
 
 
 class FrameElement3D(FrameElement):
@@ -557,16 +583,22 @@ class Bar2D_2N(FrameElement2D):
             # extract relevant properties
             E = self.material.elastic_modulus
             A = self.section.area
-            s = c[1]
-            c = c[0]
+            cx = c[0]
+            cy = c[1]
+
+            # construct rotation matrix
+            T = np.array([
+                [cx, cy, 0, 0],
+                [0, 0, cx, cy]
+            ])
 
             # compute bar stiffness matrix
-            return E * A / l0 * np.array([
-                [c*c, c*s, -c*c, -c*s],
-                [c*s, s*s, -c*s, -s*s],
-                [-c*c, -c*s, c*c, c*s],
-                [-c*s, -s*s, c*s, s*s]
+            k = E * A / l0 * np.array([
+                [1, -1],
+                [-1, 1]
             ])
+
+            return np.matmul(np.matmul(np.transpose(T), k), T)
         else:
             # TODO: implement non-linear stiffness matrix
             pass
@@ -587,8 +619,8 @@ class Bar2D_2N(FrameElement2D):
         (_, _, l0, c) = self.get_geometric_properties()
 
         # extract relevant properties
-        s = c[1]
-        c = c[0]
+        cx = c[0]
+        cy = c[1]
 
         # get axial force
         f_int = self.get_fint(analysis_case)
@@ -596,13 +628,19 @@ class Bar2D_2N(FrameElement2D):
         # get axial force in element (take average of nodal values)
         N = np.mean([-f_int[0], f_int[1]])
 
-        # form geometric stiffness matrix
-        return N / l0 * np.array([
-            [s*s, -c*s, -s*s, c*s],
-            [-c*s, c*c, c*s, -c*c],
-            [-s*s, c*s, s*s, -c*s],
-            [c*s, -c*c, -c*s, c*c]
+        # construct rotation matrix
+        T = np.array([
+            [0, 0, cx, cy],
+            [cx, cy, 0, 0]
         ])
+
+        # compute bar geometric stiffness matrix
+        k_g = N / l0 * np.array([
+            [1, -1],
+            [-1, 1]
+        ])
+
+        return np.matmul(np.matmul(np.transpose(T), k_g), T)
 
     def get_mass_matrix(self):
         """Gets the mass matrix for a for a two noded, 2D bar element. The mass matrix has been
@@ -616,25 +654,20 @@ class Bar2D_2N(FrameElement2D):
         (_, _, l0, c) = self.get_geometric_properties()
 
         # extract relevant properties
-        s = c[1]
-        c = c[0]
         rho = self.material.rho
         A = self.section.area
+        cx = c[0]
+        cy = c[1]
+
+        T = np.array([
+            [cx, cy, 0, 0],
+            [0, 0, cx, cy]
+        ])
 
         # compute element mass matrix
         m_el = rho * A * l0 / 6 * np.array([
-            [2, 0, 1, 0],
-            [0, 0, 0, 0],
-            [1, 0, 2, 0],
-            [0, 0, 0, 0]
-        ])
-
-        # construct rotation matrix
-        T = np.array([
-            [c, s, 0, 0],
-            [-s, c, 0, 0],
-            [0, 0, c, s],
-            [0, 0, -s, c],
+            [2, 1],
+            [1, 2]
         ])
 
         return np.matmul(np.matmul(np.transpose(T), m_el), T)
@@ -653,12 +686,12 @@ class Bar2D_2N(FrameElement2D):
         (_, _, _, c) = self.get_geometric_properties()
         f_int = self.get_fint(analysis_case=analysis_case)
 
-        s = c[1]
-        c = c[0]
+        cx = c[0]
+        cy = c[1]
 
         f = np.array([
-            f_int[0] * c + f_int[1] * s,
-            f_int[2] * c + f_int[3] * s
+            f_int[0] * cx + f_int[1] * cy,
+            f_int[2] * cx + f_int[3] * cy
         ])
 
         return f
@@ -693,7 +726,10 @@ class Bar2D_2N(FrameElement2D):
 
         (_, _, _, c) = self.get_geometric_properties()
 
-        return np.array([[c[0], c[1]], [-c[1], c[0]]])
+        return np.array([
+            [c[0], c[1]],
+            [-c[1], c[0]]
+        ])
 
     def get_afd(self, n, analysis_case):
         """Returns the axial force diagram within the element for *n* stations for an
@@ -827,7 +863,7 @@ class Bar3D_2N(FrameElement3D):
             # construct rotation matrix
             T = np.array([
                 [cx, cy, cz, 0, 0, 0],
-                [0, 0, 0, cx, cy, cz],
+                [0, 0, 0, cx, cy, cz]
             ])
 
             # compute bar stiffness matrix
@@ -1099,8 +1135,8 @@ class EulerBernoulli2D_2N(FrameElement2D):
             E = self.material.elastic_modulus
             A = self.section.area
             ixx = self.section.ixx
-            s = c[1]
-            c = c[0]
+            cx = c[0]
+            cy = c[1]
 
             # compute bar stiffness matrix
             k_el_bar = E * A / l0 * np.array([
@@ -1130,11 +1166,11 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
         # construct rotation matrix
         T = np.array([
-            [c, s, 0, 0, 0, 0],
-            [-s, c, 0, 0, 0, 0],
+            [cx, cy, 0, 0, 0, 0],
+            [-cy, cx, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0],
-            [0, 0, 0, c, s, 0],
-            [0, 0, 0, -s, c, 0],
+            [0, 0, 0, cx, cy, 0],
+            [0, 0, 0, -cy, cx, 0],
             [0, 0, 0, 0, 0, 1]
         ])
 
@@ -1156,8 +1192,8 @@ class EulerBernoulli2D_2N(FrameElement2D):
         (_, _, l0, c) = self.get_geometric_properties()
 
         # extract relevant properties
-        s = c[1]
-        c = c[0]
+        cx = c[0]
+        cy = c[1]
 
         # get axial force
         f_int = self.get_fint(analysis_case)
@@ -1178,11 +1214,11 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
         # construct rotation matrix
         T = np.array([
-            [c, s, 0, 0, 0, 0],
-            [-s, c, 0, 0, 0, 0],
+            [cx, cy, 0, 0, 0, 0],
+            [-cy, cx, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0],
-            [0, 0, 0, c, s, 0],
-            [0, 0, 0, -s, c, 0],
+            [0, 0, 0, cx, cy, 0],
+            [0, 0, 0, -cy, cx, 0],
             [0, 0, 0, 0, 0, 1]
         ])
 
@@ -1200,10 +1236,10 @@ class EulerBernoulli2D_2N(FrameElement2D):
         (_, _, l0, c) = self.get_geometric_properties()
 
         # extract relevant properties
-        s = c[1]
-        c = c[0]
         rho = self.material.rho
         A = self.section.area
+        cx = c[0]
+        cy = c[1]
 
         # compute element mass matrix
         m_el = np.array([
@@ -1218,11 +1254,11 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
         # construct rotation matrix
         T = np.array([
-            [c, s, 0, 0, 0, 0],
-            [-s, c, 0, 0, 0, 0],
+            [cx, cy, 0, 0, 0, 0],
+            [-cy, cx, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0],
-            [0, 0, 0, c, s, 0],
-            [0, 0, 0, -s, c, 0],
+            [0, 0, 0, cx, cy, 0],
+            [0, 0, 0, -cy, cx, 0],
             [0, 0, 0, 0, 0, 1]
         ])
 
@@ -1242,15 +1278,15 @@ class EulerBernoulli2D_2N(FrameElement2D):
         (_, _, _, c) = self.get_geometric_properties()
         f_int = self.get_fint(analysis_case=analysis_case)
 
-        s = c[1]
-        c = c[0]
+        cx = c[0]
+        cy = c[1]
 
         f = np.array([
-            f_int[0] * c + f_int[1] * s,
-            -f_int[0] * s + f_int[1] * c,
+            f_int[0] * cx + f_int[1] * cy,
+            -f_int[0] * cy + f_int[1] * cx,
             f_int[2],
-            f_int[3] * c + f_int[4] * s,
-            -f_int[3] * s + f_int[4] * c,
+            f_int[3] * cx + f_int[4] * cy,
+            -f_int[3] * cy + f_int[4] * cx,
             f_int[5]
         ])
 
@@ -1371,6 +1407,18 @@ class EulerBernoulli2D_2N(FrameElement2D):
         M1 = f[2]
         M2 = -f[5]
 
+        # get element length
+        (_, _, l0, _) = self.get_geometric_properties()
+
+        # get list of applied element loads
+        element_loads = []
+
+        for element_load in analysis_case.load_case.element_items:
+            # if the current element has an applied element load
+            if element_load.element is self:
+                # add nodal equivalent loads to f_int
+                element_loads.append(element_load)
+
         # allocate the bending moment diagram
         bmd = np.zeros(n)
 
@@ -1385,7 +1433,91 @@ class EulerBernoulli2D_2N(FrameElement2D):
             # compute bending moment diagram
             bmd[i] = np.dot(N, np.array([M1, M2]))
 
+            # add bending moment due to element loads
+            for element_load in element_loads:
+                bmd[i] += -1 * (xi - 1) * (xi + 1) * element_load.q * l0 * l0 / 8
+
         return bmd
+
+    def generate_udl(self, q):
+        """Returns a UniformDistributedLoad object for the current element.
+
+        :param float q: Value of the uniformly distributed load
+
+        :returns: UniformDistributedLoad object
+        :rtype: :class:`~feastruct.fea.frame.EulerBernoulli2D_2N.UniformDistributedLoad`
+        """
+
+        return self.UniformDistributedLoad(self, q)
+
+    class UniformDistributedLoad(ElementLoad):
+        """Class for the application of a uniformly distributed load to a EulerBernoulli2D_2N
+        element.
+
+        :cvar element: EulerBernoulli2D_2N element to which the load is applied
+        :vartype element: :class:`~feastruct.fea.frame.EulerBernoulli2D_2N`
+        :cvar float val: Value of the uniformly distributed load
+        """
+
+        def __init__(self, element, q):
+            """Inits the UniformDistributedLoad class.
+
+            :param element: EulerBernoulli2D_2N element to which the load is applied
+            :type element: :class:`~feastruct.fea.frame.EulerBernoulli2D_2N`
+            :param float q: Value of the uniformly distributed load
+            """
+
+            super().__init__(element)
+            self.q = q
+
+        def nodal_equivalent_loads(self):
+            """a"""
+
+            # get relevant properties
+            (_, _, l0, _) = self.element.get_geometric_properties()
+
+            f_eq = np.array([
+                0,
+                -self.q * l0 / 2,
+                -self.q * l0 * l0 / 12,
+                0,
+                -self.q * l0 / 2,
+                self.q * l0 * l0 / 12
+            ])
+
+            return f_eq
+
+        def apply_load(self, f_eq):
+            """a"""
+
+            # get gdofs for the element
+            gdofs = self.element.get_gdof_nums()
+
+            # calculate the nodal equivalent loads
+            f_e_eq = self.nodal_equivalent_loads()
+
+            # get relevant properties
+            (_, _, _, c) = self.element.get_geometric_properties()
+            cx = c[0]
+            cy = c[1]
+
+            # rotate
+            f_e_eq = np.array([
+                f_e_eq[0] * cx + f_e_eq[1] * cy,
+                -f_e_eq[0] * cy + f_e_eq[1] * cx,
+                f_e_eq[2],
+                f_e_eq[3] * cx + f_e_eq[4] * cy,
+                -f_e_eq[3] * cy + f_e_eq[4] * cx,
+                f_e_eq[5]
+            ])
+
+            # apply fixed end forces
+            f_eq[gdofs] += f_e_eq
+
+        def plot_load(self):
+            """a"""
+
+            pass
 
 
 class EulerBernoulli3D_2N(FrameElement3D):

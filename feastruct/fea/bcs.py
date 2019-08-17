@@ -29,7 +29,11 @@ class BoundaryCondition:
         self.dof = dof
 
     def get_gdof(self):
-        """Returns the global degree of freedom number for the boundary condition."""
+        """Returns the global degree of freedom number for the boundary condition.
+
+        :returns: Global degree of freedom number
+        :rtype: int
+        """
 
         return self.node.dofs[self.dof].global_dof_num
 
@@ -599,11 +603,11 @@ class NodalLoad(BoundaryCondition):
         :type f_ext: :class:`numpy.ndarray`
         """
 
-        # get gdof number for the support
+        # get gdof number for the load
         gdof = self.node.dofs[self.dof].global_dof_num
 
         # add load to f_ext, selecting the correct dof from dofs
-        f_ext[gdof] = self.val
+        f_ext[gdof] += self.val
 
     def plot_load(self, ax, max_force, small, get_support_angle, analysis_case, deformed,
                   def_scale):
@@ -722,3 +726,39 @@ class NodalLoad(BoundaryCondition):
 
         ax.plot(rl[0, s:e] + x, rl[1, s:e] + y, 'k-', linewidth=2)
         ax.add_patch(Polygon(np.transpose(rp), facecolor='k'))
+
+
+class ElementLoad:
+    """Parent class for a load applied to a finite element.
+
+    :cvar element: Finite element to which the load is applied
+    :vartype element: :class:`~feastruct.fea.fea.FiniteElement`
+    """
+
+    def __init__(self, element):
+        """Inits the ElementLoad class.
+
+        :param element: Finite element to which the load is applied
+        :type element: :class:`~feastruct.fea.fea.FiniteElement`
+        """
+
+        self.element = element
+
+    def nodal_equivalent_loads(self):
+        """Placehodler for the nodal_equivalent_loads method."""
+
+        pass
+
+    def apply_load(self, f_eq):
+        """Placeholder for the apply_load method.
+
+        :param f_eq: Global equivalent nodal loads vector of size *N*
+        :type f_eq: :class:`numpy.ndarray
+        """
+
+        pass
+
+    def plot_load(self):
+        """Placeholder for the plot_load method."""
+
+        pass

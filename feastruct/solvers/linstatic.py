@@ -56,9 +56,12 @@ class LinearStatic(Solver):
             # assemble the external force vector
             if self.solver_settings.linear_static.time_info:
                 str = '---Assembling the external force vector...'
-                f_ext = self.function_timer(str, self.assemble_fext, analysis_case)
+                (f_ext, f_eq) = self.function_timer(str, self.assemble_fext, analysis_case)
             else:
-                f_ext = self.assemble_fext(analysis_case=analysis_case)
+                (f_ext, f_eq) = self.assemble_fext(analysis_case=analysis_case)
+
+            # apply the equivalent nodal loads
+            f_ext -= f_eq
 
             # apply the boundary conditions
             (K_mod, f_ext) = self.apply_bcs(K=K, f_ext=f_ext, analysis_case=analysis_case)
@@ -82,9 +85,9 @@ class LinearStatic(Solver):
             # calculate the reaction forces
             if self.solver_settings.linear_static.time_info:
                 str = '---Calculating reactions...'
-                self.function_timer(str, self.calculate_reactions, K, u, analysis_case)
+                self.function_timer(str, self.calculate_reactions, K, u, f_eq, analysis_case)
             else:
-                self.calculate_reactions(K=K, u=u, analysis_case=analysis_case)
+                self.calculate_reactions(K=K, u=u, f_eq=f_eq, analysis_case=analysis_case)
 
             # calculate the element stresses
             if self.solver_settings.linear_static.time_info:

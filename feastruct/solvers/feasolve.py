@@ -167,23 +167,29 @@ class Solver:
         :param analysis_case: Analysis case used to assemble the external force vector
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: The external force vector
-        :rtype: :class:`numpy.ndarray`
+        :returns: The external force vector *f_ext* and the equivalent nodal loads vector *f_eq*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         f_ext = np.zeros(self.ndof)
+        f_eq = np.zeros(self.ndof)
 
         # apply nodal loads
-        # loop through all the loads in the analysis case
-        for load in analysis_case.load_case.items:
-            load.apply_load(f_ext=f_ext)
+        # loop through all the nodal loads in the analysis case
+        for nodal_load in analysis_case.load_case.items:
+            nodal_load.apply_load(f_ext=f_ext)
+
+        # apply element loads
+        # loop through all the element loads in the analysis case
+        for element_load in analysis_case.load_case.element_items:
+            element_load.apply_load(f_eq=f_eq)
 
         # add body forces
         for el in self.analysis.elements:
             # TODO: add body forces to fext
             pass
 
-        return f_ext
+        return (f_ext, f_eq)
 
     def apply_bcs(self, K, f_ext, analysis_case):
         """Applies the boundary conditions to the global stiffness matrix and external force
@@ -426,7 +432,7 @@ class Solver:
                 dof.save_frequency_modes(
                     frequency_modes=frequency_modes, w=w, v=v_dof, analysis_case=analysis_case)
 
-    def calculate_reactions(self, K, u, analysis_case):
+    def calculate_reactions(self, K, u, f_eq, analysis_case):
         """Calculates the reactions using the stiffness matrix *K* and the displacement vector *u*
         and saves the reactions for the analysis case.
 
@@ -434,12 +440,14 @@ class Solver:
         :type K: :class:`scipy.sparse.lil_matrix`
         :param u: Displacement vector
         :type u: :class:`numpy.ndarray`
+        :param f_eq: Global equivalent nodal loads vector of size *N*
+        :type f_eq: :class:`numpy.ndarray`
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         """
 
         # calculate global force vector
-        F = K.dot(u)
+        F = K.dot(u) + f_eq
 
         # loop through constrained nodes and save reactions
         for support in analysis_case.freedom_case.items:
@@ -464,6 +472,13 @@ class Solver:
 
             # calculate internal force vector
             f_int = np.matmul(k_el, u_el)
+
+            # find element loads
+            for element_load in analysis_case.load_case.element_items:
+                # if the current element has an applied element load
+                if element_load.element is el:
+                    # add nodal equivalent loads to f_int
+                    f_int += element_load.nodal_equivalent_loads()
 
             el.save_fint(f=f_int, analysis_case=analysis_case)
 

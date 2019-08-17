@@ -15,7 +15,7 @@
 - [x] 3d truss elements
 - [ ] 3d frame elements
 - [ ] Spring supports
-- [ ] Distributed loads
+- [x] Distributed loads
 - [ ] Body loads
 - [ ] Thermal loads
 - [ ] MP Constraints
@@ -28,4 +28,4 @@
 ## Post-Processor:
 
 - [ ] pyVista module
-- [ ] Line contour plots
+- [ ] Line contour plots (e.g. displacement)

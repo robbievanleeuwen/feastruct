@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import feastruct.fea.bcs as bcs
 
 
 class PostProcessor2D:
@@ -10,11 +11,11 @@ class PostProcessor2D:
 
     :cvar analysis: Analysis object for post-processing
     :vartype analysis: :class:`~feastruct.fea.fea.fea`
-    :cvar int n_subdiv: Number of subdivisions used to discretise frame elements in
-        post-processing, such that higher order shape functions can be realised
+    :cvar int n_subdiv: Number of subdivisions (intermediate nodes) used to discretise frame
+        elements in post-processing, such that higher order shape functions can be realised
     """
 
-    def __init__(self, analysis, n_subdiv=10):
+    def __init__(self, analysis, n_subdiv=11):
         """Inits the fea class.
 
         :param analysis: Analysis object for post-processing
@@ -112,15 +113,17 @@ class PostProcessor2D:
             max_force = 0
 
             for load in analysis_case.load_case.items:
-                if load.dof in [0, 1]:
-                    max_force = max(max_force, abs(load.val))
+                if type(load) is bcs.NodalLoad:
+                    if load.dof in [0, 1]:
+                        max_force = max(max_force, abs(load.val))
 
             # plot loads
             for load in analysis_case.load_case.items:
-                load.plot_load(
-                    ax=ax, max_force=max_force, small=small,
-                    get_support_angle=self.get_support_angle, analysis_case=analysis_case,
-                    deformed=deformed, def_scale=def_scale)
+                if type(load) is bcs.NodalLoad:
+                    load.plot_load(
+                        ax=ax, max_force=max_force, small=small,
+                        get_support_angle=self.get_support_angle, analysis_case=analysis_case,
+                        deformed=deformed, def_scale=def_scale)
 
         # plot layout
         plt.axis('tight')
@@ -204,7 +207,7 @@ class PostProcessor2D:
                 sfd = el.get_sfd(n=2, analysis_case=analysis_case)
                 max_shear = max(max_shear, abs(sfd[0]), abs(sfd[1]))
             if moment:
-                bmd = el.get_bmd(n=2, analysis_case=analysis_case)
+                bmd = el.get_bmd(n=self.n_subdiv, analysis_case=analysis_case)
                 max_moment = max(max_moment, abs(bmd[0]), abs(bmd[1]))
 
         scale_axial = scale * max(xmax - xmin, ymax - ymin) / max(max_axial, 1e-8)
@@ -218,7 +221,8 @@ class PostProcessor2D:
             if shear:
                 el.plot_shear_force(ax=ax, analysis_case=analysis_case, scalef=scale_shear)
             if moment:
-                el.plot_bending_moment(ax=ax, analysis_case=analysis_case, scalef=scale_moment)
+                el.plot_bending_moment(
+                    ax=ax, analysis_case=analysis_case, scalef=scale_moment, n=self.n_subdiv)
 
         # plot the undeformed structure
         self.plot_geom(analysis_case=analysis_case, ax=ax)

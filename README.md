@@ -36,7 +36,7 @@ a python package for structural finite element analysis.
 - [x] Applied Loads
   - [x] Load Cases
   - [x] Nodal Loads
-  - [ ] Surface (Distributed) Loads
+  - [x] Surface (Distributed) Loads
   - [ ] Body Loads
 - [x] Restraints
   - [x] Freedom Cases
