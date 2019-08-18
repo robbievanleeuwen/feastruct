@@ -75,9 +75,9 @@ class TestChapter3(unittest.TestCase):
         self.assertEqual(np.around(u_b, 2), -0.19)
 
         # check axial forces
-        n1 = elements[0].get_afd(n=1, analysis_case=analysis_case)
-        n2 = elements[1].get_afd(n=1, analysis_case=analysis_case)
-        n3 = elements[2].get_afd(n=1, analysis_case=analysis_case)
+        (_, n1) = elements[0].get_afd(n=1, analysis_case=analysis_case)
+        (_, n2) = elements[1].get_afd(n=1, analysis_case=analysis_case)
+        (_, n3) = elements[2].get_afd(n=1, analysis_case=analysis_case)
 
         self.assertEqual(np.around(n1/1e3, 1), 515.7)
         self.assertEqual(np.around(n2/1e3, 1), 89.9)

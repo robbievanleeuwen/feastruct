@@ -3,7 +3,7 @@ import numpy as np
 from feastruct.pre.material import Steel
 from feastruct.pre.section import Section
 import feastruct.fea.cases as cases
-from feastruct.fea.frame import FrameAnalysis3D
+from feastruct.fea.frame import FrameAnalysis2D, FrameAnalysis3D
 from feastruct.solvers.linstatic import LinearStatic
 
 
@@ -113,6 +113,141 @@ class TestChapter5(unittest.TestCase):
         self.assertEqual(np.around(re_x/1e3, 1), 176.4)
         self.assertEqual(np.around(re_y/1e3, 1), -176.4)
         self.assertEqual(np.around(re_z/1e3, 1), 705.6)
+
+    def test_example5_6(self):
+        # create materials
+        steel = Steel()
+
+        # create 3d frame analysis object
+        analysis = FrameAnalysis2D()
+
+        section_ab = Section(area=6e3, ixx=200e6)
+        section_bc = Section(area=4e3, ixx=50e6)
+
+        # create nodes
+        node_a = analysis.create_node(coords=[0])
+        node_b = analysis.create_node(coords=[8000])
+        node_c = analysis.create_node(coords=[13000])
+
+        # create beam elements
+        element_ab = analysis.create_element(
+            el_type='EB2-2D', nodes=[node_a, node_b], material=steel, section=section_ab
+        )
+        element_bc = analysis.create_element(
+            el_type='EB2-2D', nodes=[node_b, node_c], material=steel, section=section_bc
+        )
+
+        # add supports
+        freedom_case = cases.FreedomCase()
+        sup_a = freedom_case.add_nodal_support(node=node_a, val=0, dof=1)
+        sup_b = freedom_case.add_nodal_support(node=node_b, val=0, dof=1)
+        sup_c = [0, 0, 0]
+        sup_c[0] = freedom_case.add_nodal_support(node=node_c, val=0, dof=0)
+        sup_c[1] = freedom_case.add_nodal_support(node=node_c, val=0, dof=1)
+        sup_c[2] = freedom_case.add_nodal_support(node=node_c, val=0, dof=5)
+
+        # add loads
+        load_case = cases.LoadCase()
+        load_case.add_element_load(element_ab.generate_udl(q=-2))
+        load_case.add_element_load(element_bc.generate_point_load(p=-20e3, a=0.4))
+
+        # add analysis case
+        analysis_case = cases.AnalysisCase(freedom_case=freedom_case, load_case=load_case)
+
+        # linear static solver
+        LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
+
+        # check node displacement
+        dofs_a = node_a.get_dofs(node_a.nfs)
+        dofs_b = node_b.get_dofs(node_b.nfs)
+        r_a = dofs_a[2].get_displacement(analysis_case)
+        r_b = dofs_b[2].get_displacement(analysis_case)
+
+        self.assertEqual(np.around(r_a, 7), -5.681e-4)
+        self.assertEqual(np.around(r_b, 7), 0.696e-4)
+
+        # check reactions
+        ra_y = sup_a.get_reaction(analysis_case=analysis_case)
+        rb_y = sup_b.get_reaction(analysis_case=analysis_case)
+        rc_y = sup_c[1].get_reaction(analysis_case=analysis_case)
+        rc_m = sup_c[2].get_reaction(analysis_case=analysis_case)
+
+        self.assertEqual(np.around(ra_y/1e3, 2), 6.13)
+        self.assertEqual(np.around(rb_y/1e3, 2), 23.00)
+        self.assertEqual(np.around(rc_y/1e3, 2), 6.87)
+        self.assertEqual(np.around(rc_m/1e6, 2), -9.32)
+
+    def test_example5_7(self):
+        l_a = np.sqrt(8000 * 8000 - 3000 * 3000)
+
+        # create materials
+        steel = Steel()
+
+        # create 3d frame analysis object
+        analysis = FrameAnalysis2D()
+
+        section = Section(area=6e3, ixx=200e6)
+
+        # create nodes
+        node_a = analysis.create_node(coords=[0])
+        node_b = analysis.create_node(coords=[l_a, 3000])
+        node_c = analysis.create_node(coords=[l_a + 8000, 3000])
+
+        # create beam elements
+        element_ab = analysis.create_element(
+            el_type='EB2-2D', nodes=[node_a, node_b], material=steel, section=section
+        )
+        element_bc = analysis.create_element(
+            el_type='EB2-2D', nodes=[node_b, node_c], material=steel, section=section
+        )
+
+        # add supports
+        freedom_case = cases.FreedomCase()
+        sup_a = [0, 0, 0]
+        sup_a[0] = freedom_case.add_nodal_support(node=node_a, val=0, dof=0)
+        sup_a[1] = freedom_case.add_nodal_support(node=node_a, val=0, dof=1)
+        sup_a[2] = freedom_case.add_nodal_support(node=node_a, val=0, dof=5)
+        sup_c = [0, 0, 0]
+        sup_c[0] = freedom_case.add_nodal_support(node=node_c, val=0, dof=0)
+        sup_c[1] = freedom_case.add_nodal_support(node=node_c, val=0, dof=1)
+        sup_c[2] = freedom_case.add_nodal_support(node=node_c, val=0, dof=5)
+
+        # add loads
+        load_case = cases.LoadCase()
+        load_case.add_nodal_load(node=node_b, val=50e3 * 3000 / 8000, dof=0)
+        load_case.add_nodal_load(node=node_b, val=-50e3 * l_a / 8000, dof=1)
+        load_case.add_element_load(element_bc.generate_udl(q=-4))
+
+        # add analysis case
+        analysis_case = cases.AnalysisCase(freedom_case=freedom_case, load_case=load_case)
+
+        # linear static solver
+        LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
+
+        # check node displacement
+        dofs_b = node_b.get_dofs(node_b.nfs)
+        u_b = dofs_b[0].get_displacement(analysis_case)
+        v_b = dofs_b[1].get_displacement(analysis_case)
+        r_b = dofs_b[2].get_displacement(analysis_case)
+
+        self.assertEqual(np.around(u_b, 4), 0.9950)
+        self.assertEqual(np.around(v_b, 3), -4.982)
+        self.assertEqual(np.around(r_b, 6), -0.000534)
+
+        # check reactions
+        ra_x = sup_a[0].get_reaction(analysis_case=analysis_case)
+        ra_y = sup_a[1].get_reaction(analysis_case=analysis_case)
+        ra_m = sup_a[2].get_reaction(analysis_case=analysis_case)
+        rc_x = sup_c[0].get_reaction(analysis_case=analysis_case)
+        rc_y = sup_c[1].get_reaction(analysis_case=analysis_case)
+        rc_m = sup_c[2].get_reaction(analysis_case=analysis_case)
+
+        self.assertEqual(np.around(ra_x/1e3, 1), 130.5)
+        self.assertEqual(np.around(ra_y/1e3, 1), 55.7)
+        self.assertEqual(np.around(ra_m/1e6, 2), 13.37)
+        self.assertEqual(np.around(rc_x/1e3, 1), -149.3)
+        self.assertEqual(np.around(rc_y/1e3, 1), 22.7)
+        self.assertEqual(np.around(rc_m/1e6, 2), -45.36)
 
 
 if __name__ == "__main__":

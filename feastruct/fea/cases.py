@@ -166,7 +166,12 @@ class LoadCase(Case):
 
         :param element_load: Element load object
         :type element_load: :class:`~feastruct.fea.bcs.ElementLoad`
+
+        :returns: Element load object
+        :rtype: :class:`~feastruct.fea.bcs.ElementLoad`
         """
 
         # add an entry to the load case element_items list
         self.element_items.append(element_load)
+
+        return element_load

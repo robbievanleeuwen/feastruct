@@ -67,8 +67,8 @@ class TestChapter2(unittest.TestCase):
         self.assertEqual(np.around(v, 2), 0.72)
 
         # check axial forces
-        n1 = elements[0].get_afd(n=1, analysis_case=analysis_case)
-        n2 = elements[1].get_afd(n=1, analysis_case=analysis_case)
+        (_, n1) = elements[0].get_afd(n=1, analysis_case=analysis_case)
+        (_, n2) = elements[1].get_afd(n=1, analysis_case=analysis_case)
 
         self.assertEqual(np.around(n1/1e3, 1), 400.6)
         self.assertEqual(np.around(n2/1e3, 1), -277.8)
@@ -129,10 +129,10 @@ class TestChapter2(unittest.TestCase):
         self.assertEqual(np.around(v, 2), 0)
 
         # check axial forces
-        n1 = el1.get_afd(n=1, analysis_case=analysis_case)
-        n2 = el2.get_afd(n=1, analysis_case=analysis_case)
-        n3 = el3.get_afd(n=1, analysis_case=analysis_case)
-        n4 = el4.get_afd(n=1, analysis_case=analysis_case)
+        (_, n1) = el1.get_afd(n=1, analysis_case=analysis_case)
+        (_, n2) = el2.get_afd(n=1, analysis_case=analysis_case)
+        (_, n3) = el3.get_afd(n=1, analysis_case=analysis_case)
+        (_, n4) = el4.get_afd(n=1, analysis_case=analysis_case)
 
         self.assertEqual(np.around(n1/1e3, 1), 368.8)
         self.assertEqual(np.around(n2/1e3, 1), 368.8)

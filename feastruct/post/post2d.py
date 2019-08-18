@@ -30,7 +30,7 @@ class PostProcessor2D:
     def plot_geom(self, analysis_case, ax=None, supports=True, loads=True, undeformed=True,
                   deformed=False, def_scale=1, dashed=False):
         """Method used to plot the structural mesh in the undeformed and/or deformed state. If no
-        axes object is provided, a new axes object is created. N.B. this method is adopted from the
+        axes object is provided, a new axes object is created. N.B. this method is adapted from the
         MATLAB code by F.P. van der Meer: plotGeom.m.
 
         :param analysis_case: Analysis case
@@ -113,17 +113,15 @@ class PostProcessor2D:
             max_force = 0
 
             for load in analysis_case.load_case.items:
-                if type(load) is bcs.NodalLoad:
-                    if load.dof in [0, 1]:
-                        max_force = max(max_force, abs(load.val))
+                if load.dof in [0, 1]:
+                    max_force = max(max_force, abs(load.val))
 
             # plot loads
             for load in analysis_case.load_case.items:
-                if type(load) is bcs.NodalLoad:
-                    load.plot_load(
-                        ax=ax, max_force=max_force, small=small,
-                        get_support_angle=self.get_support_angle, analysis_case=analysis_case,
-                        deformed=deformed, def_scale=def_scale)
+                load.plot_load(
+                    ax=ax, max_force=max_force, small=small,
+                    get_support_angle=self.get_support_angle, analysis_case=analysis_case,
+                    deformed=deformed, def_scale=def_scale)
 
         # plot layout
         plt.axis('tight')
@@ -186,8 +184,6 @@ class PostProcessor2D:
             fraction of the window that the largest action takes up
         """
 
-        # TODO: implement for arbitrary number of stations - label ends and min, max
-
         (fig, ax) = plt.subplots()
 
         # get size of structure
@@ -201,14 +197,14 @@ class PostProcessor2D:
         # loop throuh each element to get max forces
         for el in self.analysis.elements:
             if axial:
-                afd = el.get_afd(n=2, analysis_case=analysis_case)
-                max_axial = max(max_axial, abs(afd[0]), abs(afd[1]))
+                (_, afd) = el.get_afd(n=self.n_subdiv, analysis_case=analysis_case)
+                max_axial = max(max_axial, max(abs(min(afd)), abs(max(afd))))
             if shear:
-                sfd = el.get_sfd(n=2, analysis_case=analysis_case)
-                max_shear = max(max_shear, abs(sfd[0]), abs(sfd[1]))
+                (_, sfd) = el.get_sfd(n=self.n_subdiv, analysis_case=analysis_case)
+                max_shear = max(max_shear, max(abs(min(sfd)), abs(max(sfd))))
             if moment:
-                bmd = el.get_bmd(n=self.n_subdiv, analysis_case=analysis_case)
-                max_moment = max(max_moment, abs(bmd[0]), abs(bmd[1]))
+                (_, bmd) = el.get_bmd(n=self.n_subdiv, analysis_case=analysis_case)
+                max_moment = max(max_moment, max(abs(min(bmd)), abs(max(bmd))))
 
         scale_axial = scale * max(xmax - xmin, ymax - ymin) / max(max_axial, 1e-8)
         scale_shear = scale * max(xmax - xmin, ymax - ymin) / max(max_shear, 1e-8)
@@ -217,9 +213,11 @@ class PostProcessor2D:
         # loop throgh each element to plot the forces
         for el in self.analysis.elements:
             if axial:
-                el.plot_axial_force(ax=ax, analysis_case=analysis_case, scalef=scale_axial)
+                el.plot_axial_force(
+                    ax=ax, analysis_case=analysis_case, scalef=scale_axial, n=self.n_subdiv)
             if shear:
-                el.plot_shear_force(ax=ax, analysis_case=analysis_case, scalef=scale_shear)
+                el.plot_shear_force(
+                    ax=ax, analysis_case=analysis_case, scalef=scale_shear, n=self.n_subdiv)
             if moment:
                 el.plot_bending_moment(
                     ax=ax, analysis_case=analysis_case, scalef=scale_moment, n=self.n_subdiv)
@@ -312,7 +310,7 @@ class PostProcessor2D:
     def get_support_angle(self, node, prefer_dir=None):
         """Given a node object, returns the optimal angle to plot a support. Essentially finds the
         average angle of the connected elements and considers a preferred plotting direction. N.B.
-        this method is adopted from the MATLAB code by F.P. van der Meer: plotGeom.m.
+        this method is adapted from the MATLAB code by F.P. van der Meer: plotGeom.m.
 
         :param node: Node object
         :type node: :class:`~feastruct.fea.node.node`

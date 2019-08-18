@@ -81,8 +81,8 @@ class TestChapter4(unittest.TestCase):
         self.assertEqual(np.around(rb_y/1e3, 2), 6.85)
 
         # check bending moment forces
-        m_ab = self.element_ab.get_bmd(n=2, analysis_case=analysis_case)
-        m_bc = self.element_bc.get_bmd(n=2, analysis_case=analysis_case)
+        (_, m_ab) = self.element_ab.get_bmd(n=2, analysis_case=analysis_case)
+        (_, m_bc) = self.element_bc.get_bmd(n=2, analysis_case=analysis_case)
 
         self.assertTrue(np.isclose(m_ab[1], m_bc[0]))
         self.assertEqual(np.around(m_ab[1]/1e6, 2), 17.68)
@@ -130,8 +130,8 @@ class TestChapter4(unittest.TestCase):
         self.assertEqual(np.around(rc_m/1e6, 2), 7.14)
 
         # check bending moment forces
-        m_ab = self.element_ab.get_bmd(n=2, analysis_case=analysis_case)
-        m_bc = self.element_bc.get_bmd(n=2, analysis_case=analysis_case)
+        (_, m_ab) = self.element_ab.get_bmd(n=2, analysis_case=analysis_case)
+        (_, m_bc) = self.element_bc.get_bmd(n=2, analysis_case=analysis_case)
 
         self.assertEqual(np.around(m_ab[1]/1e6, 2), -35.71)
         self.assertEqual(np.around(m_bc[0]/1e6, 2), 14.29)
@@ -178,8 +178,8 @@ class TestChapter4(unittest.TestCase):
         self.assertEqual(np.around(rc_m/1e6, 2), -51.86)
 
         # check bending moment forces
-        m_ab = self.element_ab.get_bmd(n=2, analysis_case=analysis_case)
-        m_bc = self.element_bc.get_bmd(n=2, analysis_case=analysis_case)
+        (_, m_ab) = self.element_ab.get_bmd(n=2, analysis_case=analysis_case)
+        (_, m_bc) = self.element_bc.get_bmd(n=2, analysis_case=analysis_case)
 
         self.assertTrue(np.isclose(m_ab[1], m_bc[0]))
         self.assertEqual(np.around(m_ab[1]/1e6, 2), -55.71)
@@ -300,8 +300,8 @@ class TestChapter4(unittest.TestCase):
 
         self.assertEqual(np.around(v_p, 3), -0.238)
 
-        # check bending moment forces
-        m = beam_elements[int(n/2)].get_bmd(n=2, analysis_case=analysis_case)
+        # check bending moments
+        (_, m) = beam_elements[int(n/2)].get_bmd(n=2, analysis_case=analysis_case)
         self.assertEqual(np.around(m[0], 0), -547)
 
 

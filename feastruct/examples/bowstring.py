@@ -106,8 +106,8 @@ def preprocessor(length, depth, panels, freq):
 
     # if frequency analysis, don't bother adding load
     if not freq:
-        for i in range(panels - 1):
-            load_case.add_nodal_load(node=nodes_deck[i+1], val=-w*dx, dof=1)
+        for el in elements_deck:
+            load_case.add_element_load(el.generate_udl(q=-w))
 
     # add analysis case
     analysis_case = cases.AnalysisCase(freedom_case=freedom_case, load_case=load_case)

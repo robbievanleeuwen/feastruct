@@ -18,6 +18,7 @@ elements = []  # list holding the element objects
 
 # create 2d frame analysis object
 analysis = FrameAnalysis2D()
+analysis.post.n_subdiv = 5
 
 # create materials and sections
 steel = Steel()

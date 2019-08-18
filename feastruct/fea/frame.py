@@ -340,91 +340,147 @@ class FrameElement2D(FrameElement):
         ax.plot(x[0], y[0], 'k.', markersize=8)
         ax.plot(x[-1], y[-1], 'k.', markersize=8)
 
-    def plot_axial_force(self, ax, analysis_case, scalef):
+    def plot_axial_force(self, ax, analysis_case, scalef, n):
         """Plots the axial force diagram from a static analysis defined by case_id. N.B. this
-        method is adopted from the MATLAB code by F.P. van der Meer: plotNLine.m.
+        method is adapted from the MATLAB code by F.P. van der Meer: plotNLine.m.
 
         :param ax: Axis object on which to draw the element
         :type ax: :class: `matplotlib.axes.Axes`
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param float scalef: Factor by which to scale the axial force diagram
+        :param int n: Number of points at which to plot the axial force diagram
         """
 
         # get geometric properties
         (node_coords, dx, l0, _) = self.get_geometric_properties()
 
-        # get axial force diagram - TODO implement for arbitrary n!
-        afd = self.get_afd(n=2, analysis_case=analysis_case)
-        n1 = afd[0]
-        n2 = afd[1]
+        # get axial force diagram
+        (xis, afd) = self.get_afd(n=n, analysis_case=analysis_case)
 
-        # location of node 1 and node 2
-        p1 = node_coords[0, 0:2]
-        p2 = node_coords[1, 0:2]
+        # get indices of min and max values of bending moment
+        min_index = np.argmin(afd)
+        max_index = np.argmax(afd)
 
-        # location of the axial force diagram end points
-        v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
-        p3 = p2 + v * scalef * n2
-        p4 = p1 + v * scalef * n1
+        # get end node coordinates
+        end1 = node_coords[0, 0:2]
+        end2 = node_coords[1, 0:2]
 
-        # plot axial force line and patch
-        ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0.7, 0, 0))
-        ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0.7, 0, 0))
-        ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0.7, 0, 0))
-        ax.add_patch(
-            Polygon(np.array([p1, p2, p3, p4]), facecolor=(1, 0, 0), linestyle='None', alpha=0.3))
+        # plot shear force diagram
+        for (i, xi) in enumerate(xis[:-1]):
+            n1 = afd[i]
+            n2 = afd[i+1]
 
-        # plot text value of axial force
-        mid1 = (p1 + p4) / 2
-        mid2 = (p2 + p3) / 2
-        ax.text(mid1[0], mid1[1], "{:5.3g}".format(n1), size=8, verticalalignment='bottom')
-        ax.text(mid2[0], mid2[1], "{:5.3g}".format(n2), size=8, verticalalignment='bottom')
+            a_i1 = (xi + 1) / 2  # percentage along element for xis[i]
+            a_i2 = (xis[i+1] + 1) / 2  # percentage along element for xis[i+1]
 
-    def plot_shear_force(self, ax, analysis_case, scalef):
+            # location of node 1 and node 2
+            p1 = end1 + a_i1 * (end2 - end1)
+            p2 = end1 + a_i2 * (end2 - end1)
+
+            # location of the axial force diagram end points
+            v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
+            p3 = p2 + v * scalef * n2
+            p4 = p1 + v * scalef * n1
+
+            # plot shear force line and patch
+            ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0.7, 0, 0))
+            ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0.7, 0, 0))
+            ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0.7, 0, 0))
+            ax.add_patch(Polygon(
+                np.array([p1, p2, p3, p4]), facecolor=(1, 0, 0), linestyle='None', alpha=0.3
+            ))
+
+            # plot end text values of bending moment
+            if i == 0:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:.3e}".format(n1), size=8, verticalalignment='bottom')
+            elif i == len(xis) - 2:
+                mid = (p2 + p3) / 2
+                ax.text(mid[0], mid[1], "{:.3e}".format(n2), size=8, verticalalignment='bottom')
+
+            # plot text value of min bending moment
+            if i == min_index:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:.3e}".format(n1), size=8, verticalalignment='bottom')
+
+            # plot text value of max bending moment
+            if i == max_index:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:.3e}".format(n1), size=8, verticalalignment='bottom')
+
+    def plot_shear_force(self, ax, analysis_case, scalef, n):
         """Plots the axial force diagram from a static analysis defined by case_id. N.B. this
-        method is adopted from the MATLAB code by F.P. van der Meer: plotVLine.m.
+        method is adapted from the MATLAB code by F.P. van der Meer: plotVLine.m.
 
         :param ax: Axis object on which to draw the element
         :type ax: :class: `matplotlib.axes.Axes`
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param float scalef: Factor by which to scale the shear force diagram
+        :param int n: Number of points at which to plot the shear force diagram
         """
 
         # get geometric properties
         (node_coords, dx, l0, _) = self.get_geometric_properties()
 
-        # get shear force diagram - TODO implement for arbitrary n!
-        sfd = self.get_sfd(n=2, analysis_case=analysis_case)
-        v1 = sfd[0]
-        v2 = sfd[1]
+        # get shear force diagram
+        (xis, sfd) = self.get_sfd(n=n, analysis_case=analysis_case)
 
-        # location of node 1 and node 2
-        p1 = node_coords[0, 0:2]
-        p2 = node_coords[1, 0:2]
+        # get indices of min and max values of bending moment
+        min_index = np.argmin(sfd)
+        max_index = np.argmax(sfd)
 
-        # location of the shear force diagram end points
-        v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
-        p3 = p2 + v * scalef * v2
-        p4 = p1 + v * scalef * v1
+        # get end node coordinates
+        end1 = node_coords[0, 0:2]
+        end2 = node_coords[1, 0:2]
 
-        # plot shear force line and patch
-        ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0, 0.3, 0))
-        ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0, 0.3, 0))
-        ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0, 0.3, 0))
-        ax.add_patch(Polygon(
-            np.array([p1, p2, p3, p4]), facecolor=(0, 0.5, 0), linestyle='None', alpha=0.3))
+        # plot shear force diagram
+        for (i, xi) in enumerate(xis[:-1]):
+            v1 = sfd[i]
+            v2 = sfd[i+1]
 
-        # plot text value of shear force
-        mid1 = (p1 + p4) / 2
-        mid2 = (p2 + p3) / 2
-        ax.text(mid1[0], mid1[1], "{:5.3g}".format(v1), size=8, verticalalignment='bottom')
-        ax.text(mid2[0], mid2[1], "{:5.3g}".format(v2), size=8, verticalalignment='bottom')
+            a_i1 = (xi + 1) / 2  # percentage along element for xis[i]
+            a_i2 = (xis[i+1] + 1) / 2  # percentage along element for xis[i+1]
+
+            # location of node 1 and node 2
+            p1 = end1 + a_i1 * (end2 - end1)
+            p2 = end1 + a_i2 * (end2 - end1)
+
+            # location of the shear force diagram end points
+            v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
+            p3 = p2 + v * scalef * v2
+            p4 = p1 + v * scalef * v1
+
+            # plot shear force line and patch
+            ax.plot([p1[0], p4[0]], [p1[1], p4[1]], linewidth=1, color=(0, 0.3, 0))
+            ax.plot([p3[0], p4[0]], [p3[1], p4[1]], linewidth=1, color=(0, 0.3, 0))
+            ax.plot([p3[0], p2[0]], [p3[1], p2[1]], linewidth=1, color=(0, 0.3, 0))
+            ax.add_patch(Polygon(
+                np.array([p1, p2, p3, p4]), facecolor=(0, 0.5, 0), linestyle='None', alpha=0.3
+            ))
+
+            # plot end text values of bending moment
+            if i == 0:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:.3e}".format(v1), size=8, verticalalignment='bottom')
+            elif i == len(xis) - 2:
+                mid = (p2 + p3) / 2
+                ax.text(mid[0], mid[1], "{:.3e}".format(v2), size=8, verticalalignment='bottom')
+
+            # plot text value of min bending moment
+            if i == min_index:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:.3e}".format(v1), size=8, verticalalignment='bottom')
+
+            # plot text value of max bending moment
+            if i == max_index:
+                mid = (p1 + p4) / 2
+                ax.text(mid[0], mid[1], "{:.3e}".format(v1), size=8, verticalalignment='bottom')
 
     def plot_bending_moment(self, ax, analysis_case, scalef, n):
         """Plots the axial force diagram from a static analysis defined by case_id. N.B. this
-        method is adopted from the MATLAB code by F.P. van der Meer: plotMLine.m.
+        method is adapted from the MATLAB code by F.P. van der Meer: plotMLine.m.
 
         :param ax: Axis object on which to draw the element
         :type ax: :class: `matplotlib.axes.Axes`
@@ -438,24 +494,27 @@ class FrameElement2D(FrameElement):
         (node_coords, dx, l0, _) = self.get_geometric_properties()
 
         # get bending moment diagram
-        bmd = self.get_bmd(n=n, analysis_case=analysis_case)
+        (xis, bmd) = self.get_bmd(n=n, analysis_case=analysis_case)
 
         # get indices of min and max values of bending moment
         min_index = np.argmin(bmd)
         max_index = np.argmax(bmd)
 
         # get end node coordinates
-        n1 = node_coords[0, 0:2]
-        n2 = node_coords[1, 0:2]
+        end1 = node_coords[0, 0:2]
+        end2 = node_coords[1, 0:2]
 
         # plot bending moment diagram
-        for i in range(n-1):
+        for (i, xi) in enumerate(xis[:-1]):
             m1 = bmd[i]
             m2 = bmd[i+1]
 
+            a_i1 = (xi + 1) / 2  # percentage along element for xis[i]
+            a_i2 = (xis[i+1] + 1) / 2  # percentage along element for xis[i+1]
+
             # location of node 1 and node 2
-            p1 = n1 + i / (n - 1) * (n2 - n1)
-            p2 = n1 + (i + 1) / (n - 1) * (n2 - n1)
+            p1 = end1 + a_i1 * (end2 - end1)
+            p2 = end1 + a_i2 * (end2 - end1)
 
             # location of the bending moment diagram end points
             v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
@@ -473,20 +532,20 @@ class FrameElement2D(FrameElement):
             # plot end text values of bending moment
             if i == 0:
                 mid = (p1 + p4) / 2
-                ax.text(mid[0], mid[1], "{:5.3g}".format(m1), size=8, verticalalignment='bottom')
-            elif i == n - 2:
+                ax.text(mid[0], mid[1], "{:.3e}".format(m1), size=8, verticalalignment='bottom')
+            elif i == len(xis) - 2:
                 mid = (p2 + p3) / 2
-                ax.text(mid[0], mid[1], "{:5.3g}".format(m2), size=8, verticalalignment='bottom')
+                ax.text(mid[0], mid[1], "{:.3e}".format(m2), size=8, verticalalignment='bottom')
 
-            # plot text value of min bending moment (if not end)
-            if i == min_index and i not in [0, n - 2]:
+            # plot text value of min bending moment
+            if i == min_index:
                 mid = (p1 + p4) / 2
-                ax.text(mid[0], mid[1], "{:5.3g}".format(m1), size=8, verticalalignment='bottom')
+                ax.text(mid[0], mid[1], "{:.3e}".format(m1), size=8, verticalalignment='bottom')
 
-            # plot text value of max bending moment (if not end)
-            if i == max_index and i not in [0, n - 2]:
+            # plot text value of max bending moment
+            if i == max_index:
                 mid = (p1 + p4) / 2
-                ax.text(mid[0], mid[1], "{:5.3g}".format(m1), size=8, verticalalignment='bottom')
+                ax.text(mid[0], mid[1], "{:.3e}".format(m1), size=8, verticalalignment='bottom')
 
 
 class FrameElement3D(FrameElement):
@@ -739,8 +798,8 @@ class Bar2D_2N(FrameElement2D):
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Axial force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and axial force diagram, *afd* - *(xis, afd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # get internal forces
@@ -762,7 +821,7 @@ class Bar2D_2N(FrameElement2D):
             # compute local displacements
             afd[i] = np.dot(N, np.array([N1, N2]))
 
-        return afd
+        return (stations, afd)
 
     def get_sfd(self, n, analysis_case):
         """Returns the shear force diagram within the element for *n* stations for an
@@ -772,12 +831,12 @@ class Bar2D_2N(FrameElement2D):
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Shear force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and shear force diagram, *sfd* - *(xis, sfd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # no shear force in this element
-        return np.zeros(n)
+        return (np.linspace(-1, 1, n), np.zeros(n))
 
     def get_bmd(self, n, analysis_case):
         """Returns the bending moment diagram within the element for *n* stations for an
@@ -787,12 +846,12 @@ class Bar2D_2N(FrameElement2D):
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Shear force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and bending moment diagram, *bmd* - *(xis, bmd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # no bending moment in this element
-        return np.zeros(n)
+        return (np.linspace(-1, 1, n), np.zeros(n))
 
 
 class Bar3D_2N(FrameElement3D):
@@ -1004,8 +1063,8 @@ class Bar3D_2N(FrameElement3D):
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Axial force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and axial force diagram, *afd* - *(xis, afd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # get internal forces
@@ -1027,7 +1086,7 @@ class Bar3D_2N(FrameElement3D):
             # compute local displacements
             afd[i] = np.dot(N, np.array([N1, N2]))
 
-        return afd
+        return (stations, afd)
 
     def get_sfd(self, n, analysis_case):
         """Returns the shear force diagram within the element for *n* stations for an
@@ -1037,12 +1096,12 @@ class Bar3D_2N(FrameElement3D):
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Shear force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and shear force diagram, *sfd* - *(xis, sfd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # no shear force in this element
-        return np.zeros(n)
+        return (np.linspace(-1, 1, n), np.zeros(n))
 
     def get_bmd(self, n, analysis_case):
         """Returns the bending moment diagram within the element for *n* stations for an
@@ -1052,12 +1111,12 @@ class Bar3D_2N(FrameElement3D):
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Shear force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and bending moment diagram, *bmd* - *(xis, bmd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # no bending moment in this element
-        return np.zeros(n)
+        return (np.linspace(-1, 1, n), np.zeros(n))
 
 
 class EulerBernoulli2D_2N(FrameElement2D):
@@ -1332,8 +1391,8 @@ class EulerBernoulli2D_2N(FrameElement2D):
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Axial force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and axial force diagram, *afd* - *(xis, afd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # get internal forces
@@ -1341,11 +1400,11 @@ class EulerBernoulli2D_2N(FrameElement2D):
         N1 = -f[0]
         N2 = f[3]
 
-        # allocate the axial force diagram
-        afd = np.zeros(n)
-
         # generate list of stations
         stations = np.linspace(-1, 1, n)
+
+        # allocate the axial force diagram
+        afd = np.zeros(len(stations))
 
         # loop over each station
         for (i, xi) in enumerate(stations):
@@ -1355,18 +1414,19 @@ class EulerBernoulli2D_2N(FrameElement2D):
             # compute axial force diagram
             afd[i] = np.dot(N, np.array([N1, N2]))
 
-        return afd
+        return (stations, afd)
 
     def get_sfd(self, n, analysis_case):
         """Returns the shear force diagram within the element for *n* stations for an
-        analysis_case.
+        analysis_case. Note that if the element has an internal point load, an additional two
+        stations are added either side of the location of the point load.
 
         :param int n: Number of stations to sample the shear force diagram
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Shear force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and shear force diagram, *sfd* - *(xis, sfd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # get internal forces
@@ -1374,11 +1434,33 @@ class EulerBernoulli2D_2N(FrameElement2D):
         V1 = f[1]
         V2 = -f[4]
 
-        # allocate the shear force diagram
-        sfd = np.zeros(n)
+        # get list of applied element loads
+        element_loads = []  # list of applied element loads
+        pl_a = []  # list of point load locations
+
+        for element_load in analysis_case.load_case.element_items:
+            # if the current element has an applied element load
+            if element_load.element is self:
+                # add nodal equivalent loads to f_int
+                element_loads.append(element_load)
+
+                # if the load is a point load, add station either side of point load
+                if type(element_load) is self.PointLoad:
+                    pl_a.append(element_load.a * 2 - 1 - 1e-6)
+                    pl_a.append(element_load.a * 2 - 1 + 1e-6)
 
         # generate list of stations
         stations = np.linspace(-1, 1, n)
+
+        # add point load stations
+        for a in pl_a:
+            if a not in stations:
+                stations = np.append(stations, a)
+
+        stations = np.sort(stations)  # re-sort stations list
+
+        # allocate the shear force diagram
+        sfd = np.zeros(len(stations))
 
         # loop over each station
         for (i, xi) in enumerate(stations):
@@ -1388,18 +1470,25 @@ class EulerBernoulli2D_2N(FrameElement2D):
             # compute shear force diagram
             sfd[i] = np.dot(N, np.array([V1, V2]))
 
-        return sfd
+            # add shear force due to element loads
+            for element_load in element_loads:
+                sfd[i] += element_load.get_internal_sfd(xi)
+
+        return (stations, sfd)
 
     def get_bmd(self, n, analysis_case):
         """Returns the bending moment diagram within the element for *n* stations for an
-        analysis_case.
+        analysis_case. Note that if the element has an internal point load, an additional station
+        is added at the location of the point load. An additional station is also added at all
+        locations where the shear force is zero to ensure that bending moment maxima/minima are
+        captured.
 
         :param int n: Number of stations to sample the bending moment diagram
         :param analysis_case: Analysis case
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
 
-        :returns: Shear force diagram
-        :rtype: :class:`numpy.ndarray`
+        :returns: Station locations, *xis*, and bending moment diagram, *bmd* - *(xis, bmd)*
+        :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`)
         """
 
         # get internal forces
@@ -1407,11 +1496,9 @@ class EulerBernoulli2D_2N(FrameElement2D):
         M1 = f[2]
         M2 = -f[5]
 
-        # get element length
-        (_, _, l0, _) = self.get_geometric_properties()
-
         # get list of applied element loads
-        element_loads = []
+        element_loads = []  # list of applied element loads
+        pl_a = []  # list of point load locations
 
         for element_load in analysis_case.load_case.element_items:
             # if the current element has an applied element load
@@ -1419,11 +1506,41 @@ class EulerBernoulli2D_2N(FrameElement2D):
                 # add nodal equivalent loads to f_int
                 element_loads.append(element_load)
 
-        # allocate the bending moment diagram
-        bmd = np.zeros(n)
+                # if the load is a point load, take note of the position
+                if type(element_load) is self.PointLoad:
+                    pl_a.append(element_load.a * 2 - 1)
 
         # generate list of stations
         stations = np.linspace(-1, 1, n)
+
+        # add point load stations
+        for a in pl_a:
+            if a not in stations:
+                stations = np.append(stations, a)
+
+        # add all points of zero shear force
+        (xis, sfd) = self.get_sfd(n=n, analysis_case=analysis_case)
+
+        for i in range(len(xis) - 1):
+            # if there is a root between i and i + 1
+            if (sfd[i] > 0 and sfd[i+1] < 0) or (sfd[i] < 0 and sfd[i+1] > 0):
+                delta_xis = xis[i+1] - xis[i]
+                delta_sfd = sfd[i+1] - sfd[i]
+                xi = xis[i] + -sfd[i] * delta_xis / delta_sfd
+
+                # check that the station doesn't already exist
+                for diff in (stations - xi):
+                    # if the station already exists
+                    if abs(diff) < 1e-5:
+                        break
+                else:
+                    # add the station if it doesn't already exist
+                    stations = np.append(stations, xi)
+
+        stations = np.sort(stations)  # re-sort stations list
+
+        # allocate the bending moment diagram
+        bmd = np.zeros(len(stations))
 
         # loop over each station
         for (i, xi) in enumerate(stations):
@@ -1435,12 +1552,12 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
             # add bending moment due to element loads
             for element_load in element_loads:
-                bmd[i] += -1 * (xi - 1) * (xi + 1) * element_load.q * l0 * l0 / 8
+                bmd[i] += element_load.get_internal_bmd(xi)
 
-        return bmd
+        return (stations, bmd)
 
     def generate_udl(self, q):
-        """Returns a UniformDistributedLoad object for the current element.
+        """Returns a EulerBernoulli2D_2N UniformDistributedLoad object for the current element.
 
         :param float q: Value of the uniformly distributed load
 
@@ -1450,13 +1567,25 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
         return self.UniformDistributedLoad(self, q)
 
+    def generate_point_load(self, p, a):
+        """Returns a EulerBernoulli2D_2N PointLoad object for the current element.
+
+        :param float p: Value of the point load
+        :param float a: Percentage along the element at which the point load is applied *0<a<1*
+
+        :returns: PointLoad object
+        :rtype: :class:`~feastruct.fea.frame.EulerBernoulli2D_2N.PointLoad`
+        """
+
+        return self.PointLoad(self, p, a)
+
     class UniformDistributedLoad(ElementLoad):
         """Class for the application of a uniformly distributed load to a EulerBernoulli2D_2N
         element.
 
         :cvar element: EulerBernoulli2D_2N element to which the load is applied
         :vartype element: :class:`~feastruct.fea.frame.EulerBernoulli2D_2N`
-        :cvar float val: Value of the uniformly distributed load
+        :cvar float q: Value of the uniformly distributed load
         """
 
         def __init__(self, element, q):
@@ -1513,6 +1642,125 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
             # apply fixed end forces
             f_eq[gdofs] += f_e_eq
+
+        def get_internal_bmd(self, xi):
+            """a"""
+
+            # get relevant properties
+            (_, _, l0, _) = self.element.get_geometric_properties()
+
+            return -1 * (xi - 1) * (xi + 1) * self.q * l0 * l0 / 8
+
+        def get_internal_sfd(self, xi):
+            """a"""
+
+            return 0
+
+        def plot_load(self):
+            """a"""
+
+            pass
+
+    class PointLoad(ElementLoad):
+        """Class for the application of a point load to a EulerBernoulli2D_2N element.
+
+        :cvar element: EulerBernoulli2D_2N element to which the load is applied
+        :vartype element: :class:`~feastruct.fea.frame.EulerBernoulli2D_2N`
+        :cvar float p: Value of the point load
+        :cvar float a: Percentage along the element at which the point load is applied *0<a<1*
+        """
+
+        def __init__(self, element, p, a):
+            """Inits the UniformDistributedLoad class.
+
+            :param element: EulerBernoulli2D_2N element to which the load is applied
+            :type element: :class:`~feastruct.fea.frame.EulerBernoulli2D_2N`
+            :param float p: Value of the point load
+            :param float a: Percentage along the element at which the point load is applied *0<a<1*
+            """
+
+            super().__init__(element)
+            self.p = p
+            self.a = a
+
+        def nodal_equivalent_loads(self):
+            """a"""
+
+            # get relevant properties
+            (_, _, l0, _) = self.element.get_geometric_properties()
+            d_a = self.a * l0
+            d_b = l0 - d_a
+
+            f_eq = np.array([
+                0,
+                -self.p * d_b * d_b * (3 * d_a + d_b) / l0 / l0 / l0,
+                -self.p * d_a * d_b * d_b / l0 / l0,
+                0,
+                -self.p * d_a * d_a * (d_a + 3 * d_b) / l0 / l0 / l0,
+                self.p * d_a * d_a * d_b / l0 / l0
+            ])
+
+            return f_eq
+
+        def apply_load(self, f_eq):
+            """a"""
+
+            # get gdofs for the element
+            gdofs = self.element.get_gdof_nums()
+
+            # calculate the nodal equivalent loads
+            f_e_eq = self.nodal_equivalent_loads()
+
+            # get relevant properties
+            (_, _, _, c) = self.element.get_geometric_properties()
+            cx = c[0]
+            cy = c[1]
+
+            # rotate
+            f_e_eq = np.array([
+                f_e_eq[0] * cx + f_e_eq[1] * cy,
+                -f_e_eq[0] * cy + f_e_eq[1] * cx,
+                f_e_eq[2],
+                f_e_eq[3] * cx + f_e_eq[4] * cy,
+                -f_e_eq[3] * cy + f_e_eq[4] * cx,
+                f_e_eq[5]
+            ])
+
+            # apply fixed end forces
+            f_eq[gdofs] += f_e_eq
+
+        def get_internal_bmd(self, xi):
+            """a"""
+
+            # get relevant properties
+            (_, _, l0, _) = self.element.get_geometric_properties()
+            d_a = self.a * l0
+            d_b = l0 - d_a
+            x = l0 / 2 * (xi + 1)
+
+            if x <= d_a:
+                return self.p * d_b * x / l0
+            else:
+                return self.p * (x * (d_b / l0 - 1) + d_a)
+
+        def get_internal_sfd(self, xi):
+            """a"""
+
+            # get relevant properties
+            (_, _, l0, _) = self.element.get_geometric_properties()
+            d_a = self.a * l0
+            d_b = l0 - d_a
+            x = l0 / 2 * (xi + 1)
+
+            r1 = -self.p * d_b / l0
+            r2 = -self.p * d_a / l0
+
+            if x <= d_a:
+                r_l = r1 * (1 + (d_a - d_b) / d_b)
+                return r_l * x / d_a
+            else:
+                r_r = r2 * (1 - (d_a - d_b) / d_a)
+                return r_r / d_b * (x - d_a - d_b)
 
         def plot_load(self):
             """a"""

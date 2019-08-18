@@ -2,7 +2,7 @@
 
 ## Class Implementation:
 
-- [ ] Easier retrieval of displacements
+- [ ] Easier retrieval of displacements (also at positions along elements)
 - [ ] Method for moving nodes
 - [ ] Load combinations
 
@@ -16,6 +16,7 @@
 - [ ] 3d frame elements
 - [ ] Spring supports
 - [x] Distributed loads
+- [x] Intermediate point loads
 - [ ] Body loads
 - [ ] Thermal loads
 - [ ] MP Constraints
