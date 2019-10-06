@@ -11,8 +11,8 @@ class PostProcessor2D:
 
     :cvar analysis: Analysis object for post-processing
     :vartype analysis: :class:`~feastruct.fea.fea.fea`
-    :cvar int n_subdiv: Number of subdivisions (intermediate nodes) used to discretise frame
-        elements in post-processing, such that higher order shape functions can be realised
+    :cvar int n_subdiv: Number of subdivisions (total nodes) used to discretise frame elements in
+        post-processing, such that higher order shape functions can be realised
     """
 
     def __init__(self, analysis, n_subdiv=11):
@@ -354,7 +354,7 @@ class PostProcessor2D:
 
         :param x: List containing axis limits e.g. [xmin, xmax]
         :type x: list[float, float]
-        :return: Stretched axis limits (x1, x2)
+        :returns: Stretched axis limits (x1, x2)
         :rtype: tuple(float, float)
         """
 

@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Boundary Conditions" href="bcs.html" />
-    <link rel="prev" title="Frame" href="frame.html" /> 
+    <link rel="prev" title="3D Frame Elements" href="frame/frame_3d.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -86,11 +86,51 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a></li>
-<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pre.html#materials">Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pre.html#sections">Sections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="node.html#id1">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node.html#dof">DoF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node.html#displacement">Displacement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node.html#buckling-modes">Buckling Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node.html#frequency-modes">Frequency Modes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fea.html#finiteelementanalysis">FiniteElementAnalysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fea.html#finiteelement">FiniteElement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fea.html#forcevector">ForceVector</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_analysis.html">Frame Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#id1">Frame Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#frame-analysis2d">Frame Analysis2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#frame-analysis3d">Frame Analysis3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_elements.html">Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element">Frame Element</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element2d">Frame Element2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element3d">Frame Element3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_2d.html">2D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_2d.html#bar2d-2n">Bar2D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_2d.html#eulerbernoulli2d-2n">EulerBernoulli2D_2N</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_3d.html">3D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_3d.html#bar3d-2n">Bar3D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_3d.html#eulerbernoulli3d-2n">EulerBernoulli3D_2N</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Cases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#analysis-case">Analysis Case</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#case">Case</a><ul>
@@ -100,9 +140,34 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bcs.html#boundary-condition">Boundary Condition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bcs.html#nodal-support">Nodal Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bcs.html#nodal-load">Nodal Load</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html#fea-solve">FEA Solve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-static-solver">Linear Static Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-buckling-solver">Linear Buckling Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#natural-frequency-solver">Natural Frequency Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html#solver-settings">Solver Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-static-settings">Linear Static Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-buckling-settings">Linear Buckling Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#natural-frequency-settings">Natural Frequency Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="post.html#post-processor-2d">Post-Processor 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="post.html#scalar-result">Scalar Result</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -365,7 +430,11 @@ Methods are provided to add loads to the LoadCase object.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><strong>items</strong> (list[<a class="reference internal" href="bcs.html#feastruct.fea.bcs.BoundaryCondition" title="feastruct.fea.bcs.BoundaryCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">BoundaryCondition</span></code></a>]) – A list of BoundaryCondition items defining the freedom case</td>
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>items</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">ElementLoad</span></code>]) – A list of BoundaryCondition items defining the load case</li>
+<li><strong>element_items</strong> – A list of ElementLoad items defining the load case</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -378,6 +447,24 @@ Methods are provided to add loads to the LoadCase object.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>items</strong> (list[<a class="reference internal" href="bcs.html#feastruct.fea.bcs.BoundaryCondition" title="feastruct.fea.bcs.BoundaryCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">BoundaryCondition</span></code></a>]) – A list of BoundaryConditions to initialise the case</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.cases.LoadCase.add_element_load">
+<code class="descname">add_element_load</code><span class="sig-paren">(</span><em>element_load</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/cases.html#LoadCase.add_element_load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.cases.LoadCase.add_element_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an element load to the current load case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>element_load</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ElementLoad</span></code>) – Element load object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Element load object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">ElementLoad</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -440,7 +527,7 @@ Methods are provided to add loads to the LoadCase object.</p>
         <a href="bcs.html" class="btn btn-neutral float-right" title="Boundary Conditions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="frame.html" class="btn btn-neutral" title="Frame" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="frame/frame_3d.html" class="btn btn-neutral" title="3D Frame Elements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

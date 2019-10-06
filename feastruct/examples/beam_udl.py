@@ -1,7 +1,7 @@
 from feastruct.pre.material import Steel
 from feastruct.pre.section import Section
 import feastruct.fea.cases as cases
-from feastruct.fea.frame import FrameAnalysis2D
+from feastruct.fea.frame_analysis import FrameAnalysis2D
 from feastruct.solvers.linstatic import LinearStatic
 from feastruct.solvers.feasolve import SolverSettings
 
@@ -23,7 +23,7 @@ section = Section(area=3230, ixx=23.6e6)
 # create nodes
 node1 = analysis.create_node(coords=[0])
 node2 = analysis.create_node(coords=[length])
-node3 = analysis.create_node(coords=[2*length, 2500])
+node3 = analysis.create_node(coords=[2*length])
 
 # create beam element
 beam1 = analysis.create_element(
@@ -62,7 +62,7 @@ LinearStatic(analysis=analysis, analysis_cases=[analysis_case], solver_settings=
 # ----
 
 analysis.post.plot_geom(analysis_case=analysis_case)
-analysis.post.plot_geom(analysis_case=analysis_case, deformed=True, def_scale=1e2)
+analysis.post.plot_geom(analysis_case=analysis_case, deformed=True, def_scale=100)
 analysis.post.plot_frame_forces(analysis_case=analysis_case, shear=True)
 analysis.post.plot_frame_forces(analysis_case=analysis_case, moment=True)
 analysis.post.plot_reactions(analysis_case=analysis_case)

@@ -1,0 +1,639 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Frame Analysis &mdash; feastruct 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Frame Elements" href="frame_elements.html" />
+    <link rel="prev" title="Frame" href="../frame.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pre.html">Pre</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pre.html#materials">Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pre.html#sections">Sections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../node.html">Node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../node.html#id1">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../node.html#dof">DoF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../node.html#displacement">Displacement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../node.html#buckling-modes">Buckling Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../node.html#frequency-modes">Frequency Modes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../fea.html">Finite Element Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../fea.html#finiteelementanalysis">FiniteElementAnalysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fea.html#finiteelement">FiniteElement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fea.html#forcevector">ForceVector</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../frame.html">Frame</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Frame Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Frame Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frame-analysis2d">Frame Analysis2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frame-analysis3d">Frame Analysis3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame_elements.html">Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame_elements.html#frame-element">Frame Element</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame_elements.html#frame-element2d">Frame Element2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame_elements.html#frame-element3d">Frame Element3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame_2d.html">2D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame_2d.html#bar2d-2n">Bar2D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame_2d.html#eulerbernoulli2d-2n">EulerBernoulli2D_2N</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame_3d.html">3D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame_3d.html#bar3d-2n">Bar3D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame_3d.html#eulerbernoulli3d-2n">EulerBernoulli3D_2N</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cases.html">Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cases.html#analysis-case">Analysis Case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cases.html#case">Case</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../cases.html#freedom-case">Freedom Case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cases.html#load-case">Load Case</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bcs.html">Boundary Conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../bcs.html#boundary-condition">Boundary Condition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bcs.html#nodal-support">Nodal Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bcs.html#nodal-load">Nodal Load</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers.html">Solvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../solvers.html#fea-solve">FEA Solve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../solvers.html#linear-static-solver">Linear Static Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../solvers.html#linear-buckling-solver">Linear Buckling Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../solvers.html#natural-frequency-solver">Natural Frequency Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../solvers.html#solver-settings">Solver Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../solvers.html#linear-static-settings">Linear Static Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../solvers.html#linear-buckling-settings">Linear Buckling Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../solvers.html#natural-frequency-settings">Natural Frequency Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../post.html">Post-Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../post.html#post-processor-2d">Post-Processor 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../post.html#scalar-result">Scalar Result</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../frame.html">Frame</a> &raquo;</li>
+        
+      <li>Frame Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/rst/frame/frame_analysis.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="frame-analysis">
+<h1>Frame Analysis<a class="headerlink" href="#frame-analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>Frame Analysis<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame_analysis.</code><code class="descname">FrameAnalysis</code><span class="sig-paren">(</span><em>nodes</em>, <em>elements</em>, <em>nfa</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/feastruct/fea/frame_analysis.html#FrameAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../fea.html#feastruct.fea.fea.FiniteElementAnalysis" title="feastruct.fea.fea.FiniteElementAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.fea.FiniteElementAnalysis</span></code></a></p>
+<p>Parent class for a frame analysis.</p>
+<p>Includes a method for analysis initiation and a method for adding a frame element to the
+analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – Nodes used in the finite element analysis</li>
+<li><strong>elements</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code>]) – Elements used in the finite element analysis</li>
+<li><strong>nfa</strong> (<em>list</em><em>[</em><em>bool</em><em>]</em>) – Node freedom arrangement</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes</em>, <em>elements</em>, <em>nfa</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/feastruct/fea/frame_analysis.html#FrameAnalysis.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameAnalysis class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of nodes with which to initialise the class</li>
+<li><strong>elements</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code>]) – List of elements with which to initialise the class</li>
+<li><strong>nfa</strong> (<em>list</em><em>[</em><em>bool</em><em>]</em>) – Node freedom arrangement</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis.create_element">
+<code class="descname">create_element</code><span class="sig-paren">(</span><em>el_type</em>, <em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/feastruct/fea/frame_analysis.html#FrameAnalysis.create_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis.create_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a frame element and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Frame</span></code> object. Refer to ‘xxx’ for the possible element types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>el_type</strong> (<em>string</em>) – String characterising the type of frame element</li>
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="../pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="../pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FrameElement object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis.create_node">
+<code class="descname">create_node</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis.create_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a node and adds it to the Fea object.</p>
+<p>Creates and returns a <a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> object and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Fea</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Cartesian coordinates of the node <em>([x], [x, y] or [x, y, z])</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Node object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis.get_node_lims">
+<code class="descname">get_node_lims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis.get_node_lims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns the minimum and maximum x, y and z values within the current analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(xmin, xmax, ymin, ymax, zmin, zmax)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="frame-analysis2d">
+<h2>Frame Analysis2D<a class="headerlink" href="#frame-analysis2d" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis2D">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame_analysis.</code><code class="descname">FrameAnalysis2D</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>elements=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/feastruct/fea/frame_analysis.html#FrameAnalysis2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame_analysis.FrameAnalysis" title="feastruct.fea.frame_analysis.FrameAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame_analysis.FrameAnalysis</span></code></a></p>
+<p>Parent class for a 2D frame analysis.</p>
+<p>Includes a method for analysis initiation and a method for adding 2D frame elements to the
+analysis.</p>
+<p>Active degrees of freedom are <em>[x, y, rz]</em> and are referred to as <em>[0, 1, 5]</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – Nodes used in the finite element analysis</li>
+<li><strong>elements</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code>]) – Elements used in the finite element analysis</li>
+<li><strong>nfa</strong> (<em>list</em><em>[</em><em>bool</em><em>]</em>) – Node freedom arrangement</li>
+<li><strong>post</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.post.post2d.PostProcessor</span></code>) – Post-processor object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis2D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>elements=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/feastruct/fea/frame_analysis.html#FrameAnalysis2D.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis2D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameAnalysis2D class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of nodes with which to initialise the class</li>
+<li><strong>elements</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code>]) – List of elements with which to initialise the class</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis2D.create_element">
+<code class="descname">create_element</code><span class="sig-paren">(</span><em>el_type</em>, <em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis2D.create_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a frame element and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Frame</span></code> object. Refer to ‘xxx’ for the possible element types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>el_type</strong> (<em>string</em>) – String characterising the type of frame element</li>
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="../pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="../pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FrameElement object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis2D.create_node">
+<code class="descname">create_node</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis2D.create_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a node and adds it to the Fea object.</p>
+<p>Creates and returns a <a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> object and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Fea</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Cartesian coordinates of the node <em>([x], [x, y] or [x, y, z])</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Node object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis2D.get_node_lims">
+<code class="descname">get_node_lims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis2D.get_node_lims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns the minimum and maximum x, y and z values within the current analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(xmin, xmax, ymin, ymax, zmin, zmax)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="frame-analysis3d">
+<h2>Frame Analysis3D<a class="headerlink" href="#frame-analysis3d" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="class">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis3D">
+<em class="property">class </em><code class="descclassname">feastruct.fea.frame_analysis.</code><code class="descname">FrameAnalysis3D</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>elements=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/feastruct/fea/frame_analysis.html#FrameAnalysis3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#feastruct.fea.frame_analysis.FrameAnalysis" title="feastruct.fea.frame_analysis.FrameAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">feastruct.fea.frame_analysis.FrameAnalysis</span></code></a></p>
+<p>Parent class for a 3D frame analysis.</p>
+<p>Includes a method for analysis initiation and a method for adding 3D frame elements to the
+analysis.</p>
+<p>Active degrees of freedom are <em>[x, y, z, rx, ry, rz]</em> and are referred to as
+<em>[0, 1, 2, 3, 4, 5]</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – Nodes used in the finite element analysis</li>
+<li><strong>elements</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code>]) – Elements used in the finite element analysis</li>
+<li><strong>nfa</strong> (<em>list</em><em>[</em><em>bool</em><em>]</em>) – Node freedom arrangement</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis3D.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>elements=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/feastruct/fea/frame_analysis.html#FrameAnalysis3D.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis3D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the FrameAnalysis3D class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of nodes with which to initialise the class</li>
+<li><strong>elements</strong> (list[<code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code>]) – List of elements with which to initialise the class</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis3D.create_element">
+<code class="descname">create_element</code><span class="sig-paren">(</span><em>el_type</em>, <em>nodes</em>, <em>material</em>, <em>section</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis3D.create_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a frame element and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Frame</span></code> object. Refer to ‘xxx’ for the possible element types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>el_type</strong> (<em>string</em>) – String characterising the type of frame element</li>
+<li><strong>nodes</strong> (list[<a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>]) – List of node objects defining the element</li>
+<li><strong>material</strong> (<a class="reference internal" href="../pre.html#feastruct.pre.material.Material" title="feastruct.pre.material.Material"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></a>) – Material object for the element</li>
+<li><strong>section</strong> (<a class="reference internal" href="../pre.html#feastruct.pre.section.Section" title="feastruct.pre.section.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – Section object for the element</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FrameElement object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameElement</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis3D.create_node">
+<code class="descname">create_node</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis3D.create_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a node and adds it to the Fea object.</p>
+<p>Creates and returns a <a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> object and adds it to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Fea</span></code> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Cartesian coordinates of the node <em>([x], [x, y] or [x, y, z])</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Node object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="../node.html#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.frame_analysis.FrameAnalysis3D.get_node_lims">
+<code class="descname">get_node_lims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#feastruct.fea.frame_analysis.FrameAnalysis3D.get_node_lims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and returns the minimum and maximum x, y and z values within the current analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(xmin, xmax, ymin, ymax, zmin, zmax)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="frame_elements.html" class="btn btn-neutral float-right" title="Frame Elements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../frame.html" class="btn btn-neutral" title="Frame" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

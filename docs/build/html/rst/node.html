@@ -86,7 +86,11 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pre.html#materials">Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pre.html#sections">Sections</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Node</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">Node</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dof">DoF</a></li>
@@ -95,13 +99,75 @@
 <li class="toctree-l2"><a class="reference internal" href="#frequency-modes">Frequency Modes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fea.html">Finite Element Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fea.html#finiteelementanalysis">FiniteElementAnalysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fea.html#finiteelement">FiniteElement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fea.html#forcevector">ForceVector</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_analysis.html">Frame Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#id1">Frame Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#frame-analysis2d">Frame Analysis2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#frame-analysis3d">Frame Analysis3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_elements.html">Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element">Frame Element</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element2d">Frame Element2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element3d">Frame Element3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_2d.html">2D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_2d.html#bar2d-2n">Bar2D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_2d.html#eulerbernoulli2d-2n">EulerBernoulli2D_2N</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_3d.html">3D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_3d.html#bar3d-2n">Bar3D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_3d.html#eulerbernoulli3d-2n">EulerBernoulli3D_2N</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cases.html#analysis-case">Analysis Case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cases.html#case">Case</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cases.html#freedom-case">Freedom Case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cases.html#load-case">Load Case</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bcs.html#boundary-condition">Boundary Condition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bcs.html#nodal-support">Nodal Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bcs.html#nodal-load">Nodal Load</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html#fea-solve">FEA Solve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-static-solver">Linear Static Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-buckling-solver">Linear Buckling Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#natural-frequency-solver">Natural Frequency Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html#solver-settings">Solver Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-static-settings">Linear Static Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-buckling-settings">Linear Buckling Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#natural-frequency-settings">Natural Frequency Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="post.html#post-processor-2d">Post-Processor 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="post.html#scalar-result">Scalar Result</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -205,6 +271,45 @@ of freedom.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.node.Node.copy_node">
+<code class="descname">copy_node</code><span class="sig-paren">(</span><em>vec</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.copy_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.copy_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies and returns a new node shifted by the vector vec
+<em>([dx], [dx, dy] or [dx, dy, dz])</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vec</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Vector to move the current node by</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">New node object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#feastruct.fea.node.Node" title="feastruct.fea.node.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.node.Node.get_displacements">
+<code class="descname">get_displacements</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.get_displacements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.get_displacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the displacement vector for the current node and analysis case. If the degree
+of freedom is not used in the current analysis case, a <em>None</em> value is assigned.</p>
+<p>Degree of freedoms are ordered as follows: <em>(x, y, z, rx, ry, rz)</em></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case relating to the displacement</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Displacement vector of length <em>(1 x 6)</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.node.Node.get_dofs">
 <code class="descname">get_dofs</code><span class="sig-paren">(</span><em>freedom_signature</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.get_dofs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.get_dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the degree of freedom objects relating to the freedom_signature list.</p>
@@ -217,6 +322,20 @@ of freedom.</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List containing degree of freedom objects</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[<a class="reference internal" href="#feastruct.fea.node.DoF" title="feastruct.fea.node.DoF"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoF</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.node.Node.move_node">
+<code class="descname">move_node</code><span class="sig-paren">(</span><em>vec</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/node.html#Node.move_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.node.Node.move_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the current node by the vector vec <em>([dx], [dx, dy] or [dx, dy, dz])</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vec</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – Vector to move the current node by</td>
 </tr>
 </tbody>
 </table>

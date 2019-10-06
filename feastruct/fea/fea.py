@@ -48,7 +48,7 @@ class FiniteElementAnalysis:
 
         :param coords: Cartesian coordinates of the node *([x], [x, y] or [x, y, z])*
         :type coords: list[float]
-        :return: Node object
+        :returns: Node object
         :rtype: :class:`~feastruct.fea.node.Node`
         """
 
@@ -67,7 +67,7 @@ class FiniteElementAnalysis:
 
         :param element: Element to be added to the analysis object
         :type element: :class:`~feastruct.fea.fea.FiniteElement`
-        :return: Element object
+        :returns: Element object
         :rtype: :class:`~feastruct.fea.fea.FiniteElement`
         """
 
@@ -80,7 +80,7 @@ class FiniteElementAnalysis:
     def get_node_lims(self):
         """Finds and returns the minimum and maximum x, y and z values within the current analysis.
 
-        :return: (xmin, xmax, ymin, ymax, zmin, zmax)
+        :returns: (xmin, xmax, ymin, ymax, zmin, zmax)
         :rtype: tuple(float)
         """
 
@@ -140,7 +140,7 @@ class FiniteElement:
         """Returns a NumPy array of the cartesian coordinates defining the geometry of the finite
         element.
 
-        :return: An *(n x 3)* array of node coordinates, where *n* is the number of nodes for the
+        :returns: An *(n x 3)* array of node coordinates, where *n* is the number of nodes for the
             given finite element
         :rtype: :class:`numpy.ndarray`
         """
@@ -167,7 +167,7 @@ class FiniteElement:
         """Finds and returns a list of DoF objects corresponding to the degrees of freedom of the
         finite element.
 
-        :return: A list of DoF objects, with a length of *(n_nodes x n_dof)*
+        :returns: A list of DoF objects, with a length of *(n_nodes x n_dof)*
         :rtype: list[list[:class:`~feastruct.fea.node.DoF`]]
         """
 
@@ -184,7 +184,7 @@ class FiniteElement:
         """Returns an array of global degree of freedom numbers corresponding to the degrees of
         freedom of the finite element.
 
-        :return: A integer array of global degrees of freedom, with a length of *(1 x n)*, where n
+        :returns: A integer array of global degrees of freedom, with a length of *(1 x n)*, where n
             is *n_nodes x n_dof*
         :rtype: :class:`numpy.ndarray`
         """
@@ -221,7 +221,7 @@ class FiniteElement:
 
         :param analysis_case: Analysis case relating to the displacement
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
-        :return: An *(n_nodes x n_dof)* array of degree of freedom displacements
+        :returns: An *(n_nodes x n_dof)* array of degree of freedom displacements
         :rtype: :class:`numpy.ndarray`
         """
 
@@ -253,7 +253,7 @@ class FiniteElement:
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param int buckling_mode: Buckling mode number
 
-        :return: Eigenvalue and eigenvectors *(w, v)*. A tuple containing the eigenvalue *w* and
+        :returns: Eigenvalue and eigenvectors *(w, v)*. A tuple containing the eigenvalue *w* and
             an *(n_nodes x n_dof)* array of eigenvector values *v*.
         :rtype: tuple(float, :class:`numpy.ndarray`)
         """
@@ -289,7 +289,7 @@ class FiniteElement:
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param int frequency_mode: Frequency mode number
 
-        :return: Eigenvalue and eigenvectors *(w, v)*. A tuple containing the eigenvalue *w* and
+        :returns: Eigenvalue and eigenvectors *(w, v)*. A tuple containing the eigenvalue *w* and
             an *(n_nodes x n_dof)* array of eigenvector values *v*.
         :rtype: tuple(float, :class:`numpy.ndarray`)
         """
@@ -322,7 +322,7 @@ class FiniteElement:
 
         :param analysis_case: Analysis case relating to the internal force vector
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
-        :return: Internal force vector
+        :returns: Internal force vector
         :rtype: :class:`numpy.ndarray`
 
         :raises Exception: If the force vector cannot be found for the analysis_case
@@ -347,6 +347,67 @@ class FiniteElement:
         """
 
         self.f_int.append(ForceVector(f, analysis_case))
+
+    def get_shape_function(self, xi):
+        """Placeholder for the get_shape_function method.
+
+        Returns the value of the shape functions at *xi*.
+
+        :param float xi: Position along the element
+
+        :returns: Value of the shape functions at *xi*
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        pass
+
+    def get_stiffness_matrix(self):
+        """Placeholder for the get_stiffness_matrix method.
+
+        Gets the stiffness matrix for a FiniteElement.
+
+        :returns: 6 x 6 element stiffness matrix
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        pass
+
+    def get_geometric_stiff_matrix(self, analysis_case):
+        """Placeholder for the get_geometric_stiff_matrix method.
+
+        Gets the geometric stiffness matrix for a FiniteElement.
+
+        :param analysis_case: Analysis case from which to extract the axial force
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+
+        :returns: Element geometric stiffness matrix
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        pass
+
+    def get_mass_matrix(self):
+        """Placeholder for the get_mass_matrix method.
+
+        Gets the mass matrix for a for a FiniteElement.
+
+        :returns: Element mass matrix
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        pass
+
+    def get_internal_actions(self, analysis_case):
+        """Returns the internal actions for a FiniteElement.
+
+        :param analysis_case: Analysis case
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+
+        :returns: An array containing the internal actions for the element
+        :rtype: :class:`numpy.ndarray`
+        """
+
+        pass
 
 
 class ForceVector:

@@ -114,7 +114,6 @@ analysis.post.plot_reactions(analysis_case=analysis_case)
   - [x] Load Cases
   - [x] Nodal Loads
   - [x] Surface (Distributed) Loads
-  - [x] Intermediate Nodal Loads
   - [ ] Body Loads
 - [x] Restraints
   - [x] Freedom Cases

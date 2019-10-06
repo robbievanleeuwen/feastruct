@@ -2,8 +2,9 @@
 
 ## Class Implementation:
 
-- [ ] Easier retrieval of displacements (also at positions along elements)
-- [ ] Method for moving nodes
+- [x] Easier retrieval of displacements (also at positions along elements)
+- [x] Add get_sampling_points method for frame elements - use for everything!
+- [x] Method for moving & copying nodes
 - [ ] Load combinations
 
 ## Pre-Processor:
@@ -16,7 +17,6 @@
 - [ ] 3d frame elements
 - [ ] Spring supports
 - [x] Distributed loads
-- [x] Intermediate point loads
 - [ ] Body loads
 - [ ] Thermal loads
 - [ ] MP Constraints

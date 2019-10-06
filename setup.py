@@ -15,7 +15,12 @@ setup(name='feastruct',
       author='Robbie van Leeuwen',
       author_email='robbie.vanleeuwen@gmail.com',
       license='MIT',
-      packages=['feastruct'],
+      packages=[
+          'feastruct', 'feastruct.fea', 'feastruct.fea.elements', 'feastruct.post',
+          'feastruct.pre', 'feastruct.solvers',
+          'feastruct.examples', 'feastruct.tests.implementation',
+          'feastruct.tests.mastan2_textbook'
+      ],
       install_requires=[
           'numpy', 'scipy', 'matplotlib'
       ],

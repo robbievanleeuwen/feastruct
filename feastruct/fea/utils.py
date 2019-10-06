@@ -7,7 +7,7 @@ def gauss_points(el_type, n):
 
     :param string el_type: String describing the element type
     :param int n: Number of Gauss points
-    :return: The integration weights *(n x 1)* and an *(n x i)* matrix consisting of the values of
+    :returns: The integration weights *(n x 1)* and an *(n x i)* matrix consisting of the values of
         the *i* shape functions for *n* Gauss points
     :rtype: tuple(list[float], :class:`numpy.ndarray`)
     """
@@ -58,7 +58,7 @@ def shape_function(el_type, coords, gp):
     :type coords: :class:`numpy.ndarray`
     :param gp: Isoparametric location of the Gauss point
     :type gp: :class:`numpy.ndarray`
-    :return: The value of the shape functions *N(i)* at the given Gauss point *(1 x n)*, the
+    :returns: The value of the shape functions *N(i)* at the given Gauss point *(1 x n)*, the
         derivative of the shape functions in the j-th global direction *B(i,j)* *(3 x n)* and the
         determinant of the Jacobian matrix *j*
     :rtype: tuple(:class:`numpy.ndarray`, :class:`numpy.ndarray`, float)

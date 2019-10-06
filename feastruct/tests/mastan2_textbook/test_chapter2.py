@@ -3,7 +3,7 @@ import numpy as np
 from feastruct.pre.material import Steel
 from feastruct.pre.section import Section
 import feastruct.fea.cases as cases
-from feastruct.fea.frame import FrameAnalysis2D
+from feastruct.fea.frame_analysis import FrameAnalysis2D
 from feastruct.solvers.linstatic import LinearStatic
 
 
@@ -57,11 +57,10 @@ class TestChapter2(unittest.TestCase):
         LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        node1 = nodes[1]
-        dofs = node1.get_dofs(node1.nfs)
+        n1_disp = nodes[1].get_displacements(analysis_case)
 
-        u = dofs[0].get_displacement(analysis_case)
-        v = dofs[1].get_displacement(analysis_case)
+        u = n1_disp[0]
+        v = n1_disp[1]
 
         self.assertEqual(np.around(u, 2), 2.41)
         self.assertEqual(np.around(v, 2), 0.72)
@@ -121,9 +120,9 @@ class TestChapter2(unittest.TestCase):
         LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dofs = a.get_dofs(a.nfs)
-        u = dofs[0].get_displacement(analysis_case)
-        v = dofs[1].get_displacement(analysis_case)
+        disp_a = a.get_displacements(analysis_case)
+        u = disp_a[0]
+        v = disp_a[1]
 
         self.assertEqual(np.around(u, 2), 2.55)
         self.assertEqual(np.around(v, 2), 0)

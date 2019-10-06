@@ -74,6 +74,27 @@ class TestNode(unittest.TestCase):
         with self.assertRaises(Exception):
             dof.get_displacement(case2)
 
+    def test_node_displacements(self):
+        # add dummy analysis case
+        case1 = AnalysisCase('fc', 'lc')
+
+        # create dummy displacements
+        for (i, dof) in enumerate(self.node.dofs):
+            # don't save dof index 4
+            if i == 4:
+                pass
+            else:
+                dof.save_displacement(i, case1)
+
+        # get displacements
+        disp_vector = self.node.get_displacements(case1)
+
+        for (i, disp) in enumerate(disp_vector):
+            if i == 4:
+                self.assertEqual(disp, None)
+            else:
+                self.assertEqual(disp, i)
+
 
 if __name__ == "__main__":
     unittest.main()

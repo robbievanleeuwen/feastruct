@@ -53,6 +53,50 @@ class Node:
     def z(self):
         return self.coords[2]
 
+    def move_node(self, vec):
+        """Moves the current node by the vector vec *([dx], [dx, dy] or [dx, dy, dz])*.
+
+        :param vec: Vector to move the current node by
+        :type vec: list[float]
+        """
+
+        if len(vec) == 1:
+            self.coords[0] += vec[0]
+        elif len(vec) == 2:
+            self.coords[0] += vec[0]
+            self.coords[1] += vec[1]
+        elif len(vec) == 3:
+            self.coords += vec
+        else:
+            # TODO: throw an error
+            return
+
+    def copy_node(self, vec):
+        """Copies and returns a new node shifted by the vector vec
+        *([dx], [dx, dy] or [dx, dy, dz])*.
+
+        :param vec: Vector to move the current node by
+        :type vec: list[float]
+
+        :returns: New node object
+        :rtype: :class:`~feastruct.fea.node.Node`
+        """
+
+        new_coords = self.coords
+
+        if len(vec) == 1:
+            new_coords[0] += vec[0]
+        elif len(vec) == 2:
+            new_coords[0] += vec[0]
+            new_coords[1] += vec[1]
+        elif len(vec) == 3:
+            new_coords += vec
+        else:
+            # TODO: throw an error
+            return
+
+        return Node(coords=new_coords)
+
     def get_dofs(self, freedom_signature):
         """Returns the degree of freedom objects relating to the freedom_signature list.
 
@@ -72,6 +116,33 @@ class Node:
                 dof_list.append(self.dofs[i])
 
         return dof_list
+
+    def get_displacements(self, analysis_case):
+        """Returns the displacement vector for the current node and analysis case. If the degree
+        of freedom is not used in the current analysis case, a *None* value is assigned.
+
+        Degree of freedoms are ordered as follows: *(x, y, z, rx, ry, rz)*
+
+        :param analysis_case: Analysis case relating to the displacement
+        :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
+
+        :returns: Displacement vector of length *(1 x 6)*
+        :rtype: float
+        """
+
+        # assign displacement vector
+        disp_vector = []
+
+        # loop throught the degrees of freedom
+        for dof in self.dofs:
+            try:
+                disp = dof.get_displacement(analysis_case=analysis_case)
+            except Exception:
+                disp = None
+
+            disp_vector.append(disp)
+
+        return disp_vector
 
 
 class DoF:
@@ -111,7 +182,8 @@ class DoF:
 
         :param analysis_case: Analysis case relating to the displacement
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
-        :return: Displacement value
+
+        :returns: Displacement value
         :rtype: float
 
         :raises Exception: If a displacement corresponding to analysis_case cannot be found
@@ -136,7 +208,8 @@ class DoF:
         :param analysis_case: Analysis case relating to the buckling results
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param int buckling_mode: Buckling mode number
-        :return: Eigenvalue and eigenvector corresponding to an analysis_case and buckling_mode
+
+        :returns: Eigenvalue and eigenvector corresponding to an analysis_case and buckling_mode
         :rtype: tuple(float, float)
 
         :raises Exception: If buckling results corresponding to an analysis_case cannot be found,
@@ -173,7 +246,8 @@ class DoF:
         :param analysis_case: Analysis case relating to the frequency results
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
         :param int frequency_mode: Frequency mode number
-        :return: Eigenvalue and eigenvector corresponding to an analysis_case and frequency_mode
+
+        :returns: Eigenvalue and eigenvector corresponding to an analysis_case and frequency_mode
         :rtype: tuple(float, float)
 
         :raises Exception: If frequency results corresponding to an analysis_case cannot be found,

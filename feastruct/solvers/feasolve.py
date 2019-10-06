@@ -490,7 +490,7 @@ class Solver:
         :param function: Function to time and execute
         :type function: function
         :param args: Function arguments
-        :return: Value returned from the function
+        :returns: Value returned from the function
         """
 
         start_time = time.time()

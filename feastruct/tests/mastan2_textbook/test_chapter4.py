@@ -3,7 +3,7 @@ import numpy as np
 from feastruct.pre.material import Material, Steel
 from feastruct.pre.section import Section
 import feastruct.fea.cases as cases
-from feastruct.fea.frame import FrameAnalysis2D
+from feastruct.fea.frame_analysis import FrameAnalysis2D
 from feastruct.solvers.linstatic import LinearStatic
 
 
@@ -54,14 +54,14 @@ class TestChapter4(unittest.TestCase):
         LinearStatic(analysis=self.analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dofs_b = self.node_b.get_dofs(self.node_b.nfs)
-        dofs_c = self.node_c.get_dofs(self.node_c.nfs)
+        disp_b = self.node_b.get_displacements(analysis_case)
+        disp_c = self.node_c.get_displacements(analysis_case)
 
-        u_b = dofs_b[0].get_displacement(analysis_case)
-        rz_b = dofs_b[2].get_displacement(analysis_case)
-        u_c = dofs_c[0].get_displacement(analysis_case)
-        v_c = dofs_c[1].get_displacement(analysis_case)
-        rz_c = dofs_c[2].get_displacement(analysis_case)
+        u_b = disp_b[0]
+        rz_b = disp_b[5]
+        u_c = disp_c[0]
+        v_c = disp_c[1]
+        rz_c = disp_c[5]
 
         self.assertEqual(np.around(u_b, 3), 0.024)
         self.assertEqual(np.around(rz_b, 5), -0.00088)
@@ -111,8 +111,8 @@ class TestChapter4(unittest.TestCase):
         LinearStatic(analysis=self.analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dofs_b = self.node_b.get_dofs(self.node_b.nfs)
-        rz_b = dofs_b[2].get_displacement(analysis_case)
+        disp_b = self.node_b.get_displacements(analysis_case)
+        rz_b = disp_b[5]
 
         self.assertEqual(np.around(rz_b, 5), 0.00179)
 
@@ -159,8 +159,8 @@ class TestChapter4(unittest.TestCase):
         LinearStatic(analysis=self.analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dofs_b = self.node_b.get_dofs(self.node_b.nfs)
-        rz_b = dofs_b[2].get_displacement(analysis_case)
+        disp_b = self.node_b.get_displacements(analysis_case)
+        rz_b = disp_b[5]
 
         self.assertEqual(np.around(rz_b, 6), -0.000964)
 
@@ -212,10 +212,10 @@ class TestChapter4(unittest.TestCase):
         LinearStatic(analysis=self.analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dofs_b = self.node_b.get_dofs(self.node_b.nfs)
-        u_b = dofs_b[0].get_displacement(analysis_case)
-        v_b = dofs_b[1].get_displacement(analysis_case)
-        rz_b = dofs_b[2].get_displacement(analysis_case)
+        disp_b = self.node_b.get_displacements(analysis_case)
+        u_b = disp_b[0]
+        v_b = disp_b[1]
+        rz_b = disp_b[5]
 
         self.assertEqual(np.around(u_b, 4), 0.4415)
         self.assertEqual(np.around(v_b, 4), -0.3999)
@@ -295,8 +295,8 @@ class TestChapter4(unittest.TestCase):
         LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dof = beam_nodes[int(n/2)].get_dofs([False, True, False, False, False, False])
-        v_p = dof[0].get_displacement(analysis_case)
+        disp = beam_nodes[int(n/2)].get_displacements(analysis_case)
+        v_p = disp[1]
 
         self.assertEqual(np.around(v_p, 3), -0.238)
 

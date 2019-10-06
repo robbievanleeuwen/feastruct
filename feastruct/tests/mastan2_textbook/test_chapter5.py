@@ -3,7 +3,7 @@ import numpy as np
 from feastruct.pre.material import Steel
 from feastruct.pre.section import Section
 import feastruct.fea.cases as cases
-from feastruct.fea.frame import FrameAnalysis2D, FrameAnalysis3D
+from feastruct.fea.frame_analysis import FrameAnalysis2D, FrameAnalysis3D
 from feastruct.solvers.linstatic import LinearStatic
 
 
@@ -78,10 +78,10 @@ class TestChapter5(unittest.TestCase):
         LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dofs_a = node_a.get_dofs(node_a.nfs)
-        u_a = dofs_a[0].get_displacement(analysis_case)
-        v_a = dofs_a[1].get_displacement(analysis_case)
-        w_a = dofs_a[2].get_displacement(analysis_case)
+        disp_a = node_a.get_displacements(analysis_case)
+        u_a = disp_a[0]
+        v_a = disp_a[1]
+        w_a = disp_a[2]
 
         self.assertEqual(np.around(u_a, 3), 0.178)
         self.assertEqual(np.around(v_a, 3), 2.722)
@@ -118,7 +118,7 @@ class TestChapter5(unittest.TestCase):
         # create materials
         steel = Steel()
 
-        # create 3d frame analysis object
+        # create 2d frame analysis object
         analysis = FrameAnalysis2D()
 
         section_ab = Section(area=6e3, ixx=200e6)
@@ -127,14 +127,18 @@ class TestChapter5(unittest.TestCase):
         # create nodes
         node_a = analysis.create_node(coords=[0])
         node_b = analysis.create_node(coords=[8000])
+        node_p = analysis.create_node(coords=[10000])
         node_c = analysis.create_node(coords=[13000])
 
         # create beam elements
         element_ab = analysis.create_element(
             el_type='EB2-2D', nodes=[node_a, node_b], material=steel, section=section_ab
         )
-        element_bc = analysis.create_element(
-            el_type='EB2-2D', nodes=[node_b, node_c], material=steel, section=section_bc
+        element_bp = analysis.create_element(
+            el_type='EB2-2D', nodes=[node_b, node_p], material=steel, section=section_bc
+        )
+        element_pc = analysis.create_element(
+            el_type='EB2-2D', nodes=[node_p, node_c], material=steel, section=section_bc
         )
 
         # add supports
@@ -149,7 +153,7 @@ class TestChapter5(unittest.TestCase):
         # add loads
         load_case = cases.LoadCase()
         load_case.add_element_load(element_ab.generate_udl(q=-2))
-        load_case.add_element_load(element_bc.generate_point_load(p=-20e3, a=0.4))
+        load_case.add_nodal_load(node=node_p, val=-20e3, dof=1)
 
         # add analysis case
         analysis_case = cases.AnalysisCase(freedom_case=freedom_case, load_case=load_case)
@@ -158,10 +162,10 @@ class TestChapter5(unittest.TestCase):
         LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dofs_a = node_a.get_dofs(node_a.nfs)
-        dofs_b = node_b.get_dofs(node_b.nfs)
-        r_a = dofs_a[2].get_displacement(analysis_case)
-        r_b = dofs_b[2].get_displacement(analysis_case)
+        disp_a = node_a.get_displacements(analysis_case)
+        disp_b = node_b.get_displacements(analysis_case)
+        r_a = disp_a[5]
+        r_b = disp_b[5]
 
         self.assertEqual(np.around(r_a, 7), -5.681e-4)
         self.assertEqual(np.around(r_b, 7), 0.696e-4)
@@ -183,7 +187,7 @@ class TestChapter5(unittest.TestCase):
         # create materials
         steel = Steel()
 
-        # create 3d frame analysis object
+        # create 2d frame analysis object
         analysis = FrameAnalysis2D()
 
         section = Section(area=6e3, ixx=200e6)
@@ -225,10 +229,10 @@ class TestChapter5(unittest.TestCase):
         LinearStatic(analysis=analysis, analysis_cases=[analysis_case]).solve()
 
         # check node displacement
-        dofs_b = node_b.get_dofs(node_b.nfs)
-        u_b = dofs_b[0].get_displacement(analysis_case)
-        v_b = dofs_b[1].get_displacement(analysis_case)
-        r_b = dofs_b[2].get_displacement(analysis_case)
+        disp_b = node_b.get_displacements(analysis_case)
+        u_b = disp_b[0]
+        v_b = disp_b[1]
+        r_b = disp_b[5]
 
         self.assertEqual(np.around(u_b, 4), 0.9950)
         self.assertEqual(np.around(v_b, 3), -4.982)

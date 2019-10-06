@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>feastruct.fea.frame_analysis &mdash; feastruct 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> feastruct
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/pre.html">Pre</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/pre.html#materials">Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/pre.html#sections">Sections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/node.html">Node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/node.html#id1">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/node.html#dof">DoF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/node.html#displacement">Displacement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/node.html#buckling-modes">Buckling Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/node.html#frequency-modes">Frequency Modes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/fea.html">Finite Element Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/fea.html#finiteelementanalysis">FiniteElementAnalysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/fea.html#finiteelement">FiniteElement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/fea.html#forcevector">ForceVector</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/utils.html">Finite Element Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/frame.html">Frame</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/frame/frame_analysis.html">Frame Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_analysis.html#id1">Frame Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_analysis.html#frame-analysis2d">Frame Analysis2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_analysis.html#frame-analysis3d">Frame Analysis3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/frame/frame_elements.html">Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_elements.html#frame-element">Frame Element</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_elements.html#frame-element2d">Frame Element2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_elements.html#frame-element3d">Frame Element3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/frame/frame_2d.html">2D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_2d.html#bar2d-2n">Bar2D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_2d.html#eulerbernoulli2d-2n">EulerBernoulli2D_2N</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/frame/frame_3d.html">3D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_3d.html#bar3d-2n">Bar3D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/frame/frame_3d.html#eulerbernoulli3d-2n">EulerBernoulli3D_2N</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/cases.html">Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/cases.html#analysis-case">Analysis Case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/cases.html#case">Case</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/cases.html#freedom-case">Freedom Case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/cases.html#load-case">Load Case</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/bcs.html">Boundary Conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/bcs.html#boundary-condition">Boundary Condition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/bcs.html#nodal-support">Nodal Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/bcs.html#nodal-load">Nodal Load</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/solvers.html">Solvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/solvers.html#fea-solve">FEA Solve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/solvers.html#linear-static-solver">Linear Static Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/solvers.html#linear-buckling-solver">Linear Buckling Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/solvers.html#natural-frequency-solver">Natural Frequency Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/solvers.html#solver-settings">Solver Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/solvers.html#linear-static-settings">Linear Static Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/solvers.html#linear-buckling-settings">Linear Buckling Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../rst/solvers.html#natural-frequency-settings">Natural Frequency Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst/post.html">Post-Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/post.html#post-processor-2d">Post-Processor 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../rst/post.html#scalar-result">Scalar Result</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">feastruct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>feastruct.fea.frame_analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for feastruct.fea.frame_analysis</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">feastruct.fea.fea</span> <span class="k">import</span> <span class="n">FiniteElementAnalysis</span>
+<span class="kn">from</span> <span class="nn">feastruct.post.post2d</span> <span class="k">import</span> <span class="n">PostProcessor2D</span>
+<span class="kn">import</span> <span class="nn">feastruct.fea.elements.frame2d</span> <span class="k">as</span> <span class="nn">frame2d</span>
+<span class="kn">import</span> <span class="nn">feastruct.fea.elements.frame3d</span> <span class="k">as</span> <span class="nn">frame3d</span>
+
+
+<div class="viewcode-block" id="FrameAnalysis"><a class="viewcode-back" href="../../../rst/frame/frame_analysis.html#feastruct.fea.frame_analysis.FrameAnalysis">[docs]</a><span class="k">class</span> <span class="nc">FrameAnalysis</span><span class="p">(</span><span class="n">FiniteElementAnalysis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for a frame analysis.</span>
+
+<span class="sd">    Includes a method for analysis initiation and a method for adding a frame element to the</span>
+<span class="sd">    analysis.</span>
+
+<span class="sd">    :cvar nodes: Nodes used in the finite element analysis</span>
+<span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar elements: Elements used in the finite element analysis</span>
+<span class="sd">    :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
+<span class="sd">    :cvar nfa: Node freedom arrangement</span>
+<span class="sd">    :vartype nfa: list[bool]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FrameAnalysis.__init__"><a class="viewcode-back" href="../../../rst/frame/frame_analysis.html#feastruct.fea.frame_analysis.FrameAnalysis.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the FrameAnalysis class.</span>
+
+<span class="sd">        :param nodes: List of nodes with which to initialise the class</span>
+<span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">        :param elements: List of elements with which to initialise the class</span>
+<span class="sd">        :type elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
+<span class="sd">        :param nfa: Node freedom arrangement</span>
+<span class="sd">        :type nfa: list[bool]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># initialise parent FiniteElementAnalysis class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="o">=</span><span class="n">nfa</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FrameAnalysis.create_element"><a class="viewcode-back" href="../../../rst/frame/frame_analysis.html#feastruct.fea.frame_analysis.FrameAnalysis.create_element">[docs]</a>    <span class="k">def</span> <span class="nf">create_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">el_type</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates and returns a frame element and adds it to the</span>
+<span class="sd">        :class:`~feastruct.fea.frame.Frame` object. Refer to &#39;xxx&#39; for the possible element types.</span>
+
+<span class="sd">        :param string el_type: String characterising the type of frame element</span>
+<span class="sd">        :param nodes: List of node objects defining the element</span>
+<span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">        :param material: Material object for the element</span>
+<span class="sd">        :type material: :class:`~feastruct.pre.material.Material`</span>
+<span class="sd">        :param section: Section object for the element</span>
+<span class="sd">        :type section: :class:`~feastruct.pre.section.Section`</span>
+<span class="sd">        :returns: FrameElement object</span>
+<span class="sd">        :rtype: :class:`~feastruct.fea.frame.FrameElement`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">el_type</span> <span class="o">==</span> <span class="s1">&#39;Bar2-2D&#39;</span><span class="p">:</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">frame2d</span><span class="o">.</span><span class="n">Bar2D_2N</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">el_type</span> <span class="o">==</span> <span class="s1">&#39;EB2-2D&#39;</span><span class="p">:</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">frame2d</span><span class="o">.</span><span class="n">EulerBernoulli2D_2N</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">el_type</span> <span class="o">==</span> <span class="s1">&#39;Bar2-3D&#39;</span><span class="p">:</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">frame3d</span><span class="o">.</span><span class="n">Bar3D_2N</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+
+        <span class="k">return</span><span class="p">(</span><span class="n">FiniteElementAnalysis</span><span class="o">.</span><span class="n">create_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="FrameAnalysis2D"><a class="viewcode-back" href="../../../rst/frame/frame_analysis.html#feastruct.fea.frame_analysis.FrameAnalysis2D">[docs]</a><span class="k">class</span> <span class="nc">FrameAnalysis2D</span><span class="p">(</span><span class="n">FrameAnalysis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for a 2D frame analysis.</span>
+
+<span class="sd">    Includes a method for analysis initiation and a method for adding 2D frame elements to the</span>
+<span class="sd">    analysis.</span>
+
+<span class="sd">    Active degrees of freedom are *[x, y, rz]* and are referred to as *[0, 1, 5]*.</span>
+
+<span class="sd">    :cvar nodes: Nodes used in the finite element analysis</span>
+<span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar elements: Elements used in the finite element analysis</span>
+<span class="sd">    :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
+<span class="sd">    :cvar nfa: Node freedom arrangement</span>
+<span class="sd">    :vartype nfa: list[bool]</span>
+<span class="sd">    :cvar post: Post-processor object</span>
+<span class="sd">    :vartype post: :class:`feastruct.post.post2d.PostProcessor`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FrameAnalysis2D.__init__"><a class="viewcode-back" href="../../../rst/frame/frame_analysis.html#feastruct.fea.frame_analysis.FrameAnalysis2D.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the FrameAnalysis2D class.</span>
+
+<span class="sd">        :param nodes: List of nodes with which to initialise the class</span>
+<span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">        :param elements: List of elements with which to initialise the class</span>
+<span class="sd">        :type elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># set the node freedom arrangement for a 2D frame analysis</span>
+        <span class="n">nfa</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>
+
+        <span class="c1"># initialise parent FrameAnalysis class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="o">=</span><span class="n">nfa</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="n">PostProcessor2D</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="FrameAnalysis3D"><a class="viewcode-back" href="../../../rst/frame/frame_analysis.html#feastruct.fea.frame_analysis.FrameAnalysis3D">[docs]</a><span class="k">class</span> <span class="nc">FrameAnalysis3D</span><span class="p">(</span><span class="n">FrameAnalysis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parent class for a 3D frame analysis.</span>
+
+<span class="sd">    Includes a method for analysis initiation and a method for adding 3D frame elements to the</span>
+<span class="sd">    analysis.</span>
+
+<span class="sd">    Active degrees of freedom are *[x, y, z, rx, ry, rz]* and are referred to as</span>
+<span class="sd">    *[0, 1, 2, 3, 4, 5]*.</span>
+
+<span class="sd">    :cvar nodes: Nodes used in the finite element analysis</span>
+<span class="sd">    :vartype nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">    :cvar elements: Elements used in the finite element analysis</span>
+<span class="sd">    :vartype elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
+<span class="sd">    :cvar nfa: Node freedom arrangement</span>
+<span class="sd">    :vartype nfa: list[bool]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FrameAnalysis3D.__init__"><a class="viewcode-back" href="../../../rst/frame/frame_analysis.html#feastruct.fea.frame_analysis.FrameAnalysis3D.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the FrameAnalysis3D class.</span>
+
+<span class="sd">        :param nodes: List of nodes with which to initialise the class</span>
+<span class="sd">        :type nodes: list[:class:`~feastruct.fea.node.Node`]</span>
+<span class="sd">        :param elements: List of elements with which to initialise the class</span>
+<span class="sd">        :type elements: list[:class:`~feastruct.fea.frame.FrameElement`]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># set the node freedom arrangement for a 3D frame analysis</span>
+        <span class="n">nfa</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>
+
+        <span class="c1"># initialise parent FrameAnalysis class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">nfa</span><span class="o">=</span><span class="n">nfa</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Robbie van Leeuwen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

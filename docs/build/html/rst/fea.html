@@ -86,8 +86,19 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a></li>
-<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre.html">Pre</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pre.html#materials">Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pre.html#sections">Sections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">Node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="node.html#id1">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node.html#dof">DoF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node.html#displacement">Displacement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node.html#buckling-modes">Buckling Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node.html#frequency-modes">Frequency Modes</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Finite Element Analysis</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#finiteelementanalysis">FiniteElementAnalysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#finiteelement">FiniteElement</a></li>
@@ -95,11 +106,68 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Finite Element Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frame.html">Frame</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_analysis.html">Frame Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#id1">Frame Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#frame-analysis2d">Frame Analysis2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_analysis.html#frame-analysis3d">Frame Analysis3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_elements.html">Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element">Frame Element</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element2d">Frame Element2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_elements.html#frame-element3d">Frame Element3D</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_2d.html">2D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_2d.html#bar2d-2n">Bar2D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_2d.html#eulerbernoulli2d-2n">EulerBernoulli2D_2N</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frame/frame_3d.html">3D Frame Elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_3d.html#bar3d-2n">Bar3D_2N</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frame/frame_3d.html#eulerbernoulli3d-2n">EulerBernoulli3D_2N</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cases.html">Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cases.html#analysis-case">Analysis Case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cases.html#case">Case</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cases.html#freedom-case">Freedom Case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cases.html#load-case">Load Case</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bcs.html">Boundary Conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bcs.html#boundary-condition">Boundary Condition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bcs.html#nodal-support">Nodal Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bcs.html#nodal-load">Nodal Load</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solvers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html#fea-solve">FEA Solve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-static-solver">Linear Static Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-buckling-solver">Linear Buckling Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#natural-frequency-solver">Natural Frequency Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html#solver-settings">Solver Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-static-settings">Linear Static Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#linear-buckling-settings">Linear Buckling Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers.html#natural-frequency-settings">Natural Frequency Settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="post.html">Post-Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="post.html#post-processor-2d">Post-Processor 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="post.html#scalar-result">Scalar Result</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -429,6 +497,60 @@ is <em>n_nodes x n_dof</em></td>
 </dd></dl>
 
 <dl class="method">
+<dt id="feastruct.fea.fea.FiniteElement.get_geometric_stiff_matrix">
+<code class="descname">get_geometric_stiff_matrix</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/fea.html#FiniteElement.get_geometric_stiff_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.fea.FiniteElement.get_geometric_stiff_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placeholder for the get_geometric_stiff_matrix method.</p>
+<p>Gets the geometric stiffness matrix for a FiniteElement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case from which to extract the axial force</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Element geometric stiffness matrix</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.fea.FiniteElement.get_internal_actions">
+<code class="descname">get_internal_actions</code><span class="sig-paren">(</span><em>analysis_case</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/fea.html#FiniteElement.get_internal_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.fea.FiniteElement.get_internal_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal actions for a FiniteElement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analysis_case</strong> (<a class="reference internal" href="cases.html#feastruct.fea.cases.AnalysisCase" title="feastruct.fea.cases.AnalysisCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisCase</span></code></a>) – Analysis case</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An array containing the internal actions for the element</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.fea.FiniteElement.get_mass_matrix">
+<code class="descname">get_mass_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/fea.html#FiniteElement.get_mass_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.fea.FiniteElement.get_mass_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placeholder for the get_mass_matrix method.</p>
+<p>Gets the mass matrix for a for a FiniteElement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Element mass matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="feastruct.fea.fea.FiniteElement.get_ndof">
 <code class="descname">get_ndof</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/fea.html#FiniteElement.get_ndof"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.fea.FiniteElement.get_ndof" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the number of active degrees of freedom for the element.</p>
@@ -474,6 +596,42 @@ element.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An <em>(n x 3)</em> array of node coordinates, where <em>n</em> is the number of nodes for the
 given finite element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.fea.FiniteElement.get_shape_function">
+<code class="descname">get_shape_function</code><span class="sig-paren">(</span><em>xi</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/fea.html#FiniteElement.get_shape_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.fea.FiniteElement.get_shape_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placeholder for the get_shape_function method.</p>
+<p>Returns the value of the shape functions at <em>xi</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xi</strong> (<em>float</em>) – Position along the element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Value of the shape functions at <em>xi</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="feastruct.fea.fea.FiniteElement.get_stiffness_matrix">
+<code class="descname">get_stiffness_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/feastruct/fea/fea.html#FiniteElement.get_stiffness_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#feastruct.fea.fea.FiniteElement.get_stiffness_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placeholder for the get_stiffness_matrix method.</p>
+<p>Gets the stiffness matrix for a FiniteElement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">6 x 6 element stiffness matrix</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></td>
 </tr>

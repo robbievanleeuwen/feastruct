@@ -3,7 +3,8 @@ import numpy as np
 from feastruct.fea.node import Node
 from feastruct.pre.material import Steel
 from feastruct.pre.section import Section
-from feastruct.fea.frame import FrameElement, FrameElement2D
+from feastruct.fea.elements.frame import FrameElement
+from feastruct.fea.elements.frame2d import FrameElement2D
 from feastruct.fea.cases import AnalysisCase
 
 
