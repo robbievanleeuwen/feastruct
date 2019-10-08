@@ -40,8 +40,7 @@ class FrameElement(FiniteElement):
         self.section = section
 
     def get_geometric_properties(self):
-        """Calculates geometric properties related to a frame element. Returns
-        the following:
+        """Calculates geometric properties related to a frame element. Returns the following:
 
         * *node_coords*: An *(n x 3)* array of node coordinates, where n is the number of nodes for
           the given finite element
@@ -63,7 +62,7 @@ class FrameElement(FiniteElement):
 
     def get_sampling_points(self, n, analysis_case, bm=False, defl=False):
         """Returns a list of sampling points along a 2D frame element given a minimum *n* points
-        and an analysis case.
+        and an analysis case. The sampling points vary from 0 to 1.
 
         Adds a sampling point at the following locations:
 
@@ -83,8 +82,8 @@ class FrameElement(FiniteElement):
         :rtype: :class:`numpy.ndarray`
         """
 
-        # generate initial list of stations (from -1 to 1 with n points)
-        stations = np.linspace(-1, 1, n)
+        # generate initial list of stations
+        stations = np.linspace(0, 1, n)
 
         # find any points of zero shear force
         if bm:
@@ -163,9 +162,9 @@ class FrameElement(FiniteElement):
     def get_displacements(self, n, analysis_case):
         """Placeholder for the get_displacements method.
 
-        Returns a list of the local displacements, *(u, v, w, rx, ry, rz)*, along the element for
+        Returns a list of the local displacements, *(u, v, w, ru, rv, rw)*, along the element for
         the analysis case and a minimum of *n* subdivisions. A list of the stations, *xi*, is also
-        included.
+        included. Station locations, *xis*, vary from 0 to 1.
 
         :param analysis_case: Analysis case relating to the displacement
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
@@ -193,7 +192,7 @@ class FrameElement(FiniteElement):
         """Placeholder for the get_afd method.
 
         Returns the axial force diagram within the element for a minimum of *n* stations for an
-        analysis_case.
+        analysis_case. Station locations, *xis*, vary from 0 to 1.
 
         :param int n: Minimum number of stations to sample the axial force diagram
         :param analysis_case: Analysis case
@@ -209,7 +208,7 @@ class FrameElement(FiniteElement):
         """Placeholder for the get_sfd method.
 
         Returns the shear force diagram within the element for a minimum of *n* stations for an
-        analysis_case.
+        analysis_case. Station locations, *xis*, vary from 0 to 1.
 
         :param int n: Minimum number of stations to sample the shear force diagram
         :param analysis_case: Analysis case
@@ -225,7 +224,7 @@ class FrameElement(FiniteElement):
         """Placeholder for the get_bmd method.
 
         Returns the bending moment diagram within the element for a minimum of *n* stations for
-        an analysis_case.
+        an analysis_case. Station locations, *xis*, vary from 0 to 1.
 
         :param int n: Minimum number of stations to sample the bending moment diagram
         :param analysis_case: Analysis case
@@ -243,10 +242,34 @@ class FrameElement(FiniteElement):
         Calculates the local displacement of the element at position *xi* given the displacement
         vector *u_el*.
 
-        :param float xi: Position along the element
+        :param float xi: Position along the element *(0 < xi < 1)*
         :param u_el: Element displacement vector
         :type u_el: :class:`numpy.ndarray`
 
         :returns: Local displacement of the element *(u, v, w)*
         :rtype: tuple(float, float, float)
         """
+
+        pass
+
+    def map_to_station(self, eta):
+        """Maps the isometric parameter *-1 < eta < 1* to a station value *0 < xi < 1*.
+
+        :param float xi: Isoparametric coordinate (*-1 < eta < 1*)
+
+        :returns: Station location (*0 < x < 1*)
+        :rtype: float
+        """
+
+        return 0.5 * (eta + 1)
+
+    def map_to_isoparam(self, xi):
+        """Maps a station value *0 < xi < 1* to the isometric parameter *-1 < eta < 1*.
+
+        :param float xi: Station location (*0 < x < 1*)
+
+        :returns: Isoparametric coordinate (*-1 < eta < 1*)
+        :rtype: float
+        """
+
+        return 2 * xi - 1

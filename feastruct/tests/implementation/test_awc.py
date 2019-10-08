@@ -15,10 +15,10 @@ class TestUDL(unittest.TestCase):
     def setUp(self):
         self.steel = Steel()
         self.elastic_modulus = self.steel.elastic_modulus
-        self.ixx = 100e6
-        self.length = 5000
-        self.q = -5
-        self.pl = -10e3
+        self.ixx = np.random.uniform(10e6, 200e6)
+        self.length = np.random.uniform(2e3, 10e3)
+        self.q = -np.random.uniform(1, 10)
+        self.pl = -np.random.uniform(5e3, 50e3)
 
     def test_fig1(self):
         """Simple Beam – Uniformly Distributed Load"""
@@ -67,11 +67,11 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for disp in displacements:
             xi = disp[0]
-            x = self.length * 0.5 * (xi + 1)
+            x = self.length * xi
             v = disp[2]
 
             # check displacements
-            self.assertTrue(np.isclose(v, analytical_disp(x)))
+            self.assertTrue(np.isclose(v, analytical_disp(x), atol=1e-06))
 
         # check max displacement
         l0 = self.length
@@ -81,7 +81,8 @@ class TestUDL(unittest.TestCase):
         self.assertTrue(np.isclose(abs(v_max), max(np.abs(displacements[:, 2]))))
 
         # check position
-        self.assertTrue(np.isclose(0, displacements[np.abs(displacements[:, 2]).argmax(), 0]))
+        self.assertTrue(np.isclose(0.5, displacements[np.abs(displacements[:, 2]).argmax(), 0],
+                                   atol=1e-06))
 
         # check bending moments
         def analytical_bmd(x):
@@ -93,20 +94,20 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for (i, m) in enumerate(bmd):
             xi = xis[i]
-            x = self.length * 0.5 * (xi + 1)
+            x = self.length * xi
 
             # check bending moment
-            self.assertTrue(np.isclose(m, analytical_bmd(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd(x), atol=1e-06))
 
         # check max bending moment
         l0 = self.length
         m_max = self.q * l0 * l0 / 8
 
         # check value
-        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd))))
+        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd)), atol=1e-06))
 
         # check position
-        self.assertTrue(np.isclose(0, xis[np.abs(bmd).argmax()]))
+        self.assertTrue(np.isclose(0.5, xis[np.abs(bmd).argmax()], atol=1e-06))
 
         # check shear force
         def analytical_sfd(x):
@@ -118,16 +119,16 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for (i, sf) in enumerate(sfd):
             xi = xis[i]
-            x = self.length * 0.5 * (xi + 1)
+            x = self.length * xi
 
             # check shear force
-            self.assertTrue(np.isclose(sf, analytical_sfd(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd(x), atol=1e-06))
 
     def test_fig2(self):
         """Simple Beam – Uniform Load Partially Distributed"""
 
-        a = 1200
-        c = 1800
+        a = self.length * np.random.uniform(0.1, 0.4)
+        c = self.length * np.random.uniform(0.1, 0.4)
         b = self.length - a - c
 
         # create 2d frame analysis object
@@ -173,8 +174,8 @@ class TestUDL(unittest.TestCase):
         r1 = -sup1.get_reaction(analysis_case)
         r2 = -sup2.get_reaction(analysis_case)
 
-        self.assertTrue(np.isclose(r1, self.q * b / 2 / self.length * (2 * c + b)))
-        self.assertTrue(np.isclose(r2, self.q * b / 2 / self.length * (2 * a + b)))
+        self.assertTrue(np.isclose(r1, self.q * b / 2 / self.length * (2 * c + b), atol=1e-06))
+        self.assertTrue(np.isclose(r2, self.q * b / 2 / self.length * (2 * a + b), atol=1e-06))
 
         # check bending moments
         def analytical_bmd_ab(x):
@@ -194,37 +195,37 @@ class TestUDL(unittest.TestCase):
         # element_ab - loop through each station
         for (i, m) in enumerate(bmd_ab):
             xi = xis_ab[i]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
 
             # check bending moments
-            self.assertTrue(np.isclose(m, analytical_bmd_ab(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_ab(x), atol=1e-06))
 
         # element_bc - loop through each station
         for (i, m) in enumerate(bmd_bc):
             xi = xis_bc[i]
-            x = b * 0.5 * (xi + 1) + a
+            x = b * xi + a
 
             # check bending moments
-            self.assertTrue(np.isclose(m, analytical_bmd_bc(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_bc(x), atol=1e-06))
 
         # element_cd - loop through each station
         for (i, m) in enumerate(bmd_cd):
             xi = xis_cd[i]
-            x = c * 0.5 * (xi + 1) + a + b
+            x = c * xi + a + b
 
             # check bending moments
-            self.assertTrue(np.isclose(m, analytical_bmd_cd(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_cd(x), atol=1e-06))
 
         # check max bending moment
         m_max = r1 * (a + r1 / 2 / self.q)
         pos = a + r1 / self.q
-        x = 2 / b * (pos - a) - 1
+        x = 1 / b * (pos - a)
 
         # check value
-        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_bc))))
+        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_bc)), atol=1e-06))
 
         # check position
-        self.assertTrue(np.isclose(x, xis_bc[np.abs(bmd_bc).argmax()]))
+        self.assertTrue(np.isclose(x, xis_bc[np.abs(bmd_bc).argmax()], atol=1e-06))
 
         # check shear force
         def analytical_sfd_ab(x):
@@ -244,31 +245,31 @@ class TestUDL(unittest.TestCase):
         # element_ab - loop through each station
         for (i, sf) in enumerate(sfd_ab):
             xi = xis_ab[i]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
 
             # check shear forces
-            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x), atol=1e-06))
 
         # element_bc - loop through each station
         for (i, sf) in enumerate(sfd_bc):
             xi = xis_bc[i]
-            x = b * 0.5 * (xi + 1) + a
+            x = b * xi + a
 
             # check shear forces
-            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x), atol=1e-06))
 
         # element_cd - loop through each station
         for (i, sf) in enumerate(sfd_cd):
             xi = xis_cd[i]
-            x = c * 0.5 * (xi + 1) + a + b
+            x = c * xi + a + b
 
             # check shear forces
-            self.assertTrue(np.isclose(sf, analytical_sfd_cd(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_cd(x), atol=1e-06))
 
     def test_fig3(self):
         """Simple Beam – Uniform Load Partially Distributed at One End"""
 
-        a = 1200
+        a = self.length * np.random.uniform(0.1, 0.9)
 
         # create 2d frame analysis object
         analysis = FrameAnalysis2D()
@@ -309,8 +310,9 @@ class TestUDL(unittest.TestCase):
         r1 = -sup1.get_reaction(analysis_case)
         r2 = -sup2.get_reaction(analysis_case)
 
-        self.assertTrue(np.isclose(r1, self.q * a / 2 / self.length * (2 * self.length - a)))
-        self.assertTrue(np.isclose(r2, self.q * a * a / 2 / self.length))
+        self.assertTrue(np.isclose(r1, self.q * a / 2 / self.length * (2 * self.length - a),
+                                   atol=1e-06))
+        self.assertTrue(np.isclose(r2, self.q * a * a / 2 / self.length, atol=1e-06))
 
         # check displacements
         def analytical_disp_ab(x):
@@ -333,20 +335,20 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for disp in displacements_ab:
             xi = disp[0]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
             v = disp[2]
 
             # check displacements
-            self.assertTrue(np.isclose(v, analytical_disp_ab(x)))
+            self.assertTrue(np.isclose(v, analytical_disp_ab(x), atol=1e-06))
 
         # loop through each station
         for disp in displacements_bc:
             xi = disp[0]
-            x = (self.length - a) * 0.5 * (xi + 1) + a
+            x = (self.length - a) * xi + a
             v = disp[2]
 
             # check displacements
-            self.assertTrue(np.isclose(v, analytical_disp_bc(x)))
+            self.assertTrue(np.isclose(v, analytical_disp_bc(x), atol=1e-06))
 
         # check bending moments
         def analytical_bmd_ab(x):
@@ -362,29 +364,29 @@ class TestUDL(unittest.TestCase):
         # element_ab - loop through each station
         for (i, m) in enumerate(bmd_ab):
             xi = xis_ab[i]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
 
             # check bending moments
-            self.assertTrue(np.isclose(m, analytical_bmd_ab(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_ab(x), atol=1e-06))
 
         # element_bc - loop through each station
         for (i, m) in enumerate(bmd_bc):
             xi = xis_bc[i]
-            x = (self.length - a) * 0.5 * (xi + 1) + a
+            x = (self.length - a) * xi + a
 
             # check bending moments
-            self.assertTrue(np.isclose(m, analytical_bmd_bc(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_bc(x), atol=1e-06))
 
         # check max bending moment
         m_max = r1 * r1 / 2 / self.q
         pos = r1 / self.q
-        x = 2 * pos / a - 1
+        x = pos / a
 
         # check value
-        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_ab))))
+        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_ab)), atol=1e-06))
 
         # check position
-        self.assertTrue(np.isclose(x, xis_ab[np.abs(bmd_ab).argmax()]))
+        self.assertTrue(np.isclose(x, xis_ab[np.abs(bmd_ab).argmax()], atol=1e-06))
 
         # check shear force
         def analytical_sfd_ab(x):
@@ -400,26 +402,26 @@ class TestUDL(unittest.TestCase):
         # element_ab - loop through each station
         for (i, sf) in enumerate(sfd_ab):
             xi = xis_ab[i]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
 
             # check shear forces
-            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x), atol=1e-06))
 
         # element_bc - loop through each station
         for (i, sf) in enumerate(sfd_bc):
             xi = xis_bc[i]
-            x = (self.length - a) * 0.5 * (xi + 1) + a
+            x = (self.length - a) * xi + a
 
             # check shear forces
-            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x), atol=1e-06))
 
     def test_fig4(self):
         """Simple Beam – Uniform Load Partially Distributed at Each End"""
 
-        a = 1200
-        c = 1800
+        a = self.length * np.random.uniform(0.1, 0.4)
+        c = self.length * np.random.uniform(0.1, 0.4)
         b = self.length - a - c
-        q2 = 2
+        q2 = -np.random.uniform(1, 10)
 
         # create 2d frame analysis object
         analysis = FrameAnalysis2D()
@@ -467,8 +469,8 @@ class TestUDL(unittest.TestCase):
         r2 = -sup2.get_reaction(analysis_case)
         r2_ana = (q2 * c * (2 * self.length - c) + self.q * a * a) / (2 * self.length)
 
-        self.assertTrue(np.isclose(r1, r1_ana))
-        self.assertTrue(np.isclose(r2, r2_ana))
+        self.assertTrue(np.isclose(r1, r1_ana, atol=1e-06))
+        self.assertTrue(np.isclose(r2, r2_ana, atol=1e-06))
 
         # check bending moments
         def analytical_bmd_ab(x):
@@ -488,49 +490,49 @@ class TestUDL(unittest.TestCase):
         # element_ab - loop through each station
         for (i, m) in enumerate(bmd_ab):
             xi = xis_ab[i]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
 
             # check bending moments
-            self.assertTrue(np.isclose(m, analytical_bmd_ab(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_ab(x), atol=1e-06))
 
         # element_bc - loop through each station
         for (i, m) in enumerate(bmd_bc):
             xi = xis_bc[i]
-            x = b * 0.5 * (xi + 1) + a
+            x = b * xi + a
 
             # check bending moments
-            self.assertTrue(np.isclose(m, analytical_bmd_bc(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_bc(x), atol=1e-06))
 
         # element_cd - loop through each station
         for (i, m) in enumerate(bmd_cd):
             xi = xis_cd[i]
-            x = c * 0.5 * (xi + 1) + a + b
+            x = c * xi + a + b
 
             # check bending moments
-            self.assertTrue(np.isclose(m, analytical_bmd_cd(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_cd(x), atol=1e-06))
 
         # check max bending moment
         if abs(r1) < abs(self.q * a):
             m_max = r1 * r1 / 2 / self.q
             pos = r1 / self.q
-            x = 2 * pos / a - 1
+            x = pos / a
 
             # check value
-            self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_ab))))
+            self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_ab)), atol=1e-06))
 
             # check position
-            self.assertTrue(np.isclose(x, xis_ab[np.abs(bmd_ab).argmax()]))
+            self.assertTrue(np.isclose(x, xis_ab[np.abs(bmd_ab).argmax()], atol=1e-06))
 
         if abs(r2) < abs(q2 * c):
             m_max = r2 * r2 / 2 / q2
             pos = self.length - r2 / q2
-            x = 2 / c * (pos - a - b) - 1
+            x = 1 / c * (pos - a - b)
 
             # check value
-            self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_cd))))
+            self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_cd)), atol=1e-06))
 
             # check position
-            self.assertTrue(np.isclose(x, xis_cd[np.abs(bmd_cd).argmax()]))
+            self.assertTrue(np.isclose(x, xis_cd[np.abs(bmd_cd).argmax()], atol=1e-06))
 
         # check shear force
         def analytical_sfd_ab(x):
@@ -550,26 +552,26 @@ class TestUDL(unittest.TestCase):
         # element_ab - loop through each station
         for (i, sf) in enumerate(sfd_ab):
             xi = xis_ab[i]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
 
             # check shear forces
-            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x), atol=1e-06))
 
         # element_bc - loop through each station
         for (i, sf) in enumerate(sfd_bc):
             xi = xis_bc[i]
-            x = b * 0.5 * (xi + 1) + a
+            x = b * xi + a
 
             # check shear forces
-            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x), atol=1e-06))
 
         # element_cd - loop through each station
         for (i, sf) in enumerate(sfd_cd):
             xi = xis_cd[i]
-            x = c * 0.5 * (xi + 1) + a + b
+            x = c * xi + a + b
 
             # check shear forces
-            self.assertTrue(np.isclose(sf, analytical_sfd_cd(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_cd(x), atol=1e-06))
 
     def test_fig5(self):
         """Simple Beam – Load Increasing Uniformly to One End"""
@@ -643,31 +645,32 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for disp in displacements_ab:
             xi = disp[0]
-            x = self.length * 0.25 * (xi + 1)
+            x = self.length * 0.5 * xi
             v = disp[2]
 
             # check displacements
-            self.assertTrue(np.isclose(v, analytical_disp_ab(x)))
+            self.assertTrue(np.isclose(v, analytical_disp_ab(x), atol=1e-06))
 
         # loop through each station
         for disp in displacements_bc:
             xi = disp[0]
-            x = self.length * 0.5 + self.length * 0.25 * (xi + 1)
+            x = self.length * 0.5 + self.length * 0.5 * xi
             v = disp[2]
 
             # check displacements
-            self.assertTrue(np.isclose(v, analytical_disp_bc(x)))
+            self.assertTrue(np.isclose(v, analytical_disp_bc(x), atol=1e-06))
 
         # check max displacement
         l0 = self.length
         v_max = self.pl * l0 * l0 * l0 / 48 / self.elastic_modulus / self.ixx
 
         # check value
-        self.assertTrue(np.isclose(abs(v_max), max(np.abs(displacements_ab[:, 2]))))
+        self.assertTrue(np.isclose(abs(v_max), max(np.abs(displacements_ab[:, 2])), atol=1e-06))
 
         # check position
         self.assertTrue(
-            np.isclose(1, displacements_ab[np.abs(displacements_ab[:, 2]).argmax(), 0]))
+            np.isclose(1, displacements_ab[np.abs(displacements_ab[:, 2]).argmax(), 0],
+                       atol=1e-06))
 
         # check bending moments
         def analytical_bmd_ab(x):
@@ -684,28 +687,28 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for (i, m) in enumerate(bmd_ab):
             xi = xis_ab[i]
-            x = self.length * 0.25 * (xi + 1)
+            x = self.length * 0.5 * xi
 
             # check bending moment
-            self.assertTrue(np.isclose(m, analytical_bmd_ab(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_ab(x), atol=1e-06))
 
         # loop through each station
         for (i, m) in enumerate(bmd_bc):
             xi = xis_bc[i]
-            x = self.length * 0.5 + self.length * 0.25 * (xi + 1)
+            x = self.length * 0.5 + self.length * 0.5 * xi
 
             # check bending moment
-            self.assertTrue(np.isclose(m, analytical_bmd_bc(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_bc(x), atol=1e-06))
 
         # check max bending moment
         l0 = self.length
         m_max = self.pl * l0 / 4
 
         # check value
-        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_ab))))
+        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_ab)), atol=1e-06))
 
         # check position
-        self.assertTrue(np.isclose(1, xis_ab[np.abs(bmd_ab).argmax()]))
+        self.assertTrue(np.isclose(1, xis_ab[np.abs(bmd_ab).argmax()], atol=1e-06))
 
         # check shear force
         def analytical_sfd_ab(x):
@@ -721,23 +724,23 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for (i, sf) in enumerate(sfd_ab):
             xi = xis_ab[i]
-            x = self.length * 0.25 * (xi + 1)
+            x = self.length * 0.5 * xi
 
             # check shear force
-            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x), atol=1e-06))
 
         # loop through each station
         for (i, sf) in enumerate(sfd_bc):
             xi = xis_bc[i]
-            x = self.length * 0.5 + self.length * 0.25 * (xi + 1)
+            x = self.length * 0.5 + self.length * 0.5 * xi
 
             # check shear force
-            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x), atol=1e-06))
 
     def test_fig8(self):
         """Simple Beam – Concentrated Load at Any Point"""
 
-        a = 2100
+        a = self.length * np.random.uniform(0.1, 0.9)
         b = self.length - a
 
         # create 2d frame analysis object
@@ -795,20 +798,20 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for disp in displacements_ab:
             xi = disp[0]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
             v = disp[2]
 
             # check displacements
-            self.assertTrue(np.isclose(v, analytical_disp_ab(x)))
+            self.assertTrue(np.isclose(v, analytical_disp_ab(x), atol=1e-06))
 
         # loop through each station
         for disp in displacements_bc:
             xi = disp[0]
-            x = b * 0.5 * (xi + 1) + a
+            x = b * xi + a
             v = disp[2]
 
             # check displacements
-            self.assertTrue(np.isclose(v, analytical_disp_bc(x)))
+            self.assertTrue(np.isclose(v, analytical_disp_bc(x), atol=1e-06))
 
         # check max displacement
         if a > b:
@@ -825,18 +828,21 @@ class TestUDL(unittest.TestCase):
             27 * self.elastic_modulus * self.ixx * l0)
 
         # check value
-        self.assertTrue(np.isclose(abs(v_max), max(np.abs(disps[:, 2]))))
+        self.assertTrue(np.isclose(abs(v_max), max(np.abs(disps[:, 2])), atol=1e-06))
 
         # check position of max displacement
         pos = np.sqrt((aa * (aa + 2 * bb)) / 3)
         if b > a:
             pos = self.length - pos
-        x = 2 / b * (pos - a) - 1
-        self.assertTrue(np.isclose(x, disps[np.abs(disps[:, 2]).argmax(), 0]))
+            x = 1 / b * (pos - a)
+        else:
+            x = pos / a
+
+        self.assertTrue(np.isclose(x, disps[np.abs(disps[:, 2]).argmax(), 0], atol=1e-06))
 
         # check displacement at point load
         v_ab = self.pl * a * a * b * b / 3 / self.elastic_modulus / self.ixx / self.length
-        self.assertTrue(np.isclose(v_ab, displacements_bc[0, 2]))
+        self.assertTrue(np.isclose(v_ab, displacements_bc[0, 2], atol=1e-06))
 
         # check bending moments
         def analytical_bmd_ab(x):
@@ -853,27 +859,27 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for (i, m) in enumerate(bmd_ab):
             xi = xis_ab[i]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
 
             # check bending moment
-            self.assertTrue(np.isclose(m, analytical_bmd_ab(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_ab(x), atol=1e-06))
 
         # loop through each station
         for (i, m) in enumerate(bmd_bc):
             xi = xis_bc[i]
-            x = a + b * 0.5 * (xi + 1)
+            x = a + b * xi
 
             # check bending moment
-            self.assertTrue(np.isclose(m, analytical_bmd_bc(x)))
+            self.assertTrue(np.isclose(m, analytical_bmd_bc(x), atol=1e-06))
 
         # check max bending moment
         m_max = self.pl * a * b / self.length
 
         # check value
-        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_ab))))
+        self.assertTrue(np.isclose(abs(m_max), max(np.abs(bmd_ab)), atol=1e-06))
 
         # check position
-        self.assertTrue(np.isclose(1, xis_ab[np.abs(bmd_ab).argmax()]))
+        self.assertTrue(np.isclose(1, xis_ab[np.abs(bmd_ab).argmax()], atol=1e-06))
 
         # check shear force
         def analytical_sfd_ab(x):
@@ -889,18 +895,18 @@ class TestUDL(unittest.TestCase):
         # loop through each station
         for (i, sf) in enumerate(sfd_ab):
             xi = xis_ab[i]
-            x = a * 0.5 * (xi + 1)
+            x = a * xi
 
             # check shear force
-            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_ab(x), atol=1e-06))
 
         # loop through each station
         for (i, sf) in enumerate(sfd_bc):
             xi = xis_bc[i]
-            x = a + b * 0.5 * (xi + 1)
+            x = a + b * xi
 
             # check shear force
-            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x)))
+            self.assertTrue(np.isclose(sf, analytical_sfd_bc(x), atol=1e-06))
 
     def test_fig9(self):
         """Simple Beam – Two Equal Concentrated Loads Symmetrically Placed"""

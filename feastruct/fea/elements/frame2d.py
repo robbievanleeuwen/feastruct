@@ -79,7 +79,7 @@ class FrameElement2D(FrameElement):
         # if a displacement vector is supplied
         else:
             # set stations
-            xis = np.linspace(-1, 1, n)
+            xis = np.linspace(0, 1, n)
 
             # rotate nodal displacements to local axis
             T = self.get_transformation_matrix()
@@ -161,12 +161,9 @@ class FrameElement2D(FrameElement):
             n1 = afd[i]
             n2 = afd[i+1]
 
-            a_i1 = (xi + 1) / 2  # percentage along element for xis[i]
-            a_i2 = (xis[i+1] + 1) / 2  # percentage along element for xis[i+1]
-
             # location of node 1 and node 2
-            p1 = end1 + a_i1 * (end2 - end1)
-            p2 = end1 + a_i2 * (end2 - end1)
+            p1 = end1 + xi * (end2 - end1)
+            p2 = end1 + xis[i+1] * (end2 - end1)
 
             # location of the axial force diagram end points
             v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
@@ -230,12 +227,9 @@ class FrameElement2D(FrameElement):
             v1 = sfd[i]
             v2 = sfd[i+1]
 
-            a_i1 = (xi + 1) / 2  # percentage along element for xis[i]
-            a_i2 = (xis[i+1] + 1) / 2  # percentage along element for xis[i+1]
-
             # location of node 1 and node 2
-            p1 = end1 + a_i1 * (end2 - end1)
-            p2 = end1 + a_i2 * (end2 - end1)
+            p1 = end1 + xi * (end2 - end1)
+            p2 = end1 + xis[i+1] * (end2 - end1)
 
             # location of the shear force diagram end points
             v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
@@ -299,12 +293,9 @@ class FrameElement2D(FrameElement):
             m1 = bmd[i]
             m2 = bmd[i+1]
 
-            a_i1 = (xi + 1) / 2  # percentage along element for xis[i]
-            a_i2 = (xis[i+1] + 1) / 2  # percentage along element for xis[i+1]
-
             # location of node 1 and node 2
-            p1 = end1 + a_i1 * (end2 - end1)
-            p2 = end1 + a_i2 * (end2 - end1)
+            p1 = end1 + xi * (end2 - end1)
+            p2 = end1 + xis[i+1] * (end2 - end1)
 
             # location of the bending moment diagram end points
             v = np.matmul(np.array([[0, -1], [1, 0]]), dx[0:2]) / l0  # direction vector
@@ -371,16 +362,17 @@ class Bar2D_2N(FrameElement2D):
         # initialise parent FrameElement2D class
         super().__init__(nodes=nodes, material=material, efs=efs, section=section)
 
-    def get_shape_function(self, xi):
-        """Returns the value of the shape functions *N1* and *N2* at *xi*.
+    def get_shape_function(self, eta):
+        """Returns the value of the shape functions *N1* and *N2* at isoparametric coordinate
+        *eta*.
 
-        :param float xi: Position along the element
+        :param float eta: Isoparametric coordinate *(-1 < eta < 1)*
 
-        :returns: Value of the shape functions *(N1, N2)* at *xi*
+        :returns: Value of the shape functions *(N1, N2)* at *eta*
         :rtype: :class:`numpy.ndarray`
         """
 
-        return np.array([0.5 - xi / 2, 0.5 + xi / 2])
+        return np.array([0.5 - eta / 2, 0.5 + eta / 2])
 
     def get_stiffness_matrix(self):
         """Gets the stiffness matrix for a two noded, 2D bar element. The stiffness matrix has been
@@ -510,7 +502,7 @@ class Bar2D_2N(FrameElement2D):
     def get_displacements(self, n, analysis_case):
         """Returns a list of the local displacements, *(u, v, w, ru, rv, rw)*, along the element
         for the analysis case and a minimum of *n* subdivisions. A list of the stations, *xi*, is
-        also included.
+        also included. Station locations, *xis*, vary from 0 to 1.
 
         :param analysis_case: Analysis case relating to the displacement
         :type analysis_case: :class:`~feastruct.fea.cases.AnalysisCase`
@@ -537,7 +529,7 @@ class Bar2D_2N(FrameElement2D):
             u_el_local = np.transpose(np.matmul(T, np.transpose(u_el)))
 
             # element shape function at station location
-            N = self.get_shape_function(xi)
+            N = self.get_shape_function(self.map_to_isoparam(xi))
 
             # compute local displacements
             u = np.dot(N, np.array([u_el_local[0, 0], u_el_local[1, 0]]))
@@ -567,7 +559,7 @@ class Bar2D_2N(FrameElement2D):
 
     def get_afd(self, n, analysis_case):
         """Returns the axial force diagram within the element for *n* stations for an
-        analysis_case.
+        analysis_case. Station locations, *xis*, vary from 0 to 1.
 
         :param int n: Number of stations to sample the axial force diagram
         :param analysis_case: Analysis case
@@ -591,7 +583,7 @@ class Bar2D_2N(FrameElement2D):
         # loop over each station
         for (i, xi) in enumerate(stations):
             # get shape functions at xi
-            N = self.get_shape_function(xi)
+            N = self.get_shape_function(self.map_to_isoparam(xi))
 
             # compute local displacements
             afd[i] = np.dot(N, np.array([N1, N2]))
@@ -600,7 +592,7 @@ class Bar2D_2N(FrameElement2D):
 
     def get_sfd(self, n, analysis_case):
         """Returns the shear force diagram within the element for *n* stations for an
-        analysis_case.
+        analysis_case. Station locations, *xis*, vary from 0 to 1.
 
         :param int n: Number of stations to sample the shear force diagram
         :param analysis_case: Analysis case
@@ -611,11 +603,11 @@ class Bar2D_2N(FrameElement2D):
         """
 
         # no shear force in this element
-        return (np.linspace(-1, 1, n), np.zeros(n))
+        return (np.linspace(0, 1, n), np.zeros(n))
 
     def get_bmd(self, n, analysis_case):
         """Returns the bending moment diagram within the element for *n* stations for an
-        analysis_case.
+        analysis_case. Station locations, *xis*, vary from 0 to 1.
 
         :param int n: Number of stations to sample the bending moment diagram
         :param analysis_case: Analysis case
@@ -626,13 +618,13 @@ class Bar2D_2N(FrameElement2D):
         """
 
         # no bending moment in this element
-        return (np.linspace(-1, 1, n), np.zeros(n))
+        return (np.linspace(0, 1, n), np.zeros(n))
 
     def calculate_local_displacement(self, xi, u_el):
         """Calculates the local displacement of the element at position *xi* given the displacement
         vector *u_el*.
 
-        :param float xi: Position along the element
+        :param float xi: Station location *(0 < x < 1)*
         :param u_el: Element displacement vector
         :type u_el: :class:`numpy.ndarray`
 
@@ -641,7 +633,7 @@ class Bar2D_2N(FrameElement2D):
         """
 
         # element shape function
-        N = self.get_shape_function(xi)
+        N = self.get_shape_function(self.map_to_isoparam(xi))
 
         # compute local displacements
         u = np.dot(N, np.array([u_el[0, 0], u_el[1, 0]]))
@@ -684,12 +676,12 @@ class EulerBernoulli2D_2N(FrameElement2D):
         # initialise parent FrameElement2D class
         super().__init__(nodes=nodes, material=material, efs=efs, section=section)
 
-    def get_shape_function(self, xi):
-        """Returns the value of the shape functions *Nu1*, *Nu2*, *Nv1* and *Nv2* at *xi*.
+    def get_shape_function(self, eta):
+        """Returns the value of the shape functions *Nu1*, *Nu2*, *Nv1* and *Nv2* at *eta*.
 
-        :param float xi: Position along the element
+        :param float eta: Isoparametric coordinate (*-1 < eta < 1*)
 
-        :returns: Value of the shape functions *((Nu1, Nu2), (Nv1, Nv2))* at *xi*
+        :returns: Value of the shape functions *((Nu1, Nu2), (Nv1, Nv2))* at *eta*
         :rtype: :class:`numpy.ndarray`
         """
 
@@ -697,12 +689,12 @@ class EulerBernoulli2D_2N(FrameElement2D):
         (_, _, l0, _) = self.get_geometric_properties()
 
         # element shape functions
-        N_u = np.array([0.5 - xi / 2, 0.5 + xi / 2])
+        N_u = np.array([0.5 - eta / 2, 0.5 + eta / 2])
         N_v = np.array([
-            0.25 * (1 - xi) * (1 - xi) * (2 + xi),
-            0.125 * l0 * (1 - xi) * (1 - xi) * (1 + xi),
-            0.25 * (1 + xi) * (1 + xi) * (2 - xi),
-            -0.125 * l0 * (1 + xi) * (1 + xi) * (1 - xi)
+            0.25 * (1 - eta) * (1 - eta) * (2 + eta),
+            0.125 * l0 * (1 - eta) * (1 - eta) * (1 + eta),
+            0.25 * (1 + eta) * (1 + eta) * (2 - eta),
+            -0.125 * l0 * (1 + eta) * (1 + eta) * (1 - eta)
         ])
 
         return (N_u, N_v)
@@ -880,7 +872,7 @@ class EulerBernoulli2D_2N(FrameElement2D):
     def get_displacements(self, n, analysis_case):
         """Returns a list of the local displacements, *(u, v, w, ru, rv, rw)*, along the element
         for the analysis case and a minimum of *n* subdivisions. A list of the stations, *xi*, is
-        also included.
+        also included. Station locations, *xis*, vary from 0 to 1.
 
         An extra station is included if there is a point of zero rotation resulting in a local
         displacement maxima/minima.
@@ -910,7 +902,7 @@ class EulerBernoulli2D_2N(FrameElement2D):
             u_el_local = np.transpose(np.matmul(T, np.transpose(u_el)))
 
             # element axial shape function at station location
-            (N_u, _) = self.get_shape_function(xi)
+            (N_u, _) = self.get_shape_function(self.map_to_isoparam(xi))
 
             # compute axial displacement
             u = np.dot(N_u, np.array([u_el_local[0, 0], u_el_local[1, 0]]))
@@ -954,14 +946,14 @@ class EulerBernoulli2D_2N(FrameElement2D):
         def kappa(x): return -self.get_bm(x, analysis_case) / E / ixx
 
         for (i, xi) in enumerate(xis):
-            # integrate curvature to get change in rotation from x = -1 to x = xi
-            (delta_phi, err) = integrate.fixed_quad(kappa, -1, xi)
+            # integrate curvature to get change in rotation from x = 0 to x = xi
+            (delta_phi, err) = integrate.fixed_quad(kappa, 0, xi)
 
             # get member length
             (_, _, l0, _) = self.get_geometric_properties()
 
             # transform xi to l0
-            delta_phi *= l0 / 2
+            delta_phi *= l0
 
             phis[i] = phi0 + delta_phi
 
@@ -981,14 +973,14 @@ class EulerBernoulli2D_2N(FrameElement2D):
         def phi(x): return self.calculate_rotation(x, phi0, analysis_case)
 
         for (i, xi) in enumerate(xis):
-            # integrate rotation to get change in transverse displacement from x = -1 to x = xi
-            (delta_v, err) = integrate.fixed_quad(phi, -1, xi)
+            # integrate rotation to get change in transverse displacement from x = 0 to x = xi
+            (delta_v, err) = integrate.fixed_quad(phi, 0, xi)
 
             # get member length
             (_, _, l0, _) = self.get_geometric_properties()
 
             # transform xi to l0
-            delta_v *= l0 / 2
+            delta_v *= l0
 
             # transvere disp = initial transvere disp + change in transvere disp
             disps[i] = v0 + delta_v
@@ -1008,7 +1000,7 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
     def get_afd(self, n, analysis_case):
         """Returns the axial force diagram within the element for a minimum of *n* stations for an
-        analysis_case.
+        analysis_case. Station locations, *xis*, vary from 0 to 1.
 
         :param int n: Minimum number of stations to sample the axial force diagram
         :param analysis_case: Analysis case
@@ -1032,7 +1024,7 @@ class EulerBernoulli2D_2N(FrameElement2D):
         # loop over each station
         for (i, xi) in enumerate(stations):
             # get shape functions at xi
-            (N, _) = self.get_shape_function(xi)
+            (N, _) = self.get_shape_function(self.map_to_isoparam(xi))
 
             # compute axial force diagram
             afd[i] = np.dot(N, np.array([N1, N2]))
@@ -1041,7 +1033,7 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
     def get_sfd(self, n, analysis_case):
         """Returns the shear force diagram within the element for a minimum of *n* stations for an
-        analysis_case.
+        analysis_case. Station locations, *xis*, vary from 0 to 1.
 
         :param int n: Minimum number of stations to sample the shear force diagram
         :param analysis_case: Analysis case
@@ -1068,7 +1060,7 @@ class EulerBernoulli2D_2N(FrameElement2D):
         # loop over each station
         for (i, xi) in enumerate(stations):
             # get shape functions at xi
-            (N, _) = self.get_shape_function(xi)
+            (N, _) = self.get_shape_function(self.map_to_isoparam(xi))
 
             # compute shear force diagram
             sfd[i] = np.dot(N, np.array([V1, V2]))
@@ -1082,7 +1074,8 @@ class EulerBernoulli2D_2N(FrameElement2D):
     def get_bmd(self, n, analysis_case):
         """Returns the bending moment diagram within the element for *n* stations for an
         analysis_case. An additional station is added at all locations where the shear force is
-        zero to ensure that bending moment maxima/minima are captured.
+        zero to ensure that bending moment maxima/minima are captured. Station locations, *xis*,
+        vary from 0 to 1.
 
         :param int n: Number of stations to sample the bending moment diagram
         :param analysis_case: Analysis case
@@ -1109,14 +1102,14 @@ class EulerBernoulli2D_2N(FrameElement2D):
         # loop over each station
         for (i, xi) in enumerate(stations):
             # get shape functions at xi
-            (N, _) = self.get_shape_function(xi)
+            (N, _) = self.get_shape_function(self.map_to_isoparam(xi))
 
             # compute bending moment diagram
             bmd[i] = np.dot(N, np.array([M1, M2]))
 
             # add bending moment due to element loads
             for element_load in element_loads:
-                bmd[i] += element_load.get_internal_bmd(xi)
+                bmd[i] += element_load.get_internal_bmd(self.map_to_isoparam(xi))
 
         return (stations, bmd)
 
@@ -1149,14 +1142,14 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
         for (i, xi) in enumerate(xis):
             # get shape functions at xi
-            (N, _) = self.get_shape_function(xi)
+            (N, _) = self.get_shape_function(self.map_to_isoparam(xi))
 
             # compute shear force diagram
             sf = np.dot(N, np.array([V1, V2]))
 
             # add shear force due to element loads
             for element_load in element_loads:
-                sf += element_load.get_internal_sfd(xi)
+                sf += element_load.get_internal_sfd(self.map_to_isoparam(xi))
 
             sfs[i] = sf
 
@@ -1191,14 +1184,14 @@ class EulerBernoulli2D_2N(FrameElement2D):
 
         for (i, xi) in enumerate(xis):
             # get shape functions at xi
-            (N, _) = self.get_shape_function(xi)
+            (N, _) = self.get_shape_function(self.map_to_isoparam(xi))
 
             # compute bending moment diagram
             bm = np.dot(N, np.array([M1, M2]))
 
             # add bending moment due to element loads
             for element_load in element_loads:
-                bm += element_load.get_internal_bmd(xi)
+                bm += element_load.get_internal_bmd(self.map_to_isoparam(xi))
 
             bms[i] = bm
 
@@ -1208,7 +1201,7 @@ class EulerBernoulli2D_2N(FrameElement2D):
         """Calculates the local displacement of the element at position *xi* given the displacement
         vector *u_el*.
 
-        :param float xi: Position along the element
+        :param float xi: Station location *(0 < x < 1)*
         :param u_el: Element displacement vector
         :type u_el: :class:`numpy.ndarray`
 
@@ -1217,7 +1210,7 @@ class EulerBernoulli2D_2N(FrameElement2D):
         """
 
         # element shape functions
-        (N_u, N_v) = self.get_shape_function(xi)
+        (N_u, N_v) = self.get_shape_function(self.map_to_isoparam(xi))
 
         # compute local displacements
         u = np.dot(N_u, np.array([u_el[0, 0], u_el[1, 0]]))
