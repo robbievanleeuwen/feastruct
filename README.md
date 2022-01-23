@@ -4,8 +4,6 @@
 
 structural finite element analysis, the pythonic way.
 
-*currently under development...*
-
 ```python
 from feastruct.pre.material import Steel
 from feastruct.pre.section import Section
